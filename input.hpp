@@ -1,4 +1,5 @@
-#ifndef input_h
+#ifndef input_hpp
+#define input_hpp
 #include <SDL.h>
 #include <iostream>
 

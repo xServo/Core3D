@@ -1,7 +1,9 @@
 #include <SDL.h>
 #include <iostream>
 #include <random>
+#include "point.hpp"
 #include "input.hpp"
+#include "player.hpp"
 
 bool init();
 void close();
@@ -17,17 +19,7 @@ int main() {
     if (!init()) {
         std::cerr << "Failed to initialize!\n";
     } else {
-        //Background
-        SDL_SetRenderDrawColor(gRenderer, 255, 200, 255, 230); // skin color
-        SDL_RenderClear(gRenderer);
-
-        // first square
-        // SDL_SetRenderDrawColor(gRenderer, 255, 0, 255, 255); // purple
-        // SDL_RenderFillRect(gRenderer, &rect);
-
-        // SDL_RenderPresent(gRenderer);
-
-
+        Player player;
         bool quit = false;
         int color = 125;
         int deltaTime;
@@ -38,14 +30,10 @@ int main() {
         // game loop
         while (!quit) {
             getInput(&quit, &keyPressed);
+            deltaTime = timePassed(lastFrameTime);
+
             printf("%s", keyPressed.c_str());
 
-            deltaTime = timePassed(lastFrameTime);
-            // generate a random num
-            color = color + random_range(-5,5);
-            if (color > 255 || color < 0) {
-                color = 125;
-            }
 
             if(keyPressed == "down") {
                 rect.y = rect.y + 0.05 * deltaTime;
@@ -60,10 +48,18 @@ int main() {
                 rect.x = rect.x + 0.05 * deltaTime;
             }
 
+            //background
+            color = color + random_range(-5,5);
+            if (color > 255 || color < 0) {
+                color = 125;
+            }
             SDL_SetRenderDrawColor(gRenderer, 255, 200, color, color); // skin color
             SDL_RenderClear(gRenderer);
-            SDL_SetRenderDrawColor(gRenderer, 255, 0, 255, 255); // purple
-            SDL_RenderFillRect(gRenderer, &rect);
+            SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+
+            // draw test line
+            SDL_RenderDrawLine(gRenderer, 50, 50, 200, 200);
+
             SDL_RenderPresent(gRenderer);
             SDL_Delay(32);
             printf("1 frame %i\n", deltaTime);

@@ -12,7 +12,7 @@ LDFLAGS = -L/opt/homebrew/lib -lSDL2
 TARGET = sdl_test
 
 # Source file(s)
-SRCS = main.cpp input.cpp
+SRCS = main.cpp input.cpp 
 
 # Rule to build the target
 $(TARGET): $(SRCS)
