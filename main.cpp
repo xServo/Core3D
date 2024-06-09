@@ -1,6 +1,7 @@
 #include <SDL.h>
 #include <iostream>
 #include <random>
+#include "input.hpp"
 
 bool init();
 void close();
@@ -28,7 +29,6 @@ int main() {
 
 
         bool quit = false;
-        SDL_Event e;
         int color = 125;
         int deltaTime;
         std::string keyPressed;
@@ -37,50 +37,7 @@ int main() {
         int lastFrameTime = SDL_GetTicks();
         // game loop
         while (!quit) {
-             // Process pending events
-            while (SDL_PollEvent(&e) != 0) {
-                // handle quitting
-                if (e.type == SDL_QUIT) {
-                    quit = true;
-                }
-                if (e.type == SDL_KEYDOWN) {
-                    if (e.key.keysym.sym == SDLK_UP) {
-                        keyPressed = "up";
-                    }
-                    if (e.key.keysym.sym == SDLK_DOWN) {
-                        keyPressed = "down";
-                    }
-                    if (e.key.keysym.sym == SDLK_LEFT) {
-                        keyPressed = "left";
-                    }
-                    if (e.key.keysym.sym == SDLK_RIGHT) {
-                        keyPressed = "right";
-                    }
-                }
-                if (e.type == SDL_KEYUP) {
-                    if (e.key.keysym.sym == SDLK_UP) {
-                        if (keyPressed == "up") {
-                            keyPressed = "";
-                        }
-                    }
-                    if (e.key.keysym.sym == SDLK_DOWN) {
-                        if (keyPressed == "down") {
-                            keyPressed = "";
-                        }
-                    }
-                    if (e.key.keysym.sym == SDLK_LEFT) {
-                        if (keyPressed == "left") {
-                            keyPressed = "";
-                        }
-                    }
-                    if (e.key.keysym.sym == SDLK_RIGHT) {
-                        if (keyPressed == "right") {
-                            keyPressed = "";
-                        }
-                    }
-                }
-
-            }
+            getInput(&quit, &keyPressed);
             printf("%s", keyPressed.c_str());
 
             deltaTime = timePassed(lastFrameTime);
