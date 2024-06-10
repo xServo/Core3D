@@ -1,12 +1,12 @@
 #ifndef point_hpp
 #define point_hpp
 struct point3D {
-    int x;
-    int y;
-    int z;
+    float x;
+    float y;
+    float z;
 };
-struct point2d {
-    int x;
-    int y;
+struct point2D {
+    float x;
+    float y;
 };
 #endif

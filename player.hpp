@@ -3,13 +3,15 @@
 #include "point.hpp"
 class Player {
     public: 
-        point3D position;
-        float direction; // x/359
+        point3D pos;
+        float direction;
         float fov;
         Player() {
-            position = {0, 0, 0};
-            direction = 0.0f; // x/359
-            fov = 90.0f;
+            pos.x = 300;
+            pos.y = 300;
+            pos.z = 0;
+            direction = 50; // x/359
+            fov = 90;
         }
 };
 #endif
