@@ -176,6 +176,7 @@ void drawPlayer(point3D pos) {
 
 void rayCast(float theta) {
     float pX, pY, vX, vY, hX, hY, nX, nY, dH, dV;
+    if (theta >= 360) theta -= 360;
     float radians = theta * (M_PI / 180); // 0 = theta
     pX = player.pos.x/unitX;
     pY = player.pos.y/unitY;
@@ -193,13 +194,13 @@ void rayCast(float theta) {
     }   
 
     // VERTICAL LINES
-    if (radians > M_PI / 2 && radians < 3 * M_PI / 2) {     // looking left
+    if (radians > M_PI / 2 && radians < (3 * M_PI) / 2) {       // looking right
         vX = floor(vX);
-        vY = pY + (pX - vX) * tan(radians);
+        vY = pY + (vX - pX) * tan(radians);
     }
-    else {  // looking right
+    else {                                                      // looking left
         vX = floor(vX + 1);
-        vY = pY + (pX - vX) * tan(radians);
+        vY = pY + (vX - pX) * tan(radians);
     }
     
 
