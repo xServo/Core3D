@@ -1,22 +1,23 @@
-# g++ -o sdl_test main.cpp -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -L/opt/homebrew/lib -lSDL2 && ./sdl_test
 # Compiler
 CC = g++
 
+# Compiler version
+CVERSION = -std=c++20
 # Compiler flags
-CFLAGS = -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE
+CFLAGS = -I/opt/homebrew/include/GLFW -I/opt/homebrew/include/GL   
 
 # Linker flags
-LDFLAGS = -L/opt/homebrew/lib -lSDL2
+LDFLAGS = -L/opt/homebrew/lib -lGLEW -lglfw -framework OpenGL
 
 # Target executable name
-TARGET = sdl_test
+TARGET = rend_test
 
 # Source file(s)
-SRCS = main.cpp input.cpp 
+SRCS = src/*.cpp
 
 # Rule to build the target
 $(TARGET): $(SRCS)
-	$(CC) -o $(TARGET) $(SRCS) $(CFLAGS) $(LDFLAGS)
+	@$(CC) $(CVERSION) -o $(TARGET)  $(SRCS) $(CFLAGS) $(LDFLAGS)
 
 # Rule to run the program
 run: $(TARGET)
