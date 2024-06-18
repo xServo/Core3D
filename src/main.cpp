@@ -98,42 +98,47 @@ int main() {
     init();
 
     float positions[] = {
-        -0.5f, -0.5f, -5.5f,
-        -0.5f, -0.5f, -4.5f,
-        -0.5f,  0.5f, -4.5f,
-        0.5f,  0.5f, -5.5f,
-        -0.5f, -0.5f, -5.5f,
-        -0.5f,  0.5f, -5.5f,
-        0.5f, -0.5f, -4.5f,
-        -0.5f, -0.5f, -5.5f,
-        0.5f, -0.5f, -5.5f,
-        0.5f,  0.5f, -5.5f,
-        0.5f, -0.5f, -5.5f,
-        -0.5f, -0.5f, -5.5f,
-        -0.5f, -0.5f, -5.5f,
-        -0.5f,  0.5f, -4.5f,
-        -0.5f,  0.5f, -5.5f,
-        0.5f, -0.5f, -4.5f,
-        -0.5f, -0.5f, -4.5f,
-        -0.5f, -0.5f, -5.5f,
-        -0.5f,  0.5f, -4.5f,
-        -0.5f, -0.5f, -4.5f,
-        0.5f, -0.5f, -4.5f,
-        0.5f,  0.5f, -4.5f,
-        0.5f, -0.5f, -5.5f,
-        0.5f,  0.5f, -5.5f,
-        0.5f, -0.5f, -5.5f,
-        0.5f,  0.5f, -4.5f,
-        0.5f, -0.5f, -4.5f,
-        0.5f,  0.5f, -4.5f,
-        0.5f,  0.5f, -5.5f,
-        -0.5f,  0.5f, -5.5f,
-        0.5f,  0.5f, -4.5f,
-        -0.5f,  0.5f, -5.5f,
-        -0.5f,  0.5f, -4.5f,
-        0.5f,  0.5f, -4.5f,
-        -0.5f,  0.5f, -4.5f,
-        0.5f, -0.5f, -4.5f
+        -1.0f, -1.0f,  1.0f,
+        1.0f, -1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f,  1.0f,
+        1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+        1.0f,  1.0f, -1.0f,
+        1.0f,  1.0f,  1.0f,
+        1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f
     };
     unsigned int indicies[] = {
         0, 1, 2,
@@ -157,11 +162,63 @@ int main() {
         5, 6, 3,
         5, 4, 7
     };
+    // color buffer
+    static const float colors[] = {
+        0.583f,  0.771f,  0.014f,
+        0.583f,  0.771f,  0.014f,
+        0.583f,  0.771f,  0.014f,
+        0.583f,  0.771f,  0.014f,
+        0.583f,  0.771f,  0.014f,
+        0.583f,  0.771f,  0.014f,
+
+        0.597f,  0.770f,  0.761f,
+        0.597f,  0.770f,  0.761f,
+        0.597f,  0.770f,  0.761f,
+        0.597f,  0.770f,  0.761f,
+        0.597f,  0.770f,  0.761f,
+        0.597f,  0.770f,  0.761f,
+
+        0.014f,  0.184f,  0.576f,
+        0.014f,  0.184f,  0.576f,
+        0.014f,  0.184f,  0.576f,
+        0.014f,  0.184f,  0.576f,
+        0.014f,  0.184f,  0.576f,
+        0.014f,  0.184f,  0.576f,
+
+        0.997f,  0.513f,  0.064f,
+        0.997f,  0.513f,  0.064f,
+        0.997f,  0.513f,  0.064f,
+        0.997f,  0.513f,  0.064f,
+        0.997f,  0.513f,  0.064f,
+        0.997f,  0.513f,  0.064f,
+
+        0.055f,  0.953f,  0.042f,
+        0.055f,  0.953f,  0.042f,
+        0.055f,  0.953f,  0.042f,
+        0.055f,  0.953f,  0.042f,
+        0.055f,  0.953f,  0.042f,
+        0.055f,  0.953f,  0.042f,
+
+        0.982f,  0.099f,  0.879f,
+        0.982f,  0.099f,  0.879f,
+        0.982f,  0.099f,  0.879f,
+        0.982f,  0.099f,  0.879f,
+        0.982f,  0.099f,  0.879f,
+        0.982f,  0.099f,  0.879f,
+    };
 
     // vao stuff
     unsigned int VAO; 
-    glGenVertexArrays(1, &VAO);  // maybe needs to be 2
+    glGenVertexArrays(1, &VAO);  
     glBindVertexArray(VAO);
+
+    // color buffer
+    unsigned int cb;
+    glGenBuffers(1, &cb); 
+    glBindBuffer(GL_ARRAY_BUFFER, cb);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0); 
     
     // buffer stuff
     VertexBuffer vb(positions, (3*36)*sizeof(float));
@@ -181,8 +238,26 @@ int main() {
     int u_Perspective = glGetUniformLocation(shader, "u_Perspective");
     glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
 
+    // rotate
+    glm::mat4 rotate = glm::mat4(1.0f); // initialize identity matrix
+    rotate = glm::rotate(rotate, glm::radians(50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    int u_Rotate = glGetUniformLocation(shader, "u_Rotate");
+    glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &rotate[0][0]);
+
+    // translate
+    glm::mat4 translate = glm::mat4(1);
+    translate = glm::translate(translate, glm::vec3(0, 0, -2.5));
+    int u_Translate = glGetUniformLocation(shader, "u_Translate");
+    glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &translate[0][0]);
+    
+    // scale scaling
+    glm::mat4 scale = glm::mat4(1);
+    scale = glm::scale(scale, glm::vec3(0.5, 0.5, 0.5)); // scales to 0.5x
+    int u_Scale = glGetUniformLocation(shader, "u_Scale");
+    glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &scale[0][0]);
+
     // uniform stuff
-    // mat4 model;
+    // mat4 rotate;
     // mat4 view;
     // mat4 projection;
 
@@ -190,6 +265,8 @@ int main() {
     float r = 0.0f;
     float incr = 0.002f;
     while (!glfwWindowShouldClose(gWindow)) {
+        rotate = glm::rotate(rotate, glm::radians(0.1f), glm::vec3(1.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &rotate[0][0]);
         r += incr;
         if (r > 0.5f) {
             r = 0.5f;
@@ -200,12 +277,17 @@ int main() {
         }
         glUniform4f(u_location, r, 0.3, -r, 1);
         // Render here (currently just a clear color)
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // enable wireframe mode:w
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // enable wireframe mode:w
 
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // draw call
         // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
         glDrawArrays(GL_TRIANGLES, 0, 36*3); // use vertex matrix
+        // Enable depth test
+        glEnable(GL_DEPTH_TEST);
+        // Accept fragment if it closer to the camera than the former one
+        glDepthFunc(GL_LESS);
+        // error check
         ASSERT(GLLogCall());
         
         // Swap buffers to display the updated frame

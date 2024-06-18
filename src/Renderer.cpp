@@ -3,7 +3,6 @@
 
 void GLClearError() {
     while(glGetError());
-
 }
 bool GLLogCall() {
     while(GLenum error = glGetError()) {
