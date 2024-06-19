@@ -7,84 +7,14 @@
 #include "Renderer.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
+#include "VertexArray.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-struct ShaderProgramSource {
-    std::string VertexSource;
-    std::string FragmentSource;
-};
+#include "ShaderCompiler.hpp"
+#include "data.hpp"
 
-static ShaderProgramSource ParseShader(const std::string filepath) {
-    std::ifstream stream(filepath);
-    enum class ShaderType {
-        NONE = -1,
-        VERTEX = 0,
-        FRAGMENT = 1
-    };
-
-    std::stringstream ss[2];
-    std::string line;
-    ShaderType type = ShaderType::NONE;
-
-    // Read through the shader file line by line
-    while (getline(stream, line)) {
-        if (line.find("#shader") != std::string::npos) {
-            // Change the type based on the shader type declaration in the file
-            if (line.find("vertex") != std::string::npos) {
-                type = ShaderType::VERTEX;
-            } else if (line.find("fragment") != std::string::npos) {
-                type = ShaderType::FRAGMENT;
-            }
-        } else {
-            // Append the current line to the appropriate stringstream
-            if (type != ShaderType::NONE) {
-                ss[static_cast<int>(type)] << line << '\n';
-            }
-        }
-    }
-
-    return { ss[0].str(), ss[1].str() };
-}
-
-static unsigned int CompileShader(unsigned int type, const std::string source) {
-    unsigned int id = glCreateShader(type);
-    const char* src = source.c_str();
-    glShaderSource(id, 1, &src, nullptr);
-    glCompileShader(id);
-
-    // error handlign
-    int result;
-    glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-    if (result == GL_FALSE) {
-        int length; 
-        glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        char* message = (char*)alloca(length * sizeof(char));
-        glGetShaderInfoLog(id, length, &length, message);
-        std::cout << "Failed to compile shader!" << std::endl;
-        std::cout << message << std::endl;
-        glDeleteShader(id);
-        return 0;
-    }
-
-    return id;
-}
-
-static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
-    unsigned int program = glCreateProgram();
-    unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-    unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-    // linking
-    glAttachShader(program, vs);
-    glAttachShader(program, fs);
-    glLinkProgram(program);
-    glValidateProgram(program);
-    glDeleteShader(vs);
-    glDeleteShader(fs);
-    return program;
-}
 
 void init();
 void quit();
@@ -97,136 +27,20 @@ GLFWwindow* gWindow = NULL;
 int main() {
     init();
 
-    float positions[] = {
-        -1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
+    Renderer renderer(gWindow);
 
-        -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f,  1.0f, -1.0f,
-        1.0f,  1.0f, -1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
+    VertexArray vao(positions, 36);
+    vao.Bind();
+    IndexBuffer ib(indicies, 42);
 
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-
-        -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f,  1.0f,
-        1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f,  1.0f,
-        -1.0f, -1.0f, -1.0f,
-
-        -1.0f,  1.0f, -1.0f,
-        1.0f,  1.0f, -1.0f,
-        1.0f,  1.0f,  1.0f,
-        1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f,  1.0f,
-        -1.0f,  1.0f, -1.0f
-    };
-    unsigned int indicies[] = {
-        0, 1, 2,
-        0, 2, 6,
-        
-        3, 0, 6,
-        3, 6, 4,
-        
-        4, 0, 5,
-        5, 0, 3,
-
-        1, 7, 2,
-        1, 4, 7,
-
-        7, 4, 3,
-        7, 3, 6,
-
-        0, 1, 4,
-        5, 6, 2,
-
-        5, 6, 3,
-        5, 4, 7
-    };
-    // color buffer
-    static const float colors[] = {
-        0.583f,  0.771f,  0.014f,
-        0.583f,  0.771f,  0.014f,
-        0.583f,  0.771f,  0.014f,
-        0.583f,  0.771f,  0.014f,
-        0.583f,  0.771f,  0.014f,
-        0.583f,  0.771f,  0.014f,
-
-        0.597f,  0.770f,  0.761f,
-        0.597f,  0.770f,  0.761f,
-        0.597f,  0.770f,  0.761f,
-        0.597f,  0.770f,  0.761f,
-        0.597f,  0.770f,  0.761f,
-        0.597f,  0.770f,  0.761f,
-
-        0.014f,  0.184f,  0.576f,
-        0.014f,  0.184f,  0.576f,
-        0.014f,  0.184f,  0.576f,
-        0.014f,  0.184f,  0.576f,
-        0.014f,  0.184f,  0.576f,
-        0.014f,  0.184f,  0.576f,
-
-        0.997f,  0.513f,  0.064f,
-        0.997f,  0.513f,  0.064f,
-        0.997f,  0.513f,  0.064f,
-        0.997f,  0.513f,  0.064f,
-        0.997f,  0.513f,  0.064f,
-        0.997f,  0.513f,  0.064f,
-
-        0.055f,  0.953f,  0.042f,
-        0.055f,  0.953f,  0.042f,
-        0.055f,  0.953f,  0.042f,
-        0.055f,  0.953f,  0.042f,
-        0.055f,  0.953f,  0.042f,
-        0.055f,  0.953f,  0.042f,
-
-        0.982f,  0.099f,  0.879f,
-        0.982f,  0.099f,  0.879f,
-        0.982f,  0.099f,  0.879f,
-        0.982f,  0.099f,  0.879f,
-        0.982f,  0.099f,  0.879f,
-        0.982f,  0.099f,  0.879f,
-    };
-
-    // vao stuff
-    unsigned int VAO; 
-    glGenVertexArrays(1, &VAO);  
-    glBindVertexArray(VAO);
-
+    
     // color buffer
     unsigned int cb;
-    glGenBuffers(1, &cb); 
-    glBindBuffer(GL_ARRAY_BUFFER, cb);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0); 
-    
-    // buffer stuff
-    VertexBuffer vb(positions, (3*36)*sizeof(float));
-    glEnableVertexAttribArray(0);
-    // index, values per vertex, type, normalize?, size of vertex in bytes, offset to first vertex 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0); // links currently bound array buffer to vao [0]
-    IndexBuffer ib(indicies, 42);
-    
+    GLCall(glGenBuffers(1, &cb)); 
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, cb));
+    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW));
+    GLCall(glEnableVertexAttribArray(1));
+    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0)); 
 
     // shader stuff
     ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
@@ -275,28 +89,15 @@ int main() {
             r = 0;
             incr = 0.002f;
         }
-        glUniform4f(u_location, r, 0.3, -r, 1);
-        // Render here (currently just a clear color)
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // enable wireframe mode:w
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        // draw call
-        // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
-        glDrawArrays(GL_TRIANGLES, 0, 36*3); // use vertex matrix
-        // Enable depth test
-        glEnable(GL_DEPTH_TEST);
-        // Accept fragment if it closer to the camera than the former one
-        glDepthFunc(GL_LESS);
-        // error check
-        ASSERT(GLLogCall());
+        vao.Bind();
+        renderer.Clear();
+        renderer.Draw();
         
-        // Swap buffers to display the updated frame
-        glfwSwapBuffers(gWindow);
-        // Poll for and process events
-        glfwPollEvents();
     }
+    GLCall(glUniform4f(u_location, r, 0.3, -r, 1));
     
-    glDeleteProgram(shader);
+    GLCall(glDeleteProgram(shader));
     quit();
     // printf("hello world\n");
 }

@@ -1,4 +1,4 @@
-#ifndef VertexBuffer_hpp
+#pragma once 
 class VertexBuffer {
 private:
     unsigned int m_RendererID;
@@ -9,4 +9,3 @@ public:
     void Bind() const; 
     void Unbind() const;
 };
-#endif
