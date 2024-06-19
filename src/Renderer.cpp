@@ -17,7 +17,6 @@ Renderer::Renderer(GLFWwindow* window) {
 }
 void Renderer::Draw() {
     // Render here (currently just a clear color)
-    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // enable wireframe mode:w
 
     // draw call
     // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
@@ -30,8 +29,17 @@ void Renderer::Draw() {
     // Swap buffers to display the updated frame
     GLCall(glfwSwapBuffers(gWindow));
     // Poll for and process events
-    GLCall(glfwPollEvents());
+    /* GLCall(glfwPollEvents()); */
 }
 void Renderer::Clear() {
     GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+void Renderer::Wireframe(bool flag) {
+  if (flag == true) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // enable wireframe mode:w
+    m_Wireframe = true;
+  } else if (flag == false) {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // enable wireframe mode:w
+    m_Wireframe = false;
+  }
 }

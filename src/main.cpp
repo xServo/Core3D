@@ -22,13 +22,16 @@ const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const float NEAR_PLANE = 0.1f;
 const float FAR_PLANE = 10.0f;
+std::string keyPressed;
+
 GLFWwindow* gWindow = NULL;
+void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main() {
     init();
 
-    Renderer renderer(gWindow);
 
+    Renderer renderer(gWindow);
     VertexArray vao(positions, 36);
     vao.Bind();
     IndexBuffer ib(indicies, 42);
@@ -93,6 +96,21 @@ int main() {
         vao.Bind();
         renderer.Clear();
         renderer.Draw();
+        GLCall(glfwPollEvents());
+
+        // input  callback
+        GLCall(glfwSetKeyCallback(gWindow, InputCallback));
+        // handle input
+        if (keyPressed == "e") {
+          if (renderer.m_Wireframe == true) {
+            renderer.Wireframe(false);
+          } else if (renderer.m_Wireframe == false) {
+            renderer.Wireframe(true);
+          }
+        }
+        // reset input 
+        keyPressed = "";
+
         
     }
     GLCall(glUniform4f(u_location, r, 0.3, -r, 1));
@@ -134,4 +152,11 @@ void quit() {
     printf("Quitting...\n");
     glfwDestroyWindow(gWindow);
     glfwTerminate();
+}
+
+void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_E && action == GLFW_PRESS) {
+      keyPressed = "e";
+      std::cout << "yes" << std::endl;
+    }
 }

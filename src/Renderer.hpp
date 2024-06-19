@@ -15,8 +15,12 @@ bool GLLogCall(const char* function, const char* file, int line);
 
 class Renderer {
     public:
+
         GLFWwindow* gWindow;
         Renderer(GLFWwindow* window);
+        bool m_Wireframe;
+
         void Draw();
         void Clear();
+        void Wireframe(bool flag);
 };
