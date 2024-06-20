@@ -6,14 +6,13 @@
 #include <sstream>
 #include "Renderer.hpp"
 #include "VertexBuffer.hpp"
-#include "IndexBuffer.hpp"
 #include "VertexArray.hpp"
+#include "GameObject.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
 #include "ShaderCompiler.hpp"
-#include "data.hpp"
 
 
 void init();
@@ -30,20 +29,11 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
 int main() {
     init();
 
-
     Renderer renderer(gWindow);
-    VertexArray vao(positions, 36);
-    vao.Bind();
-    IndexBuffer ib(indicies, 42);
 
-    
-    // color buffer
-    unsigned int cb;
-    GLCall(glGenBuffers(1, &cb)); 
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, cb));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW));
-    GLCall(glEnableVertexAttribArray(1));
-    GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0)); 
+    GameObject cube;
+
+    // TODO color buffer
 
     // shader stuff
     ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
@@ -93,11 +83,11 @@ int main() {
             incr = 0.002f;
         }
 
-        vao.Bind();
         renderer.Clear();
+        cube.Bind();
         renderer.Draw();
-        GLCall(glfwPollEvents());
 
+        GLCall(glfwPollEvents());
         // input  callback
         GLCall(glfwSetKeyCallback(gWindow, InputCallback));
         // handle input

@@ -19,8 +19,8 @@ void Renderer::Draw() {
     // Render here (currently just a clear color)
 
     // draw call
-    // glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, 36*3)); // use vertex matrix
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
+    /* GLCall(glDrawArrays(GL_TRIANGLES, 0, 36*3)); // use vertex matrix */
     // Enable depth test
     GLCall(glEnable(GL_DEPTH_TEST));
     // Accept fragment if it closer to the camera than the former one
