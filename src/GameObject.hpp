@@ -11,11 +11,15 @@ class GameObject {
     /* unsigned int* m_Indicies = indicies; */
     VertexArray vao; 
     IndexBuffer ib;
+    glm::vec3 m_Position;
+
   public: 
     GameObject();
-
     ~GameObject();
 
+    glm::vec3 translate;
+    unsigned int shaderID;
+
+
     void Bind();
-    void Translate(glm::vec3 vec);
 };

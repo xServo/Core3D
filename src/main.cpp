@@ -40,9 +40,12 @@ int main() {
     unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader);
 
+    cube.shaderID = shader;
+
     // projection stuff
     glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
     int u_Perspective = glGetUniformLocation(shader, "u_Perspective");
+
     glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
 
     // rotate
@@ -52,11 +55,9 @@ int main() {
     glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &rotate[0][0]);
 
     // translate
-    glm::mat4 translate = glm::mat4(1);
-    translate = glm::translate(translate, glm::vec3(0, 0, -2.5));
-    int u_Translate = glGetUniformLocation(shader, "u_Translate");
-    glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &translate[0][0]);
-    
+    cube.translate = glm::vec3(0,0,-5);
+    cube.Bind();
+
     // scale scaling
     glm::mat4 scale = glm::mat4(1);
     scale = glm::scale(scale, glm::vec3(0.5, 0.5, 0.5)); // scales to 0.5x
@@ -84,6 +85,7 @@ int main() {
         }
 
         renderer.Clear();
+        cube.translate = glm::vec3(0.002,-0.002,0);
         cube.Bind();
         renderer.Draw();
 
