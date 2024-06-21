@@ -12,9 +12,6 @@ bool GLLogCall(const char* function, const char* file, int line) {
     return true;
 }
 
-Renderer::Renderer(GLFWwindow* window) {
-    gWindow = window;
-}
 void Renderer::Draw() {
     // Render here (currently just a clear color)
 
@@ -42,4 +39,38 @@ void Renderer::Wireframe(bool flag) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // enable wireframe mode:w
     m_Wireframe = false;
   }
+}
+
+void Renderer::init() {
+    if (!glfwInit()) {
+        printf("Error! Failed to initialize gflw");
+    } else {
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        gWindow = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "graphics ryan graphcis", NULL, NULL);
+        glViewport(0, 0, 800, 600);
+        if (!gWindow) {
+            printf("Error! Failed to create OpenGL context or window");
+            return;
+        } else {
+            glfwMakeContextCurrent(gWindow);
+
+            glfwSwapInterval(1); // enable vsync
+
+            printf("GLEW Version %s\n", glewGetString(GLEW_VERSION));
+            printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+            GLenum err = glewInit();
+            if (GLEW_OK != err) {
+                fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+                return;
+            }
+        }
+    }
+}
+
+void Renderer::quit() {
+    printf("Quitting...\n");
+    glfwDestroyWindow(gWindow);
+    glfwTerminate();
 }

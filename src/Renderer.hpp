@@ -15,11 +15,20 @@ bool GLLogCall(const char* function, const char* file, int line);
 
 class Renderer {
     public:
+        Renderer(const int WIDTH, const int HEIGHT) 
+        : SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT) {
+          GLFWwindow* gWindow = NULL;
+        }
+
         GLFWwindow* gWindow;
-        Renderer(GLFWwindow* window);
-        bool m_Wireframe;
 
         void Draw();
         void Clear();
         void Wireframe(bool flag);
+        void init();
+        void quit();
+        bool m_Wireframe;
+    private:
+        const int SCREEN_WIDTH;
+        const int SCREEN_HEIGHT;
 };

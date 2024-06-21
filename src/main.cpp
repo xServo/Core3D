@@ -15,21 +15,19 @@
 #include "ShaderCompiler.hpp"
 
 
-void init();
-void quit();
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const float NEAR_PLANE = 0.1f;
 const float FAR_PLANE = 10.0f;
 std::string keyPressed;
 
-GLFWwindow* gWindow = NULL;
+Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
+
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main() {
-    init();
+    renderer.init();
 
-    Renderer renderer(gWindow);
 
     GameObject cube;
 
@@ -69,7 +67,7 @@ int main() {
     int u_location = glGetUniformLocation(shader, "u_Color");
     float r = 0.0f;
     float incr = 0.002f;
-    while (!glfwWindowShouldClose(gWindow)) {
+    while (!glfwWindowShouldClose(renderer.gWindow)) {
         cube.Rotate(0.1, glm::vec3(1,0,1));
         r += incr;
         if (r > 0.5f) {
@@ -87,7 +85,7 @@ int main() {
 
         GLCall(glfwPollEvents());
         // input  callback
-        GLCall(glfwSetKeyCallback(gWindow, InputCallback));
+        GLCall(glfwSetKeyCallback(renderer.gWindow, InputCallback));
         // handle input
         if (keyPressed == "e") {
           if (renderer.m_Wireframe == true) {
@@ -104,43 +102,10 @@ int main() {
     GLCall(glUniform4f(u_location, r, 0.3, -r, 1));
     
     GLCall(glDeleteProgram(shader));
-    quit();
+    renderer.quit();
     // printf("hello world\n");
 }
 
-void init() {
-    if (!glfwInit()) {
-        printf("Error! Failed to initialize gflw");
-    } else {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        gWindow = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "graphics ryan graphcis", NULL, NULL);
-        glViewport(0, 0, 800, 600);
-        if (!gWindow)
-        {
-            printf("Error! Failed to create OpenGL context or window");
-            return;
-        } else {
-            glfwMakeContextCurrent(gWindow);
-
-            glfwSwapInterval(1); // enable vsync
-
-            printf("GLEW Version %s\n", glewGetString(GLEW_VERSION));
-            printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
-            GLenum err = glewInit();
-            if (GLEW_OK != err) {
-                fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-                return;
-            }
-        }
-    }
-}
-void quit() {
-    printf("Quitting...\n");
-    glfwDestroyWindow(gWindow);
-    glfwTerminate();
-}
 
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_E && action == GLFW_PRESS) {
