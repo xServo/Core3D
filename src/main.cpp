@@ -49,13 +49,10 @@ int main() {
     glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
 
     // rotate
-    glm::mat4 rotate = glm::mat4(1.0f); // initialize identity matrix
-    rotate = glm::rotate(rotate, glm::radians(50.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    int u_Rotate = glGetUniformLocation(shader, "u_Rotate");
-    glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &rotate[0][0]);
+    /* cube.Rotate(0, glm::vec3(0,0,0)); */
 
     // translate
-    cube.translate = glm::vec3(0,0,-5);
+    cube.Translate(glm::vec3(0,0,-5));
     cube.Bind();
 
     // scale scaling
@@ -73,8 +70,7 @@ int main() {
     float r = 0.0f;
     float incr = 0.002f;
     while (!glfwWindowShouldClose(gWindow)) {
-        rotate = glm::rotate(rotate, glm::radians(0.1f), glm::vec3(1.0f, 0.0f, 1.0f));
-        glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &rotate[0][0]);
+        cube.Rotate(0.1, glm::vec3(1,0,1));
         r += incr;
         if (r > 0.5f) {
             r = 0.5f;
@@ -85,7 +81,7 @@ int main() {
         }
 
         renderer.Clear();
-        cube.translate = glm::vec3(0.002,-0.002,0);
+        cube.Translate(glm::vec3(0.002,-0.002,0));
         cube.Bind();
         renderer.Draw();
 

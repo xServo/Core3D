@@ -12,14 +12,16 @@ class GameObject {
     VertexArray vao; 
     IndexBuffer ib;
     glm::vec3 m_Position;
+    glm::mat4 m_Rotate; 
 
   public: 
     GameObject();
     ~GameObject();
+    void Bind();
+    void Rotate(float theta, glm::vec3 rotationAxis);
+    void Translate(glm::vec3 translate);
 
-    glm::vec3 translate;
     unsigned int shaderID;
 
 
-    void Bind();
 };
