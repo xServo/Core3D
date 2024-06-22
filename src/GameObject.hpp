@@ -20,6 +20,7 @@ class GameObject {
     void Bind();
     void Rotate(float theta, glm::vec3 rotationAxis);
     void Translate(glm::vec3 translate);
+    void Scale(glm::vec3 scale);
 
     unsigned int shaderID;
 

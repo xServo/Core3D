@@ -50,14 +50,11 @@ int main() {
     /* cube.Rotate(0, glm::vec3(0,0,0)); */
 
     // translate
-    cube.Translate(glm::vec3(0,0,-5));
+    cube.Translate(glm::vec3(0,0,-8));
     cube.Bind();
 
     // scale scaling
-    glm::mat4 scale = glm::mat4(1);
-    scale = glm::scale(scale, glm::vec3(0.5, 0.5, 0.5)); // scales to 0.5x
-    int u_Scale = glGetUniformLocation(shader, "u_Scale");
-    glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &scale[0][0]);
+    cube.Scale(glm::vec3(1,1.3,1));
 
     // uniform stuff
     // mat4 rotate;
