@@ -17,6 +17,7 @@ void GameObject::Bind() {
     std::cout << "Error: Failed to bind GameObject! No shader bound. \nUse this.shaderID= " << std::endl;
     return;
   }
+  int u_location = glGetUniformLocation(shaderID, "u_Color");
   vao.Bind();
   ib.Bind();
 }

@@ -1,5 +1,11 @@
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include "Renderer.hpp"
+#include "ShaderCompiler.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 void GLClearError() {
     while(glGetError());
@@ -11,6 +17,7 @@ bool GLLogCall(const char* function, const char* file, int line) {
     }
     return true;
 }
+
 
 void Renderer::Draw() {
     // Render here (currently just a clear color)
@@ -71,6 +78,19 @@ void Renderer::init() {
 
 void Renderer::quit() {
     printf("Quitting...\n");
+    GLCall(glDeleteProgram(shaderID));
     glfwDestroyWindow(gWindow);
     glfwTerminate();
+}
+
+void Renderer::Projection() {
+    glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
+    int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
+    glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
+}
+
+void Renderer::Shader() {
+    ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
+    shaderID = CreateShader(source.VertexSource, source.FragmentSource);
+    glUseProgram(shaderID);
 }

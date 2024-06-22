@@ -15,9 +15,12 @@ bool GLLogCall(const char* function, const char* file, int line);
 
 class Renderer {
     public:
-        Renderer(const int WIDTH, const int HEIGHT) 
+        Renderer(const int WIDTH, const int HEIGHT)
         : SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT) {
           GLFWwindow* gWindow = NULL;
+          init();
+          Shader();
+          Projection();
         }
 
         GLFWwindow* gWindow;
@@ -28,7 +31,12 @@ class Renderer {
         void init();
         void quit();
         bool m_Wireframe;
+        unsigned int shaderID;
     private:
         const int SCREEN_WIDTH;
         const int SCREEN_HEIGHT;
+        const float NEAR_PLANE = 0.1; 
+        const float FAR_PLANE = 10;
+        void Shader();
+        void Projection();
 };
