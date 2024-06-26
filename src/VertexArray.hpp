@@ -5,9 +5,9 @@
 #include "Renderer.hpp"
 
 class VertexArray {
-    public:
-        unsigned int m_ID;
-        VertexArray(const void* positions, unsigned int size);
-        void Bind();
-    
+  public:
+    unsigned int m_ID;
+    VertexArray(const void* positions, unsigned int size);
+    void Bind();
+
 };

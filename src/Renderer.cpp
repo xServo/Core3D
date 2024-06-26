@@ -3,36 +3,33 @@
 #include <fstream>
 #include "Renderer.hpp"
 #include "ShaderCompiler.hpp"
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 
 void GLClearError() {
-    while(glGetError());
+  while(glGetError());
 }
 bool GLLogCall(const char* function, const char* file, int line) {
-    while(GLenum error = glGetError()) {
-        std::cout << "[OpenGL error] (" << error << ")" << function << " " << file << ":" << line << std::endl;
-        return false;
-    }
-    return true;
+  while(GLenum error = glGetError()) {
+    std::cout << "[OpenGL error] (" << error << ")" << function << " " << file << ":" << line << std::endl;
+    return false;
+  }
+  return true;
 }
 
 
 void Renderer::Draw() {
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
-    /* GLCall(glDrawArrays(GL_TRIANGLES, 0, 36*3)); // use vertex matrix */
+  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
+  /* GLCall(glDrawArrays(GL_TRIANGLES, 0, 36*3)); // use vertex matrix */
 }
 void Renderer::Swap() {
-    // Enable depth test
-    GLCall(glEnable(GL_DEPTH_TEST));
-    // Accept fragment if it closer to the camera than the former one
-    GLCall(glDepthFunc(GL_LESS));
+  // Enable depth test
+  GLCall(glEnable(GL_DEPTH_TEST));
+  // Accept fragment if it closer to the camera than the former one
+  GLCall(glDepthFunc(GL_LESS));
 
-    GLCall(glfwSwapBuffers(gWindow));
+  GLCall(glfwSwapBuffers(gWindow));
 }
 void Renderer::Clear() {
-    GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+  GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 void Renderer::Wireframe(bool flag) {
   if (flag == true) {
@@ -45,48 +42,48 @@ void Renderer::Wireframe(bool flag) {
 }
 
 void Renderer::init() {
-    if (!glfwInit()) {
-        printf("Error! Failed to initialize gflw");
+  if (!glfwInit()) {
+    printf("Error! Failed to initialize gflw");
+  } else {
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    gWindow = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "graphics ryan graphcis", NULL, NULL);
+    glViewport(0, 0, 800, 600);
+    if (!gWindow) {
+      printf("Error! Failed to create OpenGL context or window");
+      return;
     } else {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        gWindow = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "graphics ryan graphcis", NULL, NULL);
-        glViewport(0, 0, 800, 600);
-        if (!gWindow) {
-            printf("Error! Failed to create OpenGL context or window");
-            return;
-        } else {
-            glfwMakeContextCurrent(gWindow);
+      glfwMakeContextCurrent(gWindow);
 
-            glfwSwapInterval(1); // enable vsync
+      glfwSwapInterval(1); // enable vsync
 
-            printf("GLEW Version %s\n", glewGetString(GLEW_VERSION));
-            printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
-            GLenum err = glewInit();
-            if (GLEW_OK != err) {
-                fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-                return;
-            }
-        }
+      printf("GLEW Version %s\n", glewGetString(GLEW_VERSION));
+      printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
+      GLenum err = glewInit();
+      if (GLEW_OK != err) {
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+        return;
+      }
     }
+  }
 }
 
 void Renderer::quit() {
-    printf("Quitting...\n");
-    GLCall(glDeleteProgram(shaderID));
-    glfwDestroyWindow(gWindow);
-    glfwTerminate();
+  printf("Quitting...\n");
+  GLCall(glDeleteProgram(shaderID));
+  glfwDestroyWindow(gWindow);
+  glfwTerminate();
 }
 
 void Renderer::Projection() {
-    glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
-    int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
-    glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
+  glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
+  int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
+  glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
 }
 
 void Renderer::Shader() {
-    ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
-    shaderID = CreateShader(source.VertexSource, source.FragmentSource);
-    glUseProgram(shaderID);
+  ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
+  shaderID = CreateShader(source.VertexSource, source.FragmentSource);
+  glUseProgram(shaderID);
 }

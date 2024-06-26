@@ -9,11 +9,12 @@ uniform mat4 u_Perspective;
 uniform mat4 u_Translate;
 uniform mat4 u_Scale;
 uniform mat4 u_Rotate;
+uniform mat4 u_View;
 void main()
 {
-    gl_Position = u_Perspective * u_Translate * u_Scale * u_Rotate * vec4(aPos, 1);
-    // gl_Position = vec4(aPos, 1);
-    fragmentColor = vColor;
+  gl_Position = u_Perspective * u_View * u_Translate * u_Scale * u_Rotate * vec4(aPos, 1);
+  // gl_Position = vec4(aPos, 1);
+  fragmentColor = vColor;
 }
 
 #shader fragment
@@ -23,6 +24,6 @@ uniform vec4 u_Color;
 
 layout(location = 0) out vec4 color;
 void main() {
-    color = vec4(fragmentColor.x, u_Color.z, fragmentColor.z , 1);
-    // color = u_Color;
+  color = vec4(fragmentColor.x, u_Color.z, fragmentColor.z , 1);
+  // color = u_Color;
 }
