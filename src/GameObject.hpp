@@ -7,16 +7,22 @@
 
 class GameObject {
   private:
-    /* float* m_Positions = positions; */
-    /* unsigned int* m_Indicies = indicies; */
     VertexArray vao; 
     IndexBuffer ib;
+
     glm::vec3 m_Position;
+    /* MATRICES */ 
     glm::mat4 m_Rotate; 
+    glm::mat4 m_Translate; 
+    glm::mat4 m_Scale; 
+    /* UNIFORMS */ 
+    int u_Location;
+    int u_Rotate;
+    int u_Translate;
+    int u_Scale;
 
   public: 
-    GameObject();
-    ~GameObject();
+    GameObject(unsigned int shader);
     void Bind();
     void Rotate(float theta, glm::vec3 rotationAxis);
     void Translate(glm::vec3 translate);

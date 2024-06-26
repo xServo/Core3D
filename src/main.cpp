@@ -29,11 +29,15 @@ int main() {
 
     unsigned int shader = renderer.shaderID;
 
-    GameObject cube;
-    cube.shaderID = shader;
-    cube.Translate(glm::vec3(0,0,-8));
+    GameObject cube(shader);
     cube.Bind();
+    cube.Translate(glm::vec3(0,0,-8));
     cube.Scale(glm::vec3(1,1.3,1));
+    cube.Bind();
+
+    /* GameObject cube2(shader); */
+    /* cube2.Translate(glm::vec3(-10.1,0,-8)); */
+    /* cube2.Scale(glm::vec3(1,1,2)); */
 
     float r = 0.0f;
     float incr = 0.002f;
@@ -50,9 +54,15 @@ int main() {
 
         renderer.Clear();
 
-        cube.Translate(glm::vec3(0.002,-0.002,0));
         cube.Bind();
         renderer.Draw();
+        /* cube2.Bind(); */
+        // Enable depth test
+        GLCall(glEnable(GL_DEPTH_TEST));
+        // Accept fragment if it closer to the camera than the former one
+        GLCall(glDepthFunc(GL_LESS));
+
+        GLCall(glfwSwapBuffers(renderer.gWindow));
 
         GLCall(glfwPollEvents());
         // input  callback

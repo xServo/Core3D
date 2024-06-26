@@ -25,13 +25,8 @@ void Renderer::Draw() {
     // draw call
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
     /* GLCall(glDrawArrays(GL_TRIANGLES, 0, 36*3)); // use vertex matrix */
-    // Enable depth test
-    GLCall(glEnable(GL_DEPTH_TEST));
-    // Accept fragment if it closer to the camera than the former one
-    GLCall(glDepthFunc(GL_LESS));
-    
+      
     // Swap buffers to display the updated frame
-    GLCall(glfwSwapBuffers(gWindow));
     // Poll for and process events
     /* GLCall(glfwPollEvents()); */
 }
