@@ -26,6 +26,7 @@ class Renderer {
         GLFWwindow* gWindow;
 
         void Draw();
+        void Swap();
         void Clear();
         void Wireframe(bool flag);
         void init();

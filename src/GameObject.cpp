@@ -25,6 +25,9 @@ GameObject::GameObject(unsigned int shader)
 void GameObject::Bind() {
   vao.Bind();
   ib.Bind();
+  glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &m_Rotate[0][0]);
+  glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
+  glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
 }
 
 void GameObject::Rotate(float theta, glm::vec3 rotationAxis) {
