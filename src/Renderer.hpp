@@ -7,6 +7,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "Camera.hpp"
 // unfinished https://www.youtube.com/watch?v=FBbPWSOQ0-w&list=PLlrATfBNZ98foTJPJ_Ev03o2oq3-GGOS2&index=10
 #define ASSERT(x) if (!(x)) raise(SIGTRAP);
 #define GLCall(x) GLClearError();\
@@ -27,6 +28,7 @@ class Renderer {
       }
 
     GLFWwindow* gWindow;
+    Camera camera;
 
     void Draw();
     void Swap();
@@ -37,14 +39,6 @@ class Renderer {
     bool m_Wireframe;
     unsigned int shaderID;
 
-    /* CAMERA */
-    struct cameraStruct {
-      glm::vec3 pos;
-      glm::vec3 target;  
-      glm::vec3 up;
-      glm::mat4 view;
-    };
-    cameraStruct camera;
 
   private:
     const int SCREEN_WIDTH;

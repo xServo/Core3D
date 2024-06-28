@@ -38,12 +38,12 @@ int main() {
   cube2.Scale(glm::vec3(1,1,1));
 
   // camera
-  renderer.camera.pos = glm::vec3(0,0,5);
-  renderer.camera.target = glm::vec3(0,0,0);
-  renderer.camera.up = glm::vec3(0,1,0);
-  glm::mat4 view = glm::lookAt(glm::vec3(0,0,0), glm::vec3(0,0,-1), glm::vec3(0,1,0));
-  int u_View = glGetUniformLocation(shader, "u_View");
-  glUniformMatrix4fv(u_View, 1, GL_FALSE, &view[0][0]);
+  /* renderer.camera.pos = glm::vec3(0,0,0); */
+  /* renderer.camera.target = glm::vec3(0,0,-1); */
+  /* renderer.camera.up = glm::vec3(0,1,0); */
+  /* glm::mat4 view = glm::lookAt(renderer.camera.pos, renderer.camera.target, renderer.camera.up); */
+  /* int u_View = glGetUniformLocation(shader, "u_View"); */
+  /* glUniformMatrix4fv(u_View, 1, GL_FALSE, &view[0][0]); */
 
   float r = 0.0f;
   float incr = 0.002f;
@@ -73,27 +73,61 @@ int main() {
     // input  callback
     GLCall(glfwSetKeyCallback(renderer.gWindow, InputCallback));
     // handle input
-    if (keyPressed == "e") {
-      if (renderer.m_Wireframe == true) {
-        renderer.Wireframe(false);
-      } else if (renderer.m_Wireframe == false) {
-        renderer.Wireframe(true);
-      }
+    switch (keyPressed[0]) {
+      case 'e':
+        if (renderer.m_Wireframe) {
+          renderer.Wireframe(false);
+        } else {
+          renderer.Wireframe(true);
+        }
+        break;
+      case 'w':
+        renderer.camera.MoveForward();
+        break;
+      case 's':
+        renderer.camera.MoveBackward();
+        break;
+      case 'a':
+        renderer.camera.MoveLeft();
+        break;  
+      case 'd':
+        renderer.camera.MoveRight();
+        break;  
     }
     // reset input 
     keyPressed = "";
-
-
+    // printf("hello world\n");
   }
-
   renderer.quit();
-  // printf("hello world\n");
 }
 
 
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  if (key == GLFW_KEY_E && action == GLFW_PRESS) {
-    keyPressed = "e";
-    std::cout << "yes" << std::endl;
+  switch (key) {
+    case GLFW_KEY_E:
+      if (action == GLFW_PRESS) {
+        keyPressed = "e";
+      }
+      break;
+    case GLFW_KEY_W:
+      if (action == GLFW_PRESS) {
+        keyPressed = "w";
+      }
+      break;
+    case GLFW_KEY_S:
+      if (action == GLFW_PRESS) {
+        keyPressed = "s";
+      }
+      break;
+    case GLFW_KEY_A:
+      if (action == GLFW_PRESS) {
+        keyPressed = "a";
+      }
+      break;
+    case GLFW_KEY_D:
+      if (action == GLFW_PRESS) {
+        keyPressed = "d";
+      }
+      break;
   }
 }
