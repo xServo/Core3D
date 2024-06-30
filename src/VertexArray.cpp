@@ -1,6 +1,7 @@
 #include "VertexArray.hpp"
 
-VertexArray::VertexArray(const void* positions, unsigned int size) {
+VertexArray::VertexArray(const void* positions, unsigned int size) 
+  : size(size) {
   unsigned int vSize = 3;
   GLCall(glGenVertexArrays(1, &m_ID));  
   GLCall(glBindVertexArray(m_ID));
@@ -9,8 +10,8 @@ VertexArray::VertexArray(const void* positions, unsigned int size) {
   // index, values per vertex, type, normalize?, size of vertex in bytes, offset to first vertex 
   GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * vSize, 0));
 
-  // color buffer
-  static const float colors[] = {
+  // default color
+  float colors[] = {
     0.583f,  0.771f,  0.014f,
 
     0.597f,  0.770f,  0.761f,
@@ -25,13 +26,17 @@ VertexArray::VertexArray(const void* positions, unsigned int size) {
 
     0.982f,  0.099f,  0.879f,
   };
-  // color buffer
-  unsigned int cb;
-  GLCall(glGenBuffers(1, &cb)); 
-  GLCall(glBindBuffer(GL_ARRAY_BUFFER, cb));
-  GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW)); // danger: sizeof arr
-  GLCall(glEnableVertexAttribArray(1));
-  GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0)); 
+
+  float colorArr[size*3];
+  GenColor(glm::vec3(0.59f,0.77f,0.014f), colorArr);
+  /* for (int i = 0; i < 8; i += 3) { */
+  /*   std::cout << "Vertex " << i / 3 << " Color: " */ 
+  /*     << colorArray[i] << ", " */ 
+  /*     << colorArray[i+1] << ", " */ 
+  /*     << colorArray[i+2] << std::endl; */
+  /* } */
+
+  BindColor(colorArr);
 
   // UNBIND
   GLCall(glBindVertexArray(0));
@@ -39,4 +44,20 @@ VertexArray::VertexArray(const void* positions, unsigned int size) {
 
 void VertexArray::Bind() {
   GLCall(glBindVertexArray(m_ID));
+}
+void VertexArray::GenColor(glm::vec3 color, float* colors) {
+  for (int i=0;i<=size*3;i+=3) { // danger: vzise?
+    colors[i] = color.x;
+    colors[i+1] = color.y;
+    colors[i+2] = color.z;
+  }
+}
+void VertexArray::BindColor(float* colorArray) {
+  // color buffer
+  unsigned int cb;
+  GLCall(glGenBuffers(1, &cb)); 
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, cb));
+  GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(float)*3*size, colorArray, GL_STATIC_DRAW));
+  GLCall(glEnableVertexAttribArray(1));
+  GLCall(glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0)); 
 }
