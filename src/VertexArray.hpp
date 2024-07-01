@@ -14,6 +14,6 @@ class VertexArray {
     VertexArray(const void* positions, unsigned int size);
     void Bind();
   private:
-    void GenColor(glm::vec3 color, float* colors);
-    void BindColor(float* colorArray);
+    void GenColor(glm::vec3 color, float colors[]);
+    void BindColor(float colorArray[]);
 };
