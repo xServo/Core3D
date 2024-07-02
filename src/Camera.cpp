@@ -22,12 +22,12 @@ void Camera::MoveBackward() {
   Bind();
 }
 void Camera::MoveLeft() {
-  m_Pos += glm::vec3(1,0,0);
-  m_Target += glm::vec3(-1,0,0);
+  m_Pos += glm::vec3(-1,0,0);
+  m_Target = m_Pos + glm::vec3(0,0,-1);
   Bind();
 }
 void Camera::MoveRight() {
-  m_Pos += glm::vec3(-1,0,0);
-  m_Target += glm::vec3(1,0,0);
+  m_Pos += glm::vec3(1,0,0);
+  m_Target = m_Pos + glm::vec3(0,0,-1);
   Bind();
 }
