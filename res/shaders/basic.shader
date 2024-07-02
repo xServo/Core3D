@@ -16,11 +16,12 @@ uniform mat4 u_Rotate;
 uniform mat4 u_View;
 void main()
 {
-  gl_Position = u_Perspective * u_View * u_Translate * u_Scale * u_Rotate * vec4(aPos, 1);
+  mat4 model = u_Translate * u_Rotate * u_Scale;
+  gl_Position = u_Perspective * u_View * model * vec4(aPos, 1);
   // gl_Position = vec4(aPos, 1);
-  FragPos = vec3(u_Translate * u_Scale * u_Rotate * vec4(aPos, 1.0));
+  FragPos = vec3(model * vec4(aPos, 1.0));
   fragmentColor = vColor;
-  Normal = aNormal;
+  Normal = mat3(transpose(inverse(model))) * aNormal;
 }
 
 #shader fragment
@@ -32,9 +33,10 @@ in vec3 FragPos;
 
 uniform vec4 u_Color; 
 // uniforms TODO
-vec3 lightPos = vec3(2, 2, 2);
+vec3 lightPos = vec3(0, 0, 2);
 vec3 lightColor = vec3(0.33, 0.42, 0.18); 
-vec3 ambient = vec3(0.1, 0.1, 0.1);
+float ambientStrength = 1;
+vec3 ambient = ambientStrength * lightColor;
 
 layout(location = 0) out vec4 FragColor;
 
@@ -52,4 +54,5 @@ void main() {
 
     // Output final color
     FragColor = vec4(result, 1.0);
+    //FragColor = vec4(1, 1, 1, 1); // debug
 }
