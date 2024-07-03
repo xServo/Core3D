@@ -30,8 +30,8 @@ int main() {
   unsigned int shader = renderer.shaderID;
 
   GameObject cube(shader);
-  cube.Translate(glm::vec3(2,0,-9));
-  cube.Scale(glm::vec3(1,1.3,1));
+  /* cube.Translate(glm::vec3(2,0,-9)); */
+  /* cube.Scale(glm::vec3(1,1.3,1)); */
 
   GameObject cube2(shader);
   cube2.Translate(glm::vec3(-2,1,-9));
@@ -48,7 +48,7 @@ int main() {
   float r = 0.0f;
   float incr = 0.002f;
   while (!glfwWindowShouldClose(renderer.gWindow)) {
-    cube.Rotate(0.1, glm::vec3(1,0,1));
+    /* cube.Rotate(0.1, glm::vec3(1,0,1)); */
     cube2.Rotate(0.1, glm::vec3(1,0,1));
     r += incr;
     if (r > 0.5f) {
@@ -93,6 +93,12 @@ int main() {
       case 'd':
         renderer.camera.MoveRight();
         break;  
+      case 't':
+        renderer.camera.MoveUp();
+        break;  
+      case 'g':
+        renderer.camera.MoveDown();
+        break;  
     }
     // reset input 
     keyPressed = "";
@@ -127,6 +133,16 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
     case GLFW_KEY_D:
       if (action == GLFW_PRESS) {
         keyPressed = "d";
+      }
+      break;
+    case GLFW_KEY_T:
+      if (action == GLFW_PRESS) {
+        keyPressed = "t";
+      }
+      break;
+    case GLFW_KEY_G:
+      if (action == GLFW_PRESS) {
+        keyPressed = "g";
       }
       break;
   }

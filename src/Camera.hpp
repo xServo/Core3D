@@ -14,6 +14,8 @@ class Camera {
     void MoveBackward();
     void MoveLeft();
     void MoveRight();
+    void MoveUp();
+    void MoveDown();
   private:
     glm::vec3 m_Pos;
     glm::vec3 m_Target;  

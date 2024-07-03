@@ -22,6 +22,7 @@ void Camera::MoveBackward() {
   Bind();
 }
 void Camera::MoveLeft() {
+  /* m_Pos += glm::cross(m_Up, m_Target); */
   m_Pos += glm::vec3(-1,0,0);
   m_Target = m_Pos + glm::vec3(0,0,-1);
   Bind();
@@ -29,5 +30,15 @@ void Camera::MoveLeft() {
 void Camera::MoveRight() {
   m_Pos += glm::vec3(1,0,0);
   m_Target = m_Pos + glm::vec3(0,0,-1);
+  Bind();
+}
+void Camera::MoveUp() {
+  m_Pos += glm::vec3(0,1,0);
+  m_Up = glm::vec3(0,1,0);
+  Bind();
+}
+void Camera::MoveDown() {
+  m_Pos += glm::vec3(0,-1,0);
+  m_Up = glm::vec3(0,1,0);
   Bind();
 }
