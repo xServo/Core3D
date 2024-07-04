@@ -25,17 +25,19 @@ Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main() {
-  // TODO color buffer
+  // TODO finish phong lighting
+  // TODO fix movement
+  // TODO input class; events?
+  // TODO model loading;
 
   unsigned int shader = renderer.shaderID;
 
   GameObject cube(shader);
-  /* cube.Translate(glm::vec3(2,0,-9)); */
-  /* cube.Scale(glm::vec3(1,1.3,1)); */
+  cube.Translate(glm::vec3(2,0,-9));
+  cube.Scale(glm::vec3(1,1.3,1));
+  cube.Color(glm::vec3(0.3, 0.77, 1));
 
   GameObject cube2(shader);
-  cube2.Translate(glm::vec3(-2,1,-9));
-  cube2.Scale(glm::vec3(1,1,1));
 
   // camera
   /* renderer.camera.pos = glm::vec3(0,0,0); */
@@ -48,8 +50,7 @@ int main() {
   float r = 0.0f;
   float incr = 0.002f;
   while (!glfwWindowShouldClose(renderer.gWindow)) {
-    /* cube.Rotate(0.1, glm::vec3(1,0,1)); */
-    cube2.Rotate(0.1, glm::vec3(1,0,1));
+    cube.Rotate(0.1, glm::vec3(1,0,1));
     r += incr;
     if (r > 0.5f) {
       r = 0.5f;

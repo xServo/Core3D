@@ -17,8 +17,8 @@ bool GLLogCall(const char* function, const char* file, int line) {
 
 
 void Renderer::Draw() {
-  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
-  /* GLCall(glDrawArrays(GL_TRIANGLES, 0, 36*3)); // use vertex matrix */
+  /* glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib */
+  GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
 }
 void Renderer::Swap() {
   // Enable depth test

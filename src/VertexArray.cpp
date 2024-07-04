@@ -7,10 +7,11 @@ VertexArray::VertexArray(const void* positions, unsigned int size)
   GLCall(glBindVertexArray(m_ID));
   VertexBuffer vb(positions, (vSize*size)*sizeof(float));
   GLCall(glEnableVertexAttribArray(0));
+  GLCall(glEnableVertexAttribArray(2));
   // 0 = vertex; 1 = colors; 2 = normals
   // index, values per vertex, type, normalize?, size of vertex in bytes, offset to first vertex 
   GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * vSize, (void*)0));
-  GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * vSize, (void*)(sizeof(float)*3))); GLCall(glEnableVertexAttribArray(2));
+  GLCall(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * vSize, (void*)(sizeof(float)*3))); 
 
   // default color
   float colors[] = {
