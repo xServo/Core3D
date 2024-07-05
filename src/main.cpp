@@ -25,7 +25,7 @@ Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main() {
-  // TODO finish phong lighting
+  // TODO finish phong lighting TODO DONE
   // TODO fix movement
   // TODO ImGUI
   // TODO input class; events?
@@ -40,14 +40,16 @@ int main() {
   cube.Color(glm::vec3(0.3, 0.77, 1));
 
   GameObject cube2(shader);
+  cube2.Translate(glm::vec3(-2,0,-13));
+  cube2.Scale(glm::vec3(1,1.5,1));
 
-  // camera
-  /* renderer.camera.pos = glm::vec3(0,0,0); */
-  /* renderer.camera.target = glm::vec3(0,0,-1); */
-  /* renderer.camera.up = glm::vec3(0,1,0); */
-  /* glm::mat4 view = glm::lookAt(renderer.camera.pos, renderer.camera.target, renderer.camera.up); */
-  /* int u_View = glGetUniformLocation(shader, "u_View"); */
-  /* glUniformMatrix4fv(u_View, 1, GL_FALSE, &view[0][0]); */
+  // TODO temp lighting
+  int u_LightPos = glGetUniformLocation(shader, "u_LightPos");
+  glm::vec3 lightPos = glm::vec3(0, 2, 0);
+  glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
+  int u_LightColor = glGetUniformLocation(shader, "u_LightColor");
+  glm::vec3 lightColor = glm::vec3(0, 1, 0);
+  glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
   float r = 0.0f;
   float incr = 0.002f;
@@ -61,6 +63,11 @@ int main() {
       r = 0;
       incr = 0.002f;
     }
+    // TODO temp lighting
+    glm::vec3 lightPos = glm::vec3(0, r * 1.4, 0);
+    glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
+    glm::vec3 lightColor = glm::vec3(r+0.23, r-0.3, 0.34);
+    glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
     renderer.DeltaTime();
 

@@ -24,4 +24,5 @@ class Camera {
     glm::vec3 m_Target;  
     glm::vec3 m_Up;
     int u_View;
+    int u_ViewPos;
 };

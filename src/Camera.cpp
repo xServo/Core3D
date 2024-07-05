@@ -11,9 +11,13 @@ Camera::Camera() {
 void Camera::Bind() {
   m_Target = m_Pos + glm::vec3(0,0,-1);
 
+  // locations happen here because shader is not bound upon construction 
   u_View = glGetUniformLocation(shaderID, "u_View");
   glm::mat4 view = glm::lookAt(m_Pos, m_Target, m_Up);
   glUniformMatrix4fv(u_View, 1, GL_FALSE, &view[0][0]);
+
+  u_ViewPos = glGetUniformLocation(shaderID, "u_ViewPos");
+  glUniform3f(u_ViewPos, m_Pos.x, m_Pos.y, m_Pos.z);
 }
 
 void Camera::MoveForward() {
