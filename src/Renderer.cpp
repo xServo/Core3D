@@ -34,10 +34,10 @@ void Renderer::Clear() {
 void Renderer::Wireframe(bool flag) {
   if (flag == true) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // enable wireframe mode:w
-    m_Wireframe = true;
+    isWireframe = true;
   } else if (flag == false) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // enable wireframe mode:w
-    m_Wireframe = false;
+    isWireframe = false;
   }
 }
 
@@ -89,3 +89,9 @@ void Renderer::Shader() {
   camera.shaderID = shaderID;
   camera.Bind();
 }
+ void Renderer::DeltaTime() {
+    double currentFrameTime = glfwGetTime();
+    deltaTime = currentFrameTime - m_LastFrameTime;
+    m_LastFrameTime = currentFrameTime;
+    camera.deltaTime = deltaTime;
+ }

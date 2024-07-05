@@ -26,25 +26,28 @@ class Renderer {
         Shader();
         Projection();
       }
-
     GLFWwindow* gWindow;
     Camera camera;
+
+    unsigned int shaderID;
+    float deltaTime;
+    bool isWireframe;
 
     void Draw();
     void Swap();
     void Clear();
     void Wireframe(bool flag);
+    void DeltaTime();
     void init();
     void quit();
-    bool m_Wireframe;
-    unsigned int shaderID;
-
 
   private:
     const int SCREEN_WIDTH;
     const int SCREEN_HEIGHT;
-    const float NEAR_PLANE = 0.1; 
-    const float FAR_PLANE = 30;
+    const float NEAR_PLANE = 0.01; 
+    const float FAR_PLANE = 50;
+    float m_LastFrameTime;
+
     void Shader();
     void Projection();
 };

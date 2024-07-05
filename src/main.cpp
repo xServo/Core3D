@@ -27,9 +27,11 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
 int main() {
   // TODO finish phong lighting
   // TODO fix movement
+  // TODO ImGUI
   // TODO input class; events?
   // TODO model loading;
-
+  double deltaTime;
+  double lastFrameTime;
   unsigned int shader = renderer.shaderID;
 
   GameObject cube(shader);
@@ -60,6 +62,8 @@ int main() {
       incr = 0.002f;
     }
 
+    renderer.DeltaTime();
+
     renderer.Clear();
 
     /* TODO draw binds every GameObject in "scene" TODO */
@@ -76,7 +80,7 @@ int main() {
     // handle input
     switch (keyPressed[0]) {
       case 'e':
-        if (renderer.m_Wireframe) {
+        if (renderer.isWireframe) {
           renderer.Wireframe(false);
         } else {
           renderer.Wireframe(true);
@@ -101,13 +105,13 @@ int main() {
         renderer.camera.MoveDown();
         break;  
     }
-    // reset input 
-    keyPressed = "";
     // printf("hello world\n");
   }
   renderer.quit();
 }
 
+void GetDeltaTime(double &deltaTime, double lastFrameTime) {
+}
 
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
   switch (key) {
@@ -144,6 +148,57 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
     case GLFW_KEY_G:
       if (action == GLFW_PRESS) {
         keyPressed = "g";
+      }
+      break;
+  }
+  switch (key) {
+    case GLFW_KEY_E:
+      if (action == GLFW_RELEASE) {
+        if (keyPressed == "e") {
+          keyPressed = "";
+        }
+      }
+      break;
+    case GLFW_KEY_W:
+      if (action == GLFW_RELEASE) {
+        if (keyPressed == "w") {
+          keyPressed = "";
+        }
+      }
+      break;
+    case GLFW_KEY_S:
+      if (action == GLFW_RELEASE) {
+        if (keyPressed == "s") {
+          keyPressed = "";
+        }
+      }
+      break;
+    case GLFW_KEY_A:
+      if (action == GLFW_RELEASE) {
+        if (keyPressed == "a") {
+          keyPressed = "";
+        }
+      }
+      break;
+    case GLFW_KEY_D:
+      if (action == GLFW_RELEASE) {
+        if (keyPressed == "d") {
+          keyPressed = "";
+        }
+      }
+      break;
+    case GLFW_KEY_T:
+      if (action == GLFW_RELEASE) {
+        if (keyPressed == "t") {
+          keyPressed = "";
+        }
+      }
+      break;
+    case GLFW_KEY_G:
+      if (action == GLFW_RELEASE) {
+        if (keyPressed == "g") {
+          keyPressed = "";
+        }
       }
       break;
   }

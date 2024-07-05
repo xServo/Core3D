@@ -8,7 +8,10 @@
 class Camera {
   public: 
     Camera();
+    float speed;
+    float deltaTime;
     unsigned int shaderID;
+
     void Bind();
     void MoveForward();
     void MoveBackward();
