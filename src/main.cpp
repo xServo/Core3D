@@ -11,28 +11,34 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 #include "ShaderCompiler.hpp"
 
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 1000;
+const int SCREEN_HEIGHT = 700;
 
 std::string keyPressed;
 
 Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
-
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main() {
-  // TODO finish phong lighting TODO DONE
+  // TODO finish phong lighting   TODO DONE
   // TODO fix movement
   // TODO ImGUI
   // TODO input class; events?
   // TODO model loading;
+  renderer.ImGuiInit();
+
   double deltaTime;
   double lastFrameTime;
   unsigned int shader = renderer.shaderID;
+
+
 
   GameObject cube(shader);
   cube.Translate(glm::vec3(2,0,-9));
@@ -63,6 +69,7 @@ int main() {
       r = 0;
       incr = 0.002f;
     }
+    renderer.ImGui(); 
     // TODO temp lighting
     glm::vec3 lightPos = glm::vec3(0, r * 1.4, 0);
     glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
@@ -70,7 +77,6 @@ int main() {
     glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
     renderer.DeltaTime();
-
     renderer.Clear();
 
     /* TODO draw binds every GameObject in "scene" TODO */
@@ -78,11 +84,12 @@ int main() {
     renderer.Draw();
     cube2.Bind();
     renderer.Draw();
-
+    renderer.ImGuiEnd();
     renderer.Swap();
 
-    GLCall(glfwPollEvents());
+
     // input  callback
+    GLCall(glfwPollEvents());
     GLCall(glfwSetKeyCallback(renderer.gWindow, InputCallback));
     // handle input
     switch (keyPressed[0]) {
@@ -92,6 +99,7 @@ int main() {
         } else {
           renderer.Wireframe(true);
         }
+        keyPressed = "";
         break;
       case 'w':
         renderer.camera.MoveForward();

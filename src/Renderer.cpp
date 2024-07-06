@@ -16,6 +16,32 @@ bool GLLogCall(const char* function, const char* file, int line) {
 }
 
 
+void Renderer::ImGuiInit() { 
+  // Setup Dear ImGui context
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO();
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+  /* io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls */
+  // Setup Platform/Renderer backends
+  ImGui_ImplGlfw_InitForOpenGL(gWindow, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+  ImGui_ImplOpenGL3_Init();
+}
+
+void Renderer::ImGui() {
+  // Start the Dear ImGui frame
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
+  ImGui::NewFrame();
+  ImGui::ShowDemoWindow(); // Show demo window! :)
+}
+void Renderer::ImGuiEnd() {
+  // Rendering
+  // (Your code clears your framebuffer, renders your other stuff etc.)
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+  // (Your code calls glfwSwapBuffers() etc.)
+}
 void Renderer::Draw() {
   /* glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib */
   GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
@@ -71,6 +97,11 @@ void Renderer::init() {
 
 void Renderer::quit() {
   printf("Quitting...\n");
+  // imgui
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
+  // glfw
   GLCall(glDeleteProgram(shaderID));
   glfwDestroyWindow(gWindow);
   glfwTerminate();
