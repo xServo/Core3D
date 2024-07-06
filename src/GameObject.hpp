@@ -4,6 +4,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
+#include "Renderer.hpp"
 
 class GameObject {
   private:
@@ -31,6 +32,5 @@ class GameObject {
     void Scale(glm::vec3 scale);
 
     unsigned int shaderID;
-
-
+    int ID;
 };

@@ -34,7 +34,7 @@ uniform vec3 u_ViewPos;
 uniform vec3 u_LightPos;
 uniform vec3 u_LightColor; 
 // uniforms TODO
-float ambientStrength = 0.2;
+float ambientStrength = 0.3;
 
 layout(location = 0) out vec4 FragColor;
 

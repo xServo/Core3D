@@ -35,6 +35,8 @@ class Renderer {
     float deltaTime;
     bool isWireframe;
 
+    std::vector<int> objects;
+
     void Draw();
     void Swap();
     void Clear();

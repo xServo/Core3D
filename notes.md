@@ -31,3 +31,7 @@ Uniforms get data from cpu to gpu
   - uniforms are set per draw
   - attributes are set per vertex
 
+GAME IDEA
+- objectives
+- puzzles
+- portals

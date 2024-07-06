@@ -5,6 +5,7 @@ GameObject::GameObject(unsigned int shader)
   : vao(positions, 36), ib(indicies, 36) {
     shaderID = shader;
 
+    int ID;
     m_Color = glm::vec3(1,1,1);
     m_Position = glm::vec3(0, 0, 0);
     /* MATRICES */

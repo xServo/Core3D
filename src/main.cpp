@@ -14,7 +14,6 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-
 #include "ShaderCompiler.hpp"
 
 
@@ -28,39 +27,64 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
 
 int main() {
   // TODO finish phong lighting   TODO DONE
+  // TODO GameObject ID system 
+  //  create id on construct
+  //  add id to renderer
+  //  auto render each GameObject
   // TODO fix movement
   // TODO ImGUI
   // TODO input class; events?
   // TODO model loading;
   renderer.ImGuiInit();
 
-  double deltaTime;
-  double lastFrameTime;
   unsigned int shader = renderer.shaderID;
 
+  /* GameObject cube(shader); */
+  /* cube.Translate(glm::vec3(2,0,-9)); */
+  /* cube.Scale(glm::vec3(1,1.3,1)); */
+  /* cube.Color(glm::vec3(0.3, 0.77, 1)); */
 
+  /* GameObject cube2(shader); */
+  /* cube2.Translate(glm::vec3(-2,0,-13)); */
+  /* cube2.Scale(glm::vec3(1,1.5,10)); */
 
-  GameObject cube(shader);
-  cube.Translate(glm::vec3(2,0,-9));
-  cube.Scale(glm::vec3(1,1.3,1));
-  cube.Color(glm::vec3(0.3, 0.77, 1));
+  GameObject floor(shader);
+  floor.Color(glm::vec3(1,0,0));
+  floor.Translate(glm::vec3(0,-1.5,-5));
+  floor.Scale(glm::vec3(10,0.1,10));
+  GameObject floor2(shader);
+  floor2.Color(glm::vec3(0,0,1));
+  floor2.Translate(glm::vec3(0,1.5,-5));
+  floor2.Scale(glm::vec3(10,0.1,10));
 
-  GameObject cube2(shader);
-  cube2.Translate(glm::vec3(-2,0,-13));
-  cube2.Scale(glm::vec3(1,1.5,1));
+  std::vector<GameObject*> walls;
+  for (int i=0;i<10;i++) {
+    walls.push_back(new GameObject(shader));
+    walls[i] -> Translate(glm::vec3(i,0,0));
+    walls[i] -> Translate(glm::vec3(-5,0,-10));
+  }
+  for (int i=10;i<20;i++) {
+    walls.push_back(new GameObject(shader));
+    walls[i] -> Translate(glm::vec3(0,0,i));
+    walls[i] -> Translate(glm::vec3(-5,0,-25));
+  }
+  /* GameObject* w1 = new GameObject(shader); */
+  /* walls.push_back(w1); */
+  /* w1->Translate(glm::vec3(-5,0,0)); */
 
   // TODO temp lighting
   int u_LightPos = glGetUniformLocation(shader, "u_LightPos");
-  glm::vec3 lightPos = glm::vec3(0, 2, 0);
+  glm::vec3 lightPos = glm::vec3(0, 1, 0);
   glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
   int u_LightColor = glGetUniformLocation(shader, "u_LightColor");
-  glm::vec3 lightColor = glm::vec3(0, 1, 0);
+  glm::vec3 lightColor = glm::vec3(0.43, 0, 0.44);
   glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
   float r = 0.0f;
   float incr = 0.002f;
   while (!glfwWindowShouldClose(renderer.gWindow)) {
-    cube.Rotate(0.1, glm::vec3(1,0,1));
+    // rotation
+    /* cube.Rotate(0.1, glm::vec3(1,0,1)); */
     r += incr;
     if (r > 0.5f) {
       r = 0.5f;
@@ -69,29 +93,19 @@ int main() {
       r = 0;
       incr = 0.002f;
     }
-    renderer.ImGui(); 
-    // TODO temp lighting
-    glm::vec3 lightPos = glm::vec3(0, r * 1.4, 0);
-    glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
-    glm::vec3 lightColor = glm::vec3(r+0.23, r-0.3, 0.34);
-    glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
+    /* // TODO temp lighting */
+    /* glm::vec3 lightPos = glm::vec3(0, r * 1.4, 0); */
+    /* glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z); */
+    /* glm::vec3 lightColor = glm::vec3(r+0.23, r-0.3, 0.34); */
+    /* glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z); */
 
+    /* BEGIN FRAME */
+    renderer.ImGui(); 
     renderer.DeltaTime();
     renderer.Clear();
-
-    /* TODO draw binds every GameObject in "scene" TODO */
-    cube.Bind();
-    renderer.Draw();
-    cube2.Bind();
-    renderer.Draw();
-    renderer.ImGuiEnd();
-    renderer.Swap();
-
-
-    // input  callback
+    /* HANDLE INPUT */
     GLCall(glfwPollEvents());
     GLCall(glfwSetKeyCallback(renderer.gWindow, InputCallback));
-    // handle input
     switch (keyPressed[0]) {
       case 'e':
         if (renderer.isWireframe) {
@@ -120,6 +134,23 @@ int main() {
         renderer.camera.MoveDown();
         break;  
     }
+
+    /* TODO draw binds every GameObject in "scene" TODO */
+    /* DRAW FRAME */
+    renderer.Draw();
+    floor.Bind();
+    renderer.Draw();
+    floor2.Bind();
+    renderer.Draw();
+    for (auto it : walls) { 
+      it->Bind();
+      renderer.Draw();
+    } 
+
+    renderer.ImGuiEnd();
+    renderer.Swap();
+
+
     // printf("hello world\n");
   }
   renderer.quit();
