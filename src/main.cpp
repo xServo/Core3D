@@ -16,6 +16,8 @@
 #include "imgui_impl_opengl3.h"
 #include "ShaderCompiler.hpp"
 
+#include "level0.hpp"
+
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 700;
@@ -50,23 +52,23 @@ int main() {
 
   GameObject floor(shader);
   floor.Color(glm::vec3(1,0,0));
-  floor.Translate(glm::vec3(0,-1.5,-5));
-  floor.Scale(glm::vec3(10,0.1,10));
+  floor.Translate(glm::vec3(0,-0.5,-5));
+  floor.Scale(glm::vec3(10,0.001,10));
   GameObject floor2(shader);
   floor2.Color(glm::vec3(0,0,1));
-  floor2.Translate(glm::vec3(0,1.5,-5));
-  floor2.Scale(glm::vec3(10,0.1,10));
+  floor2.Translate(glm::vec3(0,1,-5));
+  floor2.Scale(glm::vec3(10,0.001,10));
 
   std::vector<GameObject*> walls;
-  for (int i=0;i<10;i++) {
-    walls.push_back(new GameObject(shader));
-    walls[i] -> Translate(glm::vec3(i,0,0));
-    walls[i] -> Translate(glm::vec3(-5,0,-10));
-  }
-  for (int i=10;i<20;i++) {
-    walls.push_back(new GameObject(shader));
-    walls[i] -> Translate(glm::vec3(0,0,i));
-    walls[i] -> Translate(glm::vec3(-5,0,-25));
+  for (int i=1;i<level0Size+1;i++) {
+    for (int j=1;j<level0Size+1;j++) {
+      if (level0[i-1][j-1] == 1) {
+        GameObject* wall = new GameObject(shader);  
+        wall->Translate(glm::vec3(i, 0, j));
+        wall->Translate(glm::vec3(-5, 0, -10));
+        walls.push_back(wall);
+      }
+    }
   }
   /* GameObject* w1 = new GameObject(shader); */
   /* walls.push_back(w1); */
@@ -74,7 +76,7 @@ int main() {
 
   // TODO temp lighting
   int u_LightPos = glGetUniformLocation(shader, "u_LightPos");
-  glm::vec3 lightPos = glm::vec3(0, 1, 0);
+  glm::vec3 lightPos = glm::vec3(0, 0.5, 0);
   glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
   int u_LightColor = glGetUniformLocation(shader, "u_LightColor");
   glm::vec3 lightColor = glm::vec3(0.43, 0, 0.44);
@@ -152,6 +154,10 @@ int main() {
 
 
     // printf("hello world\n");
+  }
+  // Clean up dynamically allocated objects
+  for (auto wall : walls) {
+    delete wall;
   }
   renderer.quit();
 }
