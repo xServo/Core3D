@@ -21,11 +21,15 @@
 
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 700;
+Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 std::string keyPressed;
-
-Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void MouseCallback(GLFWwindow* window, double xpos, double ypos);
+float lastX = SCREEN_WIDTH/2;
+float lastY = SCREEN_HEIGHT/2;
+float yaw;
+float pitch;
 
 int main() {
   // TODO finish phong lighting   TODO DONE
@@ -107,7 +111,9 @@ int main() {
     renderer.Clear();
     /* HANDLE INPUT */
     GLCall(glfwPollEvents());
-    GLCall(glfwSetKeyCallback(renderer.gWindow, InputCallback));
+    GLCall(glfwSetKeyCallback(renderer.gWindow, InputCallback));  // key callback
+    glfwSetCursorPosCallback(renderer.gWindow, MouseCallback);   // mouse callback
+    renderer.camera.Look(pitch, yaw);
     switch (keyPressed[0]) {
       case 'e':
         if (renderer.isWireframe) {
@@ -254,4 +260,19 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
       }
       break;
   }
+}
+void MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+  float xoffset = xpos - lastX;
+  float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
+  lastX = xpos;
+  lastY = ypos;
+  const float sensitivity = 0.1f;
+  xoffset *= sensitivity;
+  yoffset *= sensitivity;
+  yaw   += xoffset;
+  pitch += yoffset;
+  if(pitch > 89.0f)
+    pitch = 89.0f;
+  if(pitch < -89.0f)
+    pitch = -89.0f;
 }

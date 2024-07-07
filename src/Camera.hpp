@@ -6,6 +6,12 @@
 #include "glm/gtc/type_ptr.hpp"
 
 class Camera {
+  private:
+    glm::vec3 m_Pos;
+    glm::vec3 m_Target;  
+    glm::vec3 m_Up;
+    int u_View;
+    int u_ViewPos;
   public: 
     Camera();
     float speed;
@@ -13,16 +19,11 @@ class Camera {
     unsigned int shaderID;
 
     void Bind();
+    void Look(float pitch, float yaw);
     void MoveForward();
     void MoveBackward();
     void MoveLeft();
     void MoveRight();
     void MoveUp();
     void MoveDown();
-  private:
-    glm::vec3 m_Pos;
-    glm::vec3 m_Target;  
-    glm::vec3 m_Up;
-    int u_View;
-    int u_ViewPos;
 };
