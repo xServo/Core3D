@@ -114,33 +114,38 @@ int main() {
     GLCall(glfwSetKeyCallback(renderer.gWindow, InputCallback));  // key callback
     glfwSetCursorPosCallback(renderer.gWindow, MouseCallback);   // mouse callback
     renderer.camera.Look(pitch, yaw);
-    switch (keyPressed[0]) {
-      case 'e':
-        if (renderer.isWireframe) {
-          renderer.Wireframe(false);
-        } else {
-          renderer.Wireframe(true);
-        }
-        keyPressed = "";
-        break;
-      case 'w':
-        renderer.camera.MoveForward();
-        break;
-      case 's':
-        renderer.camera.MoveBackward();
-        break;
-      case 'a':
-        renderer.camera.MoveLeft();
-        break;  
-      case 'd':
-        renderer.camera.MoveRight();
-        break;  
-      case 't':
-        renderer.camera.MoveUp();
-        break;  
-      case 'g':
-        renderer.camera.MoveDown();
-        break;  
+    for (int i=0;i<keyPressed.length();i++) {
+      if (keyPressed != "") {
+        std::cout << keyPressed << std::endl;
+      }
+      switch (keyPressed[i]) {
+        case 'e':
+          if (renderer.isWireframe) {
+            renderer.Wireframe(false);
+          } else {
+            renderer.Wireframe(true);
+          }
+          keyPressed = "";
+          break;
+        case 'w':
+          renderer.camera.MoveForward();
+          break;
+        case 's':
+          renderer.camera.MoveBackward();
+          break;
+        case 'a':
+          renderer.camera.MoveLeft();
+          break;  
+        case 'd':
+          renderer.camera.MoveRight();
+          break;  
+        case 't':
+          renderer.camera.MoveUp();
+          break;  
+        case 'g':
+          renderer.camera.MoveDown();
+          break;  
+      }
     }
 
     /* TODO draw binds every GameObject in "scene" TODO */
@@ -180,7 +185,7 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
       break;
     case GLFW_KEY_W:
       if (action == GLFW_PRESS) {
-        keyPressed = "w";
+        keyPressed += "w";
       }
       break;
     case GLFW_KEY_S:
@@ -195,7 +200,7 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
       break;
     case GLFW_KEY_D:
       if (action == GLFW_PRESS) {
-        keyPressed = "d";
+        keyPressed += "d";
       }
       break;
     case GLFW_KEY_T:
@@ -209,6 +214,7 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
       }
       break;
   }
+  size_t search;
   switch (key) {
     case GLFW_KEY_E:
       if (action == GLFW_RELEASE) {
@@ -219,29 +225,33 @@ void InputCallback(GLFWwindow* window, int key, int scancode, int action, int mo
       break;
     case GLFW_KEY_W:
       if (action == GLFW_RELEASE) {
-        if (keyPressed == "w") {
-          keyPressed = "";
+        search = keyPressed.find('w');
+        if (search != std::string::npos) {
+          keyPressed.erase(search, 1);
         }
       }
       break;
     case GLFW_KEY_S:
       if (action == GLFW_RELEASE) {
-        if (keyPressed == "s") {
-          keyPressed = "";
+        search = keyPressed.find('s');
+        if (search != std::string::npos) {
+          keyPressed.erase(search, 1);
         }
       }
       break;
     case GLFW_KEY_A:
       if (action == GLFW_RELEASE) {
-        if (keyPressed == "a") {
-          keyPressed = "";
+        search = keyPressed.find('a');
+        if (search != std::string::npos) {
+          keyPressed.erase(search, 1);
         }
       }
       break;
     case GLFW_KEY_D:
       if (action == GLFW_RELEASE) {
-        if (keyPressed == "d") {
-          keyPressed = "";
+        search = keyPressed.find('d');
+        if (search != std::string::npos) {
+          keyPressed.erase(search, 1);
         }
       }
       break;
