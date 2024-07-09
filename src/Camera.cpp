@@ -5,10 +5,19 @@ Camera::Camera() {
   m_Target = glm::vec3(0,0,-1);
   m_Up = glm::vec3(0,1,0);
   speed = 1.5;
+  m_walkSpeed = speed;
+  m_runSpeed = speed * 2;
+  isRunning = false;
 } 
 
 
 void Camera::Bind() {
+  // check for running
+  if (isRunning == true) {
+    speed = m_runSpeed;
+  } else {
+    speed = m_walkSpeed;
+  }
   // locations happen here because shader is not bound upon construction 
   u_View = glGetUniformLocation(shaderID, "u_View");
   glm::mat4 view = glm::lookAt(m_Pos, m_Pos + m_Target, m_Up);

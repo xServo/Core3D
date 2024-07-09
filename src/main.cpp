@@ -114,8 +114,14 @@ int main() {
         case 'g':
           renderer.camera.MoveDown();
           break;  
-        case '\x1B': // esc
+        case Input::ESC:  
           glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); // mouse
+          break;
+        case Input::SHIFT:  
+          renderer.camera.isRunning = true;
+          break;
+        case Input::SHIFT_REL:  // Shift release
+          renderer.camera.isRunning = false;
           break;
       }
     }

@@ -5,107 +5,69 @@ namespace Input {
   float lastX = 0.0f;
   float lastY = 0.0f;
   std::string keyPressed = "";
+  void Search(char tar) {
+    size_t search = keyPressed.find(tar);
+    if (search != std::string::npos) {
+      keyPressed.erase(search, 1);
+    }
+  }
   void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     switch (key) {
       case GLFW_KEY_E:
-        if (action == GLFW_PRESS) {
+        if (action == GLFW_PRESS)
           keyPressed = "e";
-        }
+        if (action == GLFW_RELEASE)
+          Search('e');
         break;
       case GLFW_KEY_W:
-        if (action == GLFW_PRESS) {
+        if (action == GLFW_PRESS)
           keyPressed += "w";
-        }
+        if (action == GLFW_RELEASE)
+          Search('w');
         break;
       case GLFW_KEY_S:
-        if (action == GLFW_PRESS) {
+        if (action == GLFW_PRESS)
           keyPressed += "s";
-        }
+        if (action == GLFW_RELEASE)
+          Search('s');
         break;
       case GLFW_KEY_A:
-        if (action == GLFW_PRESS) {
+        if (action == GLFW_PRESS)
           keyPressed += "a";
-        }
+        if (action == GLFW_RELEASE)
+          Search('a');
         break;
       case GLFW_KEY_D:
-        if (action == GLFW_PRESS) {
+        if (action == GLFW_PRESS)
           keyPressed += "d";
-        }
+        if (action == GLFW_RELEASE)
+          Search('d');
         break;
       case GLFW_KEY_T:
-        if (action == GLFW_PRESS) {
-          keyPressed = "t";
-        }
+        if (action == GLFW_PRESS)
+          keyPressed += "t";
+        if (action == GLFW_RELEASE)
+          Search('t');
         break;
       case GLFW_KEY_G:
-        if (action == GLFW_PRESS) {
-          keyPressed = "g";
-        }
+        if (action == GLFW_PRESS)
+          keyPressed += "g";
+        if (action == GLFW_RELEASE)
+          Search('g');
         break;
       case GLFW_KEY_ESCAPE:
-        if (action == GLFW_PRESS) {
-          keyPressed = "\x1B";
-        }
-        break;
-    }
-    size_t search;
-    switch (key) {
-      case GLFW_KEY_E:
-        if (action == GLFW_RELEASE) {
-          if (keyPressed == "e") {
-            keyPressed = "";
-          }
-        }
-        break;
-      case GLFW_KEY_W:
-        if (action == GLFW_RELEASE) {
-          search = keyPressed.find('w');
-          if (search != std::string::npos) {
-            keyPressed.erase(search, 1);
-          }
-        }
-        break;
-      case GLFW_KEY_S:
-        if (action == GLFW_RELEASE) {
-          search = keyPressed.find('s');
-          if (search != std::string::npos) {
-            keyPressed.erase(search, 1);
-          }
-        }
-        break;
-      case GLFW_KEY_A:
-        if (action == GLFW_RELEASE) {
-          search = keyPressed.find('a');
-          if (search != std::string::npos) {
-            keyPressed.erase(search, 1);
-          }
-        }
-        break;
-      case GLFW_KEY_D:
-        if (action == GLFW_RELEASE) {
-          search = keyPressed.find('d');
-          if (search != std::string::npos) {
-            keyPressed.erase(search, 1);
-          }
-        }
-        break;
-      case GLFW_KEY_T:
-        if (action == GLFW_RELEASE) {
-          if (keyPressed == "t") {
-            keyPressed = "";
-          }
-        }
-        break;
-      case GLFW_KEY_G:
-        if (action == GLFW_RELEASE) {
-          if (keyPressed == "g") {
-            keyPressed = "";
-          }
-        }
-        break;
-      case GLFW_KEY_ESCAPE:
-        if (action == GLFW_RELEASE) {
+        if (action == GLFW_PRESS)
+          keyPressed = ESC;
+        if (action == GLFW_RELEASE)
           keyPressed = "";
+        break;
+      case GLFW_KEY_LEFT_SHIFT:
+        if (action == GLFW_PRESS)
+          Search(SHIFT_REL);
+          keyPressed += SHIFT;
+        if (action == GLFW_RELEASE) {
+          Search(SHIFT);
+          keyPressed += SHIFT_REL;
         }
         break;
     }
