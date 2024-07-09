@@ -44,22 +44,24 @@ int main() {
   /* cube.Scale(glm::vec3(1,1.3,1)); */
   /* cube.Color(glm::vec3(0.3, 0.77, 1)); */
 
+  renderer.camera.Pos(glm::vec3(1, 0, 1));
   /* LEVEL GEN */
   GameObject floor(shader);
   floor.Color(glm::vec3(1,0,0));
-  floor.Translate(glm::vec3(0,-0.5,-5));
-  floor.Scale(glm::vec3(10,0.001,10));
+  floor.Translate(glm::vec3(1,-0.5,1));
+  floor.Scale(glm::vec3(7,0.001,7));
   GameObject floor2(shader);
   floor2.Color(glm::vec3(0,0,1));
-  floor2.Translate(glm::vec3(0,1,-5));
-  floor2.Scale(glm::vec3(10,0.001,10));
+  floor2.Translate(glm::vec3(1,1,1));
+  floor2.Scale(glm::vec3(6,0.001,6));
+  /* WALL GEN */
   std::vector<GameObject*> walls;
   for (int i=1;i<level0Size+1;i++) {
     for (int j=1;j<level0Size+1;j++) {
       if (level0[i-1][j-1] == 1) {
         GameObject* wall = new GameObject(shader);  
         wall->Translate(glm::vec3(i, 0, j));
-        wall->Translate(glm::vec3(-5, 0, -10));
+        wall->Translate(glm::vec3(-7, 0, -7));
         walls.push_back(wall);
       }
     }
@@ -67,7 +69,7 @@ int main() {
 
   // TODO temp lighting
   int u_LightPos = glGetUniformLocation(shader, "u_LightPos");
-  glm::vec3 lightPos = glm::vec3(0, 0.5, 0);
+  glm::vec3 lightPos = glm::vec3(1, 0.5, 1);
   glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
   int u_LightColor = glGetUniformLocation(shader, "u_LightColor");
   glm::vec3 lightColor = glm::vec3(0.43, 0, 0.44);

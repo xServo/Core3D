@@ -18,6 +18,9 @@ void Camera::Bind() {
   glUniform3f(u_ViewPos, m_Pos.x, m_Pos.y, m_Pos.z);
 }
 
+void Camera::Pos(glm::vec3 newPos) {
+  m_Pos = newPos;
+}
 void Camera::MoveForward() {
   m_Pos += glm::vec3(m_Target.x, 0, m_Target.z) * speed * deltaTime;
   Bind();

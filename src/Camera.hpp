@@ -20,6 +20,7 @@ class Camera {
 
     void Bind();
     void Look(float pitch, float yaw);
+    void Pos(glm::vec3 newPos);
     void MoveForward();
     void MoveBackward();
     void MoveLeft();
