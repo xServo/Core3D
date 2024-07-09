@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <glew.h>
 #include <glfw3.h>
+#include <vector>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -11,10 +12,19 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "Camera.hpp"
+#ifdef _WIN32
+#include <intrin.h>
+#define ASSERT(x) if (!(x)) __debugbreak();
+#define GLCall(x) GLClearError();\
+          x;\
+          ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+#else
+#include <signal.h>
 #define ASSERT(x) if (!(x)) raise(SIGTRAP);
 #define GLCall(x) GLClearError();\
-  x;\
-  ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+      x;\
+      ASSERT(GLLogCall(#x, __FILE__, __LINE__))
+#endif
 
 void GLClearError(); 
 bool GLLogCall(const char* function, const char* file, int line); 
