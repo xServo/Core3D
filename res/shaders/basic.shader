@@ -29,6 +29,11 @@ void main() {
 in vec3 fragmentColor;
 in vec3 Normal;
 in vec3 FragPos;
+struct Material {
+  float shininess;
+};
+uniform Material material;
+uniform int u_IsLit;
 uniform vec3 u_Color; 
 uniform vec3 u_ViewPos; 
 uniform vec3 u_LightPos;
@@ -39,6 +44,7 @@ float ambientStrength = 0.3;
 layout(location = 0) out vec4 FragColor;
 
 void main() {
+  if (u_IsLit == 1) {
     // light and normal vec 
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(u_LightPos - FragPos);
@@ -54,7 +60,7 @@ void main() {
     float specularStrength = 0.5;
     vec3 viewDir = normalize(u_ViewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
     vec3 specular = specularStrength * spec * u_LightColor;
 
     // Final color calculation
@@ -65,4 +71,8 @@ void main() {
     FragColor = vec4(result, 1.0);
     // FragColor = vec4(1, 1, 1, 1); // debug white
     // FragColor = color; // debug color
+  } else {
+    vec4 color = vec4(u_Color.x, u_Color.y, u_Color.z, 1.0); 
+    FragColor = color; 
+  }
 }

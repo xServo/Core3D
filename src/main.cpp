@@ -46,14 +46,20 @@ int main() {
 
   renderer.camera.Pos(glm::vec3(1, 0, 1));
   /* LEVEL GEN */
+  GameObject bulb(shader);
+  bulb.IsLit(false);
+  bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
+  bulb.Translate(glm::vec3(1, 0.5, 1));
   GameObject floor(shader);
   floor.Color(glm::vec3(1,0,0));
   floor.Translate(glm::vec3(1,-0.5,1));
   floor.Scale(glm::vec3(7,0.001,7));
+  floor.Shininess(2);
   GameObject floor2(shader);
   floor2.Color(glm::vec3(0,0,1));
   floor2.Translate(glm::vec3(1,1,1));
   floor2.Scale(glm::vec3(6,0.001,6));
+  floor2.Shininess(2);
   /* WALL GEN */
   std::vector<GameObject*> walls;
   for (int i=1;i<level0Size+1;i++) {
@@ -130,6 +136,8 @@ int main() {
     floor.Bind();
     renderer.Draw();
     floor2.Bind();
+    renderer.Draw();
+    bulb.Bind();
     renderer.Draw();
     for (auto it : walls) { 
       it->Bind();
