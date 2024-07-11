@@ -43,8 +43,8 @@ void Renderer::ImGuiEnd() {
   // (Your code calls glfwSwapBuffers() etc.)
 }
 void Renderer::Draw() {
-  /* glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib */
-  GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
+  glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
+  // GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
 }
 void Renderer::Swap() {
   // Enable depth test
@@ -60,10 +60,10 @@ void Renderer::Clear() {
 void Renderer::Wireframe(bool flag) {
   if (flag == true) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // enable wireframe mode:w
-    isWireframe = true;
+    isWireFrame = true;
   } else if (flag == false) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // enable wireframe mode:w
-    isWireframe = false;
+    isWireFrame = false;
   }
 }
 

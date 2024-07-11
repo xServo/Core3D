@@ -43,7 +43,7 @@ class Renderer {
 
     unsigned int shaderID;
     float deltaTime;
-    bool isWireframe;
+    bool isWireFrame;
 
     std::vector<int> objects;
 

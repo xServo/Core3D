@@ -19,8 +19,8 @@
 #include "Input.hpp"
 #include "level0.hpp"
 
-const int SCREEN_WIDTH = 1000;
-const int SCREEN_HEIGHT = 700;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main() {
@@ -35,7 +35,6 @@ int main() {
   // TODO model loading;
   Input::lastX = SCREEN_WIDTH/2;  // init cursor pos
   Input::lastY = SCREEN_HEIGHT/2; // init cursor pos
-  renderer.ImGuiInit();
 
   unsigned int shader = renderer.shaderID;
 
@@ -81,6 +80,9 @@ int main() {
   glm::vec3 lightColor = glm::vec3(0.43, 0, 0.44);
   glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
+  glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
+  glfwSetCursorPosCallback(renderer.gWindow, Input::MouseCallback);   // mouse callback
+  renderer.ImGuiInit();
   while (!glfwWindowShouldClose(renderer.gWindow)) {
     /* BEGIN FRAME */
     renderer.ImGui(); 
@@ -88,20 +90,10 @@ int main() {
     renderer.Clear();
     /* HANDLE INPUT */
     GLCall(glfwPollEvents());
-    glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
-    glfwSetCursorPosCallback(renderer.gWindow, Input::MouseCallback);   // mouse callback
     renderer.camera.Look(Input::pitch, Input::yaw);
     /* INPUT BINDS */
     for (int i=0;i<Input::keyPressed.length();i++) {
       switch (Input::keyPressed[i]) {
-        case 'e':
-          if (renderer.isWireframe) {
-            renderer.Wireframe(false);
-          } else {
-            renderer.Wireframe(true);
-          }
-          Input::keyPressed = "";
-          break;
         case 'w':
           renderer.camera.MoveForward();
           break;
@@ -120,8 +112,23 @@ int main() {
         case 'g':
           renderer.camera.MoveDown();
           break;  
+        case 'e':
+          if (renderer.isWireFrame)
+            renderer.Wireframe(false);
+          else
+            renderer.Wireframe(true);
+          Input::keyPressed = "";
+          break;
         case Input::ESC:  
-          glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); // mouse
+          if (Input::isMouseLock == true) {
+            glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
+            Input::isMouseLock = false;
+          } else if (Input::isMouseLock == false) {
+            glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+            Input::ResetCursor();
+            Input::isMouseLock = true;
+          }
+          Input::keyPressed = "";
           break;
         case Input::SHIFT:  
           renderer.camera.isRunning = true;

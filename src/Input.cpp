@@ -4,13 +4,19 @@ namespace Input {
   float pitch = 0.0f;
   float lastX = 0.0f;
   float lastY = 0.0f;
+  bool isMouseLock = true;
   std::string keyPressed = "";
+  void ResetCursor() {
+    // TODO is it possible to set the curosr position (to be at dead center)?
+    lastY = 0.0f;
+  }
   void Search(char tar) {
     size_t search = keyPressed.find(tar);
     if (search != std::string::npos) {
       keyPressed.erase(search, 1);
     }
   }
+
   void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     switch (key) {
       case GLFW_KEY_E:
@@ -74,6 +80,7 @@ namespace Input {
   }
 
   void MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+    if (!isMouseLock) return; 
     float xoffset = xpos - lastX;
     float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
     lastX = xpos;
