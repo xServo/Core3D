@@ -17,7 +17,7 @@ class Model {
 
     void LoadModel(std::string path);
     void ProcessNode(aiNode* node, const aiScene* scene);
-    Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene)
+    Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
   public:
     Model(std::string path);
 };

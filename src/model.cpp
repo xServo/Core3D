@@ -31,5 +31,6 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
   }
 }
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
-
+  Mesh deleteThis;
+  return deleteThis;
 }

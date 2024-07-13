@@ -1,12 +1,15 @@
 #include "mesh.hpp"
+// empty constructor
+Mesh::Mesh() 
+  : vao(NULL, NULL, NULL),
+    ib(NULL,0) {
+
+}
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) 
-  : vertices(vertices), indices(indices), vao(vertices, 36), ib(indices, 36) {
-  // TODO MAKE VAO AND IB ACCEPT std::vector
-  this->vertices = vertices;
-  this->indices = indices;
-  this->textures = textures;
-
-  // TODO CREATE VERTEX ARRAY
-  // vertices.size() * sizeof(Vertex)
+  : vertices(vertices),
+    indices(indices),
+    textures(textures),
+    vao(&vertices[0], vertices.size(), sizeof(Vertex)/sizeof(float)),
+    ib(&indices[0], (unsigned int)indices.size() * sizeof(Vertex)) {
 }
