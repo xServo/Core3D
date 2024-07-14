@@ -2,7 +2,7 @@
 #include "data.hpp"
 
 GameObject::GameObject(unsigned int shader)
-  : vao(positions, 36), ib(indicies, 36) {
+  : vao(positions, 36, 6), ib(indicies, 36) {
     shaderID = shader;
 
     int ID;

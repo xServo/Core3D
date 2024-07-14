@@ -10,10 +10,10 @@
 class VertexArray {
   public:
     unsigned int m_ID;
-    int size;
-    VertexArray(const void* positions, unsigned int size);
+    int vCount;
+    int vSize;
+    VertexArray(const void* positions, unsigned int vCount, unsigned int vSize); // vSize = how many floats per vertex (not in bytes); vSize*vCount = number of floats in the array
     void Bind();
   private:
-    void GenColor(glm::vec3 color, float colors[]);
     void BindColor(float colorArray[]);
 };
