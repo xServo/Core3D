@@ -13,7 +13,7 @@ INCLUDE_DIRS += -I/opt/homebrew/include/GLFW -I/opt/homebrew/include/GL  -Iinclu
 CFLAGS = 
 
 # Linker flags
-LDFLAGS = -L/opt/homebrew/lib -lGLEW -lglfw -framework OpenGL
+LDFLAGS = -L/opt/homebrew/lib -lassimp -lGLEW -lglfw -framework OpenGL
 
 # Target executable name
 TARGET = rend_test

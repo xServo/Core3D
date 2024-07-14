@@ -17,6 +17,7 @@
 #include "imgui_impl_opengl3.h"
 #include "ShaderCompiler.hpp"
 #include "Input.hpp"
+#include "model.hpp"
 #include "level0.hpp"
 
 const int SCREEN_WIDTH = 1920;
@@ -37,6 +38,10 @@ int main() {
   Input::lastY = SCREEN_HEIGHT/2; // init cursor pos
 
   unsigned int shader = renderer.shaderID;
+
+  // temp 
+  Model ourModel("res/models/backpack/backpack.obj");
+
 
   /* GameObject cube(shader); */
   /* cube.Translate(glm::vec3(2,0,-9)); */
@@ -146,6 +151,9 @@ int main() {
     renderer.Draw();
     bulb.Bind();
     renderer.Draw();
+
+    ourModel.Draw();
+
     for (auto it : walls) { 
       it->Bind();
       renderer.Draw();
