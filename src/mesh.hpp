@@ -15,6 +15,7 @@ struct Vertex {
 struct Texture {
   unsigned int ID;
   std::string Type;
+  std::string Path;
 };
 
 class Mesh {
@@ -28,5 +29,6 @@ class Mesh {
     std::vector<Texture> textures; 
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
     Mesh();
+    void Draw();
     // TODO DRAW CALL FUNCTION THAT TAKES IN SHADER 
 };

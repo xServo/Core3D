@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "mesh.hpp"
+#include "stb_image.h"
 
 #define ASSIMP_FLAGS aiProcess_Triangulate | aiProcess_FlipUVs
 
@@ -18,6 +19,9 @@ class Model {
     void LoadModel(std::string path);
     void ProcessNode(aiNode* node, const aiScene* scene);
     Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+    std::vector<Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+    unsigned int TextureFromFile(const char* path, const std::string& directory);
   public:
     Model(std::string path);
+    void Draw();
 };
