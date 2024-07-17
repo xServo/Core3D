@@ -40,7 +40,7 @@ int main() {
   unsigned int shader = renderer.shaderID;
 
   // temp 
-  Model ourModel("res/models/backpack/backpack.obj");
+  // Model ourModel("res/models/backpack/backpack.obj");
 
 
   /* GameObject cube(shader); */
@@ -49,6 +49,13 @@ int main() {
   /* cube.Color(glm::vec3(0.3, 0.77, 1)); */
 
   renderer.camera.Pos(glm::vec3(1, 0, 1));
+
+  // backpack
+  GameObject model(shader);
+  model.InitModel();
+  model.IsLit(true);
+  model.Scale(glm::vec3(5, 5, 5));
+  model.Translate(glm::vec3(1, 8.5, 1));
   /* LEVEL GEN */
   GameObject bulb(shader);
   bulb.IsLit(false);
@@ -144,19 +151,14 @@ int main() {
       }
     }
     /* DRAW FRAME */
-    renderer.Draw();
     floor.Bind();
-    renderer.Draw();
     floor2.Bind();
-    renderer.Draw();
     bulb.Bind();
-    renderer.Draw();
+    model.Bind();
 
-    ourModel.Draw();
 
     for (auto it : walls) { 
       it->Bind();
-      renderer.Draw();
     } 
     renderer.ImGuiEnd();
     renderer.Swap();
