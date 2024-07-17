@@ -26,9 +26,10 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
     m_Meshes.push_back(ProcessMesh(mesh, scene));
   }
   // then do the same for each of its children
-  for (unsigned int i = 0; i < node->mNumChildren; i++) {
-    ProcessNode(node->mChildren[i], scene);
-  }
+  // TODO TEMP TO PREVENT INFINITE LOOP
+  /* for (unsigned int i = 0; i < node->mNumChildren; i++) { */
+  /*   ProcessNode(node->mChildren[i], scene); */
+  /* } */
 }
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   // data to fill
