@@ -86,12 +86,12 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   }
   // now wak through each of the mesh's faces (a face is a mesh its triangle)
   // and retrieve the corresponding vertex indices.
-  /* for (unsigned int i = 0; i < mesh->mNumFaces; i++) { */
-  /*   aiFace face = mesh->mFaces[i]; */
-  /*   // retrieve all indices of the face and store them in the indices vector */
-  /*   for (unsigned int j = 0; j < face.mNumIndices; j++) */
-  /*     indices.push_back(face.mIndices[j]); */
-  /* } */
+  for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+    aiFace face = mesh->mFaces[i];
+    // retrieve all indices of the face and store them in the indices vector
+    for (unsigned int j = 0; j < face.mNumIndices; j++)
+      indices.push_back(face.mIndices[j]);
+  }
   /* // process materials */
   /* aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex]; */
   /* // we assume a convention for sampler names in the shaders. Each diffuse */
@@ -113,15 +113,19 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   /* std::vector<Texture> heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height"); */
   /* textures.insert(textures.end(), heightMaps.begin(), heightMaps.end()); */
 
-  if (true) {
+  if (false) {
     for (const Vertex& vertex : vertices) {
       std::cout << "Position: (" << vertex.Position.x << ", " << vertex.Position.y << ", " << vertex.Position.z << ")";
       std::cout << ", Normal: (" << vertex.Normal.x << ", " << vertex.Normal.y << ", " << vertex.Normal.z << ")";
       std::cout << std::endl;
     }
+    for (const auto ee : indices) {
+      std::cout << ", Indices: (" << ee << ")" << std::endl;
+    }
+    std::cout << indices.size() << std::endl;
   }
   // return a mesh object created from the extracted mesh data
-  return Mesh(vertices, textures);
+  return Mesh(vertices, indices, textures);
 }
 
 std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) {

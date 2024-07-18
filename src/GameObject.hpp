@@ -12,8 +12,9 @@ class GameObject {
   private:
     VertexArray vao; 
     IndexBuffer ib;
-
     Model* m_Model; 
+
+    /* ATTRIBUTES */
     glm::vec3 m_Position;
     float m_Shininess;
     glm::vec3 m_Color;
@@ -33,6 +34,8 @@ class GameObject {
   public: 
     GameObject(unsigned int shader);
     ~GameObject();
+    unsigned int shaderID;
+    int ID;
     void Color(glm::vec3 color);
     void Shininess(float shine);
     void Bind();
@@ -42,7 +45,4 @@ class GameObject {
     void Scale(glm::vec3 scale);
     void IsLit(bool lit);
     void InitModel();
-
-    unsigned int shaderID;
-    int ID;
 };

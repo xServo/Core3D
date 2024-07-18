@@ -27,13 +27,15 @@ Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 int main() {
   // TODO finish phong lighting   TODO DONE
   // TODO GameObject ID system 
-  //  create id on construct
-  //  add id to renderer
-  //  auto render each GameObject
+    //  create id on construct
+    //  add id to renderer
+    //  auto render each GameObject
   // TODO fix movement TODO DONE
   // TODO ImGUI
-  // TODO input class; 
-  // TODO model loading;
+  // TODO input class;  TODO DONE
+  // TODO model loading; TODO DONE
+  // TODO textures 
+  // TODO model textures 
   Input::lastX = SCREEN_WIDTH/2;  // init cursor pos
   Input::lastY = SCREEN_HEIGHT/2; // init cursor pos
 
@@ -53,10 +55,12 @@ int main() {
   // backpack
   GameObject model(shader);
   model.InitModel();
+  model.Color(glm::vec3(0.32,0.2,1));
   model.IsLit(true);
-  model.Scale(glm::vec3(5, 5, 5));
-  model.Translate(glm::vec3(1, 8.5, 1));
-  /* LEVEL GEN */
+  model.Scale(glm::vec3(0.2, 0.2, 0.2));
+  model.Translate(glm::vec3(1, -0.2, 1));
+  /* LEVEL GEN */ 
+  // TODO MAKE THIS A CLASS
   GameObject bulb(shader);
   bulb.IsLit(false);
   bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
@@ -100,6 +104,8 @@ int main() {
     renderer.ImGui(); 
     renderer.DeltaTime();
     renderer.Clear();
+    /* ROTATE */ 
+    model.Rotate(renderer.deltaTime*10, glm::vec3(0,1,0));
     /* HANDLE INPUT */
     GLCall(glfwPollEvents());
     renderer.camera.Look(Input::pitch, Input::yaw);

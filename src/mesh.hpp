@@ -21,15 +21,13 @@ struct Texture {
 class Mesh {
   private:  
     VertexArray vao; 
-    /* IndexBuffer ib; */
+    IndexBuffer ib;
   
   public:
     std::vector<Vertex> vertices;
-    /* std::vector<unsigned int> indices; */
+    std::vector<unsigned int> indices;
     std::vector<Texture> textures; 
-    /* Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures); */
-    Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
     Mesh();
     void Draw();
-    // TODO DRAW CALL FUNCTION THAT TAKES IN SHADER 
 };

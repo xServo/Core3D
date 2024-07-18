@@ -27,16 +27,18 @@ GameObject::GameObject(unsigned int shader)
     Bind();
 }
 
-/* TODO DONT HEAP ALLOCATE */ 
 GameObject::~GameObject() {
   if (m_Model != NULL) {
     delete m_Model;
   }
-
 }
 
 void GameObject::InitModel() {
-  m_Model = new Model("res/models/backpack/backpack.obj"); 
+  if (m_Model == NULL) {
+    m_Model = new Model("res/models/backpack/backpack.obj"); 
+  } else {
+    std::cout << "Error, GameObject already contains model!" << std::endl;
+  }
 }
 
 void GameObject::Bind() {

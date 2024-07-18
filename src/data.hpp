@@ -1,5 +1,6 @@
 #pragma once
 // included in GameObject.cpp
+// cube data
 float d_Positions[] = {
   -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
   1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 

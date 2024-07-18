@@ -1,11 +1,11 @@
 #include "mesh.hpp"
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<Texture> textures) 
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) 
   : vertices(vertices),
-    /* indices(indices), */
+    indices(indices),
     textures(textures),
-    vao(&vertices[0], vertices.size(), sizeof(Vertex)/sizeof(float)) // TODO vao accepts normals and texture coords
-    /* ib(&indices[0], (unsigned int)indices.size() * sizeof(Vertex)) */ 
-{
+    vao(&vertices[0], vertices.size(), sizeof(Vertex)/sizeof(float)), // TODO vao accepts normals and texture coords
+    ib(&indices[0], (unsigned int)indices.size()) {
+
 }
 
 void Mesh::Draw() {
@@ -27,7 +27,8 @@ void Mesh::Draw() {
 
   // draw mesh
   vao.Bind();
-  /* glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); // TODO renderer draw call */
+  ib.Bind();
+  /* glDrawElements(GL_TRIANGLES, static_cast<unsigned int>(indices.size()), GL_UNSIGNED_INT, 0); // TODO renderer draw call */
   GLCall(glDrawArrays(GL_TRIANGLES, 0, vertices.size())); // use vertex matrix
   glBindVertexArray(0);
 }
