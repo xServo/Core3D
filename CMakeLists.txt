@@ -1,4 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(Core3D)
 
 # source
@@ -18,7 +20,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_SOURCE_DIR}/vendor/assimp
         ${CMAKE_SOURCE_DIR}/vendor/glm
         ${CMAKE_SOURCE_DIR}/vendor/glew
-        ${CMAKE_SOURCE_DIR}/vendor/glfw
+        ${CMAKE_SOURCE_DIR}/vendor/GLFW
         ${CMAKE_SOURCE_DIR}/vendor/imgui
         ${CMAKE_SOURCE_DIR}/vendor/imgui/backends
         ${CMAKE_SOURCE_DIR}/vendor/stb
