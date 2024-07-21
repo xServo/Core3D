@@ -1,5 +1,4 @@
-cmake -B build/win
-msbuild build/win/Core3D.sln /p:Configuration=Debug /p:Platform=x64
-move build\win\Debug\Core3D.exe .\
+cmake -B build
+msbuild build/Core3D.sln /p:Configuration=Debug /p:Platform=x64
 @echo Press any key to exit...
 @pause >nul
