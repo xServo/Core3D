@@ -58,7 +58,7 @@ int main() {
   model.Color(glm::vec3(0.32,0.2,1));
   model.IsLit(true);
   model.Scale(glm::vec3(0.2, 0.2, 0.2));
-  model.Translate(glm::vec3(1, -0.2, 1));
+  model.Translate(glm::vec3(2, -0.2, 1));
   /* LEVEL GEN */ 
   // TODO MAKE THIS A CLASS
   GameObject bulb(shader);
