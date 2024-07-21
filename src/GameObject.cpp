@@ -2,8 +2,9 @@
 #include "data.hpp"
 
 GameObject::GameObject(unsigned int shader)
-  : vao(positions, 36, 6), ib(indicies, 36) {
+  : vao(d_Positions, 36, 6), ib(d_Indicies, 36) {
     shaderID = shader;
+    m_Model = NULL;
 
     int ID;
     m_Color = glm::vec3(1, 1, 1);
@@ -24,17 +25,45 @@ GameObject::GameObject(unsigned int shader)
     u_Scale = glGetUniformLocation(shaderID, "u_Scale");
 
     Bind();
+}
+
+GameObject::~GameObject() {
+  if (m_Model != NULL) {
+    delete m_Model;
   }
+}
+
+void GameObject::InitModel() {
+  if (m_Model == NULL) {
+    m_Model = new Model("res/models/backpack/backpack.obj"); 
+  } else {
+    std::cout << "Error, GameObject already contains model!" << std::endl;
+  }
+}
 
 void GameObject::Bind() {
-  vao.Bind();
-  ib.Bind();
+  if (m_Model == NULL) {
+    vao.Bind();
+    ib.Bind();
+  }
+
   glUniform1f(u_Shininess, m_Shininess);
   glUniform3f(u_Color, m_Color.x, m_Color.y, m_Color.z);
   glUniform1i(u_IsLit, m_IsLit);
   glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &m_Rotate[0][0]);
   glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
   glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
+
+  // TODO TEMP
+  Draw();
+}
+
+void GameObject::Draw() {
+  if (m_Model == NULL) {
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
+  } else {
+    m_Model->Draw();
+  }
 }
 
 void GameObject::Color(glm::vec3 color) {
@@ -67,3 +96,4 @@ void GameObject::IsLit(bool lit) {
   m_IsLit = lit;
   glUniform1i(u_IsLit, m_IsLit);
 }
+

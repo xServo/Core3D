@@ -2,10 +2,9 @@
 #version 330 core
 layout(location = 0) in vec3 aPos;
 // layout(location = 1) in vec3 vColor;
-layout(location = 2) in vec3 aNormal;
+layout(location = 1) in vec3 aNormal;
 
 
-out vec3 fragmentColor;
 out vec3 Normal;
 out vec3 FragPos;
 
@@ -19,14 +18,12 @@ void main() {
   gl_Position = u_Perspective * u_View * model * vec4(aPos, 1);
 
   FragPos = vec3(model * vec4(aPos, 1));
-  // fragmentColor = vColor;
   Normal = mat3(transpose(inverse(model))) * aNormal;
 }
 
 #shader fragment
 #version 330 core
 
-in vec3 fragmentColor;
 in vec3 Normal;
 in vec3 FragPos;
 struct Material {

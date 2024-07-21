@@ -1,6 +1,7 @@
 #pragma once
 // included in GameObject.cpp
-float positions[] = {
+// cube data
+float d_Positions[] = {
   -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f,
   1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 
   1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 
@@ -43,7 +44,7 @@ float positions[] = {
   -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f,
   -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f
 };
-unsigned int indicies[] = {
+unsigned int d_Indicies[] = {
   // Back face
   0, 1, 2,
   2, 4, 0,

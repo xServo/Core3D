@@ -17,6 +17,7 @@
 #include "imgui_impl_opengl3.h"
 #include "ShaderCompiler.hpp"
 #include "Input.hpp"
+#include "model.hpp"
 #include "level0.hpp"
 
 const int SCREEN_WIDTH = 1920;
@@ -26,17 +27,23 @@ Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 int main() {
   // TODO finish phong lighting   TODO DONE
   // TODO GameObject ID system 
-  //  create id on construct
-  //  add id to renderer
-  //  auto render each GameObject
+    //  create id on construct
+    //  add id to renderer
+    //  auto render each GameObject
   // TODO fix movement TODO DONE
   // TODO ImGUI
-  // TODO input class; 
-  // TODO model loading;
+  // TODO input class;  TODO DONE
+  // TODO model loading; TODO DONE
+  // TODO textures 
+  // TODO model textures 
   Input::lastX = SCREEN_WIDTH/2;  // init cursor pos
   Input::lastY = SCREEN_HEIGHT/2; // init cursor pos
 
   unsigned int shader = renderer.shaderID;
+
+  // temp 
+  // Model ourModel("res/models/backpack/backpack.obj");
+
 
   /* GameObject cube(shader); */
   /* cube.Translate(glm::vec3(2,0,-9)); */
@@ -44,7 +51,16 @@ int main() {
   /* cube.Color(glm::vec3(0.3, 0.77, 1)); */
 
   renderer.camera.Pos(glm::vec3(1, 0, 1));
-  /* LEVEL GEN */
+
+  // backpack
+  GameObject model(shader);
+  model.InitModel();
+  model.Color(glm::vec3(0.32,0.2,1));
+  model.IsLit(true);
+  model.Scale(glm::vec3(0.2, 0.2, 0.2));
+  model.Translate(glm::vec3(2, -0.2, 1));
+  /* LEVEL GEN */ 
+  // TODO MAKE THIS A CLASS
   GameObject bulb(shader);
   bulb.IsLit(false);
   bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
@@ -88,6 +104,8 @@ int main() {
     renderer.ImGui(); 
     renderer.DeltaTime();
     renderer.Clear();
+    /* ROTATE */ 
+    model.Rotate(renderer.deltaTime*10, glm::vec3(0,1,0));
     /* HANDLE INPUT */
     GLCall(glfwPollEvents());
     renderer.camera.Look(Input::pitch, Input::yaw);
@@ -139,16 +157,14 @@ int main() {
       }
     }
     /* DRAW FRAME */
-    renderer.Draw();
     floor.Bind();
-    renderer.Draw();
     floor2.Bind();
-    renderer.Draw();
     bulb.Bind();
-    renderer.Draw();
+    model.Bind();
+
+
     for (auto it : walls) { 
       it->Bind();
-      renderer.Draw();
     } 
     renderer.ImGuiEnd();
     renderer.Swap();

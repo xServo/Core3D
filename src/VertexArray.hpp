@@ -15,5 +15,5 @@ class VertexArray {
     VertexArray(const void* positions, unsigned int vCount, unsigned int vSize); // vSize = how many floats per vertex (not in bytes); vSize*vCount = number of floats in the array
     void Bind();
   private:
-    void BindColor(float colorArray[]);
+
 };

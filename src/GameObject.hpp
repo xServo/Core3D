@@ -1,16 +1,20 @@
 #pragma once
+#include <iostream>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "Renderer.hpp"
+#include "model.hpp"
 
 class GameObject {
   private:
     VertexArray vao; 
     IndexBuffer ib;
+    Model* m_Model; 
 
+    /* ATTRIBUTES */
     glm::vec3 m_Position;
     float m_Shininess;
     glm::vec3 m_Color;
@@ -29,14 +33,16 @@ class GameObject {
 
   public: 
     GameObject(unsigned int shader);
+    ~GameObject();
+    unsigned int shaderID;
+    int ID;
     void Color(glm::vec3 color);
     void Shininess(float shine);
     void Bind();
+    void Draw();
     void Rotate(float theta, glm::vec3 rotationAxis);
     void Translate(glm::vec3 translate);
     void Scale(glm::vec3 scale);
     void IsLit(bool lit);
-
-    unsigned int shaderID;
-    int ID;
+    void InitModel();
 };
