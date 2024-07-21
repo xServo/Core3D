@@ -37,11 +37,11 @@ if(WIN32)
     target_link_libraries(${PROJECT_NAME} glfw3 glew32 assimp-vc143-mt opengl32)
 # mac
 elseif(APPLE)
-    target_link_directories(${project_name} private
+    target_link_directories(${PROJECT_NAME} PRIVATE
             /opt/homebrew/lib
     )
-    target_link_libraries(${project_name} glfw glew assimp)
-    find_library(opengl_library opengl)
+    target_link_libraries(${PROJECT_NAME} glfw GLEW assimp)
+    find_library(OpenGL_LIBRARY OpenGL)
     target_link_libraries(${PROJECT_NAME} ${OpenGL_LIBRARY})
 ENDIF()
 
