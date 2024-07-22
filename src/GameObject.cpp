@@ -10,6 +10,7 @@ GameObject::GameObject(unsigned int shader)
     m_Color = glm::vec3(1, 1, 1);
     m_Shininess = 16;
     m_IsLit = true;
+    m_IsTextured = true;
     m_Position = glm::vec3(0, 0, 0);
     /* MATRICES */
     m_Rotate = glm::mat4(1); 
@@ -20,6 +21,7 @@ GameObject::GameObject(unsigned int shader)
     u_Shininess = glGetUniformLocation(shaderID, "material.shininess");
     u_Color = glGetUniformLocation(shaderID, "u_Color");
     u_IsLit = glGetUniformLocation(shaderID, "u_IsLit");
+    u_IsTextured = glGetUniformLocation(shaderID, "u_IsTextured");
     u_Rotate = glGetUniformLocation(shaderID, "u_Rotate");
     u_Translate = glGetUniformLocation(shaderID, "u_Translate");
     u_Scale = glGetUniformLocation(shaderID, "u_Scale");
@@ -48,6 +50,7 @@ void GameObject::Bind() {
   glUniform1f(u_Shininess, m_Shininess);
   glUniform3f(u_Color, m_Color.x, m_Color.y, m_Color.z);
   glUniform1i(u_IsLit, m_IsLit);
+  glUniform1i(u_IsTextured, m_IsTextured);
   glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &m_Rotate[0][0]);
   glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
   glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
@@ -93,5 +96,10 @@ void GameObject::Scale(glm::vec3 scale) {
 void GameObject::IsLit(bool lit) {
   m_IsLit = lit;
   glUniform1i(u_IsLit, m_IsLit);
+}
+
+void GameObject::IsTextured(bool tex) {
+  m_IsTextured = tex;
+  glUniform1i(u_IsTextured, m_IsTextured);
 }
 

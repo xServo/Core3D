@@ -19,6 +19,7 @@ class GameObject {
     float m_Shininess;
     glm::vec3 m_Color;
     bool m_IsLit;
+    bool m_IsTextured;
     /* MATRICES */ 
     glm::mat4 m_Rotate; 
     glm::mat4 m_Translate; 
@@ -27,6 +28,7 @@ class GameObject {
     int u_Shininess;
     int u_Color;
     int u_IsLit;
+    int u_IsTextured;
     int u_Rotate;
     int u_Translate;
     int u_Scale;
@@ -44,5 +46,6 @@ class GameObject {
     void Translate(glm::vec3 translate);
     void Scale(glm::vec3 scale);
     void IsLit(bool lit);
+    void IsTextured(bool tex);
     void InitModel();
 };

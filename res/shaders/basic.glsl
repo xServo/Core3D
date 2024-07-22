@@ -34,6 +34,7 @@ struct Material {
 };
 uniform Material material;
 uniform int u_IsLit;
+uniform int u_IsTextured;
 uniform vec3 u_Color; 
 uniform vec3 u_ViewPos; 
 uniform vec3 u_LightPos;
@@ -46,6 +47,12 @@ layout(location = 0) out vec4 FragColor;
 
 void main() {
   if (u_IsLit == 1) {
+    vec4 color;
+    if (u_IsTextured == 1) {
+      color = texture(u_Texture, TexCoords);
+    } else {
+      color = vec4(u_Color.x, u_Color.y, u_Color.z, 1.0); 
+    }
     // light and normal vec 
     vec3 norm = normalize(Normal);
     vec3 lightDir = normalize(u_LightPos - FragPos);
@@ -65,7 +72,6 @@ void main() {
     vec3 specular = specularStrength * spec * u_LightColor;
 
     // Final color calculation
-    vec4 color = vec4(u_Color.x, u_Color.y, u_Color.z, 1.0); 
     vec3 result = (ambient + diffuse + specular) * color.rgb;
 
     // Output final color
@@ -73,8 +79,9 @@ void main() {
     // FragColor = vec4(1, 1, 1, 1); // debug white
     // FragColor = color; // debug color
   } else {
-//    vec4 color = vec4(u_Color.x, u_Color.y, u_Color.z, 1.0);
-//    FragColor = color;
-    FragColor = texture(u_Texture, TexCoords);
+    // vec4 color = vec4(u_Color.x, u_Color.y, u_Color.z, 1.0);
+    vec4 color = vec4(u_Color.x, u_Color.y, u_Color.z, 1.0);
+    FragColor = color;
+    // FragColor = texture(u_Texture, TexCoords);
   }
 }

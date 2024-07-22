@@ -40,15 +40,15 @@ int main() {
   Texture textures;
   textures.shaderID = shader;
 
-  textures.Generate("res/textures/godot.png", 0);
-  textures.Generate("res/textures/lol.png", 1);
+  textures.Generate("res/textures/slage.png", 0);
+  textures.Generate("res/textures/portal_wall.png", 1);
 
   renderer.camera.Pos(glm::vec3(1, 0, 1));
   // backpack
   GameObject model(shader);
   model.InitModel();
   model.Color(glm::vec3(0.32,0.2,1));
-  model.IsLit(true);
+  model.IsLit(false);
   model.Scale(glm::vec3(0.2, 0.2, 0.2));
   model.Translate(glm::vec3(2, -0.2, 1));
   /* LEVEL GEN */ 
@@ -58,13 +58,11 @@ int main() {
   bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
   bulb.Translate(glm::vec3(1, 0.5, 1));
   GameObject floor(shader);
-  floor.IsLit(false);
   floor.Color(glm::vec3(1,0,0));
   floor.Translate(glm::vec3(1,-0.5,1));
   floor.Scale(glm::vec3(7,0.001,7));
   floor.Shininess(2);
   GameObject floor2(shader);
-  floor2.IsLit(false);
   floor2.Color(glm::vec3(0,0,1));
   floor2.Translate(glm::vec3(1,1,1));
   floor2.Scale(glm::vec3(6,0.001,6));
@@ -75,11 +73,34 @@ int main() {
     for (int j=1;j<level0Size+1;j++) {
       if (level0[i-1][j-1] == 1) {
         GameObject* wall = new GameObject(shader);  
-        wall->IsLit(false);
+        wall->IsTextured(true);
+        wall->Shininess(10);
         wall->Translate(glm::vec3(i, 0, j));
         wall->Translate(glm::vec3(-7, 0, -7));
         walls.push_back(wall);
       }
+    }
+  }
+  /* FLOOR GEN */
+  std::vector<GameObject*> floors;
+  for (int i=1;i<level0Size+1;i++) {
+    for (int j=1;j<level0Size+1;j++) {
+      GameObject* floor = new GameObject(shader);  
+      floor->Shininess(10);
+      floor->Translate(glm::vec3(i, 0, j));
+      floor->Translate(glm::vec3(-7, -1.5, -7));
+      floors.push_back(floor);
+    }
+  }
+  /* ROOF GEN */
+  std::vector<GameObject*> roofs;
+  for (int i=1;i<level0Size+1;i++) {
+    for (int j=1;j<level0Size+1;j++) {
+      GameObject* roof = new GameObject(shader);  
+      roof->Shininess(10);
+      roof->Translate(glm::vec3(i, 0, j));
+      roof->Translate(glm::vec3(-7, 2, -7));
+      roofs.push_back(roof);
     }
   }
 
@@ -88,7 +109,7 @@ int main() {
   glm::vec3 lightPos = glm::vec3(1, 0.5, 1);
   glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
   int u_LightColor = glGetUniformLocation(shader, "u_LightColor");
-  glm::vec3 lightColor = glm::vec3(0.43, 0, 0.44);
+  glm::vec3 lightColor = glm::vec3(0.43, 0.33, 0.44);
   glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
   glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
@@ -153,14 +174,19 @@ int main() {
     }
     /* DRAW FRAME */
     textures.Bind(0);
-    floor.Bind();
-    floor2.Bind();
     bulb.Bind();
     model.Bind();
 
     textures.Bind(1);
 
     for (auto it : walls) { 
+      it->Bind();
+    } 
+    textures.Bind(0);
+    for (auto it : floors) { 
+      it->Bind();
+    } 
+    for (auto it : roofs) { 
       it->Bind();
     } 
     renderer.ImGuiEnd();
@@ -172,6 +198,12 @@ int main() {
   // delete heap
   for (auto wall : walls) {
     delete wall;
+  }
+  for (auto floor : floors) {
+    delete floor;
+  }
+  for (auto roof : roofs) {
+    delete roof;
   }
   renderer.quit();
 }
