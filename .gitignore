@@ -1,6 +1,7 @@
 rend_test
 .DS_Store
 res/models/
+res/textures/
 build/
 .idea/
 Core3D.exe

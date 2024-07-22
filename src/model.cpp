@@ -25,8 +25,6 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
     aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
     m_Meshes.push_back(ProcessMesh(mesh, scene));
   }
-  std::cout << "meshes: " << node->mNumMeshes << std::endl;
-  std::cout << "children: " << node->mNumChildren << std::endl;
   // then do the same for each of its children
   // TODO TEMP TO PREVENT INFINITE LOOP
   for (unsigned int i = 0; i < node->mNumChildren; i++) {
@@ -34,7 +32,6 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
   }
 }
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
-  std::cout << "processing mesh" << std::endl;
   // data to fill
   std::vector<Vertex> vertices;
   std::vector<unsigned int> indices;

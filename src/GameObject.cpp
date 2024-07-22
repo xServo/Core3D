@@ -2,9 +2,9 @@
 #include "data.hpp"
 
 GameObject::GameObject(unsigned int shader)
-  : vao(d_Positions, 36, 6), ib(d_Indicies, 36) {
+  : vao(d_Positions, 36, 8), ib(d_Indicies, 36) {
     shaderID = shader;
-    m_Model = NULL;
+    m_Model = nullptr;
 
     int ID;
     m_Color = glm::vec3(1, 1, 1);
@@ -28,13 +28,11 @@ GameObject::GameObject(unsigned int shader)
 }
 
 GameObject::~GameObject() {
-  if (m_Model != NULL) {
-    delete m_Model;
-  }
+  delete m_Model;
 }
 
 void GameObject::InitModel() {
-  if (m_Model == NULL) {
+  if (m_Model == nullptr) {
     m_Model = new Model("res/models/backpack/backpack.obj"); 
   } else {
     std::cout << "Error, GameObject already contains model!" << std::endl;
@@ -42,7 +40,7 @@ void GameObject::InitModel() {
 }
 
 void GameObject::Bind() {
-  if (m_Model == NULL) {
+  if (m_Model == nullptr) {
     vao.Bind();
     ib.Bind();
   }
@@ -59,7 +57,7 @@ void GameObject::Bind() {
 }
 
 void GameObject::Draw() {
-  if (m_Model == NULL) {
+  if (m_Model == nullptr) {
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
   } else {
     m_Model->Draw();

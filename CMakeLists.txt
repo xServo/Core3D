@@ -3,7 +3,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(Core3D)
 
-
 # source
 file(GLOB_RECURSE SRC_FILES src/*.cpp)
 file(GLOB IMGUI_SRC_FILES vendor/imgui/*.cpp)

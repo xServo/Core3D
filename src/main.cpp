@@ -3,22 +3,17 @@
 #include <glfw3.h>
 #include <fstream>
 #include <string>
-#include <sstream>
 #include <vector>
 #include "Renderer.hpp"
-#include "VertexBuffer.hpp"
-#include "VertexArray.hpp"
 #include "GameObject.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "ShaderCompiler.hpp"
 #include "Input.hpp"
 #include "model.hpp"
 #include "level0.hpp"
+#include "stb_image.h"
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
@@ -41,17 +36,44 @@ int main() {
 
   unsigned int shader = renderer.shaderID;
 
-  // temp 
-  // Model ourModel("res/models/backpack/backpack.obj");
+  // TEMP Textures
+  // get id
+  unsigned int texID;
+  GLCall(glGenTextures(1, &texID));
+  GLCall(glBindTexture(GL_TEXTURE_2D, texID));
+  // transparency
+  GLCall(glEnable(GL_BLEND));
+  GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+  // set the texture wrapping parameters
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));	// set texture wrapping to GL_REPEAT (default wrapping method)
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+  // set texture filtering parameters
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST));
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+  // load image
+  int texWidth;
+  int texHeight;
+  int texNrChannels;
+  stbi_set_flip_vertically_on_load(1);
+  unsigned char *data = stbi_load("res/textures/doom_lava.png", &texWidth, &texHeight, &texNrChannels, 4);
+  std::cout << "height: " << texHeight
+            << " width: " << texWidth
+            << std::endl;
+  if (data) {
+    // gen texture and mipmap
+    GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
+    GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+  } else {
+    std::cout << "Error, failed to load texture!" << std::endl;
+  }
+  stbi_image_free(data);
+  // texture uniform
+  int u_Texture = glGetUniformLocation(shader, "u_Texture");
+  GLCall(glUniform1i(u_Texture, 0));
 
-
-  /* GameObject cube(shader); */
-  /* cube.Translate(glm::vec3(2,0,-9)); */
-  /* cube.Scale(glm::vec3(1,1.3,1)); */
-  /* cube.Color(glm::vec3(0.3, 0.77, 1)); */
+  GLCall(glActiveTexture(GL_TEXTURE0)); // activate the texture unit first before binding texture
 
   renderer.camera.Pos(glm::vec3(1, 0, 1));
-
   // backpack
   GameObject model(shader);
   model.InitModel();
@@ -81,6 +103,7 @@ int main() {
     for (int j=1;j<level0Size+1;j++) {
       if (level0[i-1][j-1] == 1) {
         GameObject* wall = new GameObject(shader);  
+        wall->IsLit(false);
         wall->Translate(glm::vec3(i, 0, j));
         wall->Translate(glm::vec3(-7, 0, -7));
         walls.push_back(wall);
