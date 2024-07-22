@@ -10,7 +10,7 @@ void Model::LoadModel(std::string path) {
   // check if root note loaded successfully
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
       !scene->mRootNode) {
-    std::cout << "ERROR Failed to load model! ASSIMP - " << import.GetErrorString() << std::endl;
+    std::cout << "Error, failed to load model! \nASSIMP - " << import.GetErrorString() << std::endl;
     return;
   }
   m_Directory = path.substr(0, path.find_last_of('/'));
@@ -33,13 +33,13 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene) {
 }
 Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   // data to fill
-  std::vector<Vertex> vertices;
+  std::vector<Mesh::Vertex> vertices;
   std::vector<unsigned int> indices;
-  std::vector<Texture> textures;
+  std::vector<Mesh::Texture> textures;
 
   // walk through each of the mesh's vertices
   for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-    Vertex vertex;
+    Mesh::Vertex vertex;
     glm::vec3 vector;  // we declare a placeholder vector since assimp uses its
                        // own vector class that doesn't directly convert to
                        // glm's vec3 class so we transfer the data to this
@@ -111,7 +111,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   /* textures.insert(textures.end(), heightMaps.begin(), heightMaps.end()); */
 
   if (false) {
-    for (const Vertex& vertex : vertices) {
+    for (const Mesh::Vertex& vertex : vertices) {
       std::cout << "Position: (" << vertex.Position.x << ", " << vertex.Position.y << ", " << vertex.Position.z << ")";
       std::cout << ", Normal: (" << vertex.Normal.x << ", " << vertex.Normal.y << ", " << vertex.Normal.z << ")";
       std::cout << std::endl;
@@ -125,12 +125,12 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene) {
   return Mesh(vertices, indices, textures);
 }
 
-std::vector<Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) {
-  std::vector<Texture> textures;
+std::vector<Mesh::Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName) {
+  std::vector<Mesh::Texture> textures;
   for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
     aiString str;
     mat->GetTexture(type, i, &str);
-    Texture texture;
+    Mesh::Texture texture;
     texture.ID = TextureFromFile(str.C_Str(), m_Directory);
     texture.Type = typeName;
     texture.Path = str.C_Str();

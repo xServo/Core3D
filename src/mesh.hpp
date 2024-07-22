@@ -7,16 +7,6 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-struct Vertex {
-  glm::vec3 Position;
-  glm::vec3 Normal;
-  /* glm::vec2 TexCoords; */
-};
-struct Texture {
-  unsigned int ID;
-  std::string Type;
-  std::string Path;
-};
 
 class Mesh {
   private:  
@@ -24,6 +14,17 @@ class Mesh {
     IndexBuffer ib;
   
   public:
+    struct Vertex {
+      glm::vec3 Position;
+      glm::vec3 Normal;
+      /* glm::vec2 TexCoords; */
+    };
+    struct Texture {
+      unsigned int ID;
+      std::string Type;
+      std::string Path;
+    };
+
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures; 
