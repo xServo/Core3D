@@ -49,6 +49,30 @@ void Texture::Bind(int slot) {
     case 1:
       GLCall(glActiveTexture(GL_TEXTURE1)); 
       return;
+    case 2:
+      GLCall(glActiveTexture(GL_TEXTURE2)); 
+      return;
+    case 3:
+      GLCall(glActiveTexture(GL_TEXTURE3)); 
+      return;
+    case 4:
+      GLCall(glActiveTexture(GL_TEXTURE4)); 
+      return;
+    case 5:
+      GLCall(glActiveTexture(GL_TEXTURE5)); 
+      return;
+    case 6:
+      GLCall(glActiveTexture(GL_TEXTURE6)); 
+      return;
+    case 7:
+      GLCall(glActiveTexture(GL_TEXTURE7)); 
+      return;
+    case 8:
+      GLCall(glActiveTexture(GL_TEXTURE8)); 
+      return;
+    case 9:
+      GLCall(glActiveTexture(GL_TEXTURE9)); 
+      return;
     default:
       std::cout << "Error, invalid slot!" << std::endl;
   }

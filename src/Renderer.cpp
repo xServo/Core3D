@@ -115,7 +115,7 @@ void Renderer::Projection() {
 }
 
 void Renderer::Shader() {
-  ShaderProgramSource source = ParseShader("res/shaders/basic.glsl");
+  ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
   shaderID = CreateShader(source.VertexSource, source.FragmentSource);
   glUseProgram(shaderID);
   camera.shaderID = shaderID;

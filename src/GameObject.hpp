@@ -47,5 +47,5 @@ class GameObject {
     void Scale(glm::vec3 scale);
     void IsLit(bool lit);
     void IsTextured(bool tex);
-    void InitModel();
+    void InitModel(std::string path);
 };

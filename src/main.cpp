@@ -42,13 +42,14 @@ int main() {
 
   textures.Generate("res/textures/slage.png", 0);
   textures.Generate("res/textures/portal_wall.png", 1);
+  textures.Generate("res/models/backpack/diffuse.jpg", 3);
 
   renderer.camera.Pos(glm::vec3(1, 0, 1));
   // backpack
   GameObject model(shader);
-  model.InitModel();
+  model.InitModel("res/models/backpack/backpack.obj");
   model.Color(glm::vec3(0.32,0.2,1));
-  model.IsLit(false);
+  model.IsLit(true);
   model.Scale(glm::vec3(0.2, 0.2, 0.2));
   model.Translate(glm::vec3(2, -0.2, 1));
   /* LEVEL GEN */ 
@@ -175,6 +176,7 @@ int main() {
     /* DRAW FRAME */
     textures.Bind(0);
     bulb.Bind();
+    textures.Bind(3);
     model.Bind();
 
     textures.Bind(1);

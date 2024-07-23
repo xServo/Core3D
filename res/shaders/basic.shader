@@ -32,6 +32,7 @@ in vec2 TexCoords;
 struct Material {
   float shininess;
 };
+struct PointLight
 uniform Material material;
 uniform int u_IsLit;
 uniform int u_IsTextured;

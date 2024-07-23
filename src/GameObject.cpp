@@ -33,9 +33,9 @@ GameObject::~GameObject() {
   delete m_Model;
 }
 
-void GameObject::InitModel() {
+void GameObject::InitModel(std::string path) {
   if (m_Model == nullptr) {
-    m_Model = new Model("res/models/backpack/backpack.obj"); 
+    m_Model = new Model(path.c_str()); 
   } else {
     std::cout << "Error, GameObject already contains model!" << std::endl;
   }
