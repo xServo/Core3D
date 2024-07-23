@@ -55,9 +55,15 @@ int main() {
   /* LEVEL GEN */ 
   // TODO MAKE THIS A CLASS
   GameObject bulb(shader);
+  bulb.Color(glm::vec3(0.53, 0.13, 0.54));
   bulb.IsLit(false);
   bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
   bulb.Translate(glm::vec3(1, 0.5, 1));
+  GameObject bulb2(shader);
+  bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
+  bulb2.IsLit(false);
+  bulb2.Scale(glm::vec3(0.1, 0.1, 0.1));
+  bulb2.Translate(glm::vec3(4, 0.5, 4));
   GameObject floor(shader);
   floor.Color(glm::vec3(1,0,0));
   floor.Translate(glm::vec3(1,-0.5,1));
@@ -106,11 +112,19 @@ int main() {
   }
 
   // TODO temp lighting
-  int u_LightPos = glGetUniformLocation(shader, "u_LightPos");
+  int u_LightPos = glGetUniformLocation(shader, "lights[0].lightPos");
   glm::vec3 lightPos = glm::vec3(1, 0.5, 1);
   glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
-  int u_LightColor = glGetUniformLocation(shader, "u_LightColor");
-  glm::vec3 lightColor = glm::vec3(0.43, 0.33, 0.44);
+  int u_LightColor = glGetUniformLocation(shader, "lights[0].lightColor");
+  glm::vec3 lightColor = glm::vec3(0.53, 0.13, 0.54);
+  glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
+
+  // TODO temp lighting
+  u_LightPos = glGetUniformLocation(shader, "lights[1].lightPos");
+  lightPos = glm::vec3(4, 0.5, 4);
+  glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
+  u_LightColor = glGetUniformLocation(shader, "lights[1].lightColor");
+  lightColor = glm::vec3(0.13, 0.43, 0.54);
   glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
   glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
@@ -176,6 +190,7 @@ int main() {
     /* DRAW FRAME */
     textures.Bind(0);
     bulb.Bind();
+    bulb2.Bind();
     textures.Bind(3);
     model.Bind();
 
