@@ -30,8 +30,9 @@ int main() {
   // TODO ImGUI
   // TODO input class;  TODO DONE
   // TODO model loading; TODO DONE
-  // TODO textures 
+  // TODO textures    TODO DONE
   // TODO model textures 
+  // TODO Scene loader
   Input::lastX = SCREEN_WIDTH/2;  // init cursor pos
   Input::lastY = SCREEN_HEIGHT/2; // init cursor pos
 
@@ -124,7 +125,7 @@ int main() {
   lightPos = glm::vec3(4, 0.5, 4);
   glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
   u_LightColor = glGetUniformLocation(shader, "lights[1].lightColor");
-  lightColor = glm::vec3(0.13, 0.43, 0.54);
+  lightColor = glm::vec3(0.13, 0.53, 0.33);
   glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
 
   glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback

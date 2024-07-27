@@ -94,6 +94,8 @@ void Renderer::init() {
       }
     }
   }
+
+  GLCall(glEnable(GL_CULL_FACE));
 }
 
 void Renderer::quit() {
