@@ -4,6 +4,7 @@
 #include "Renderer.hpp"
 #include "ShaderCompiler.hpp"
 
+/* ---------------------------GL DEBUGGING---------------------------- */
 void GLClearError() {
   while(glGetError());
 }
@@ -15,8 +16,17 @@ bool GLLogCall(const char* function, const char* file, int line) {
   return true;
 }
 
+/* ---------------------------PUBLIC---------------------------- */
+Renderer::Renderer(const int WIDTH, const int HEIGHT)
+: SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), editor() {
+  GLFWwindow* gWindow = NULL;
+  isUI = true;
+  Init();
+  Shader();
+  Projection();
+}
 
-void Renderer::ImGuiInit() { 
+void Renderer::ImGuiInit() {
   // Setup Dear ImGui context
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -26,6 +36,12 @@ void Renderer::ImGuiInit() {
   // Setup Platform/Renderer backends
   ImGui_ImplGlfw_InitForOpenGL(gWindow, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
   ImGui_ImplOpenGL3_Init();
+  ImVec4 windowBgColor = ImVec4(0.2f, 0.2f, 0.2f, 1.0f); // Dark gray background
+  ImVec4 textColor = ImVec4(0.0f, 1.0f, 1.0f, 1.0f);     // Yellow text
+  ImVec4 menuBarColor = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // Blue color for the menu bar
+  ImGui::PushStyleColor(ImGuiCol_MenuBarBg, menuBarColor);
+  ImGui::PushStyleColor(ImGuiCol_WindowBg, windowBgColor);
+  ImGui::PushStyleColor(ImGuiCol_Text, textColor);
 }
 
 void Renderer::ImGui() {
@@ -33,7 +49,13 @@ void Renderer::ImGui() {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
-  ImGui::ShowDemoWindow(); // Show demo window! :)
+
+  /* ImGui::ShowDemoWindow(); // Show demo window! :) */
+  if (isUI) {
+    editor.UILoop();
+  }
+
+                           // ImGui::Text("Hello, world %d", 123);
 }
 void Renderer::ImGuiEnd() {
   // Rendering
@@ -42,6 +64,7 @@ void Renderer::ImGuiEnd() {
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
   // (Your code calls glfwSwapBuffers() etc.)
 }
+
 void Renderer::Draw() {
   glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
   // GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
@@ -67,7 +90,15 @@ void Renderer::Wireframe(bool flag) {
   }
 }
 
-void Renderer::init() {
+void Renderer::ToggleUI() {
+  if (isUI) {
+    isUI = false;
+  } else {
+    isUI = true;
+  }
+}
+
+void Renderer::Init() {
   if (!glfwInit()) {
     printf("Error! Failed to initialize gflw");
   } else {
@@ -98,7 +129,7 @@ void Renderer::init() {
   GLCall(glEnable(GL_CULL_FACE));
 }
 
-void Renderer::quit() {
+void Renderer::Quit() {
   printf("Quitting...\n");
   // imgui
   ImGui_ImplOpenGL3_Shutdown();
@@ -110,6 +141,13 @@ void Renderer::quit() {
   glfwTerminate();
 }
 
+ void Renderer::DeltaTime() {
+    double currentFrameTime = glfwGetTime();
+    deltaTime = currentFrameTime - m_LastFrameTime;
+    m_LastFrameTime = currentFrameTime;
+    camera.deltaTime = deltaTime;
+ }
+/* ---------------------------PRIVATE---------------------------- */
 void Renderer::Projection() {
   glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
   int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
@@ -123,9 +161,4 @@ void Renderer::Shader() {
   camera.shaderID = shaderID;
   camera.Bind();
 }
- void Renderer::DeltaTime() {
-    double currentFrameTime = glfwGetTime();
-    deltaTime = currentFrameTime - m_LastFrameTime;
-    m_LastFrameTime = currentFrameTime;
-    camera.deltaTime = deltaTime;
- }
+

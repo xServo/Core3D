@@ -6,6 +6,7 @@
 #include <vector>
 #include "Renderer.hpp"
 #include "GameObject.hpp"
+#include "editor.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -15,6 +16,7 @@
 #include "level0.hpp"
 #include "stb_image.h"
 #include "texture.hpp"
+#include "gl_assert.hpp"
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
@@ -112,6 +114,7 @@ int main() {
     }
   }
 
+  renderer.editor.AddObject(&bulb);
   // TODO temp lighting
   int u_LightPos = glGetUniformLocation(shader, "lights[0].lightPos");
   glm::vec3 lightPos = glm::vec3(1, 0.5, 1);
@@ -223,5 +226,5 @@ int main() {
   for (auto roof : roofs) {
     delete roof;
   }
-  renderer.quit();
+  renderer.Quit();
 }

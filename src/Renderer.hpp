@@ -2,61 +2,48 @@
 
 #include <iostream>
 #include <signal.h>
+#include <cmath>
 #include <glew.h>
 #include <glfw3.h>
-#include <vector>
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "Camera.hpp"
-#ifdef _WIN32
-#include <intrin.h>
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-          x;\
-          ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-#else
-#include <signal.h>
-#define ASSERT(x) if (!(x)) raise(SIGTRAP);
-#define GLCall(x) GLClearError();\
-      x;\
-      ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-#endif
-
-void GLClearError(); 
-bool GLLogCall(const char* function, const char* file, int line); 
+#include "editor.hpp"
+#include "gl_assert.hpp"
 
 class Renderer {
   public:
-    Renderer(const int WIDTH, const int HEIGHT)
-      : SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT) {
-        GLFWwindow* gWindow = NULL;
-        init();
-        Shader();
-        Projection();
-      }
+    Renderer(const int WIDTH, const int HEIGHT);
+    Editor editor;
+    // RENDER VARS
     GLFWwindow* gWindow;
     Camera camera;
-
+    // STATE VARS
     unsigned int shaderID;
     float deltaTime;
     bool isWireFrame;
+    bool isUI;
 
-    std::vector<int> objects;
-
-    void Draw();
-    void Swap();
-    void Clear();
+    // STATE
     void Wireframe(bool flag);
+    void ToggleUI();
     void DeltaTime();
-    void init();
-    void quit();
+
+    // IMGUI
     void ImGui();
     void ImGuiInit();
     void ImGuiEnd();
+    void ImGuiUI();
+
+    // RENDER
+    void Draw();
+    void Swap();
+    void Clear();
+    // CORE
+    void Init();
+    void Quit();
 
   private:
     const int SCREEN_WIDTH;

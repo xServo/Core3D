@@ -83,8 +83,17 @@ void GameObject::Rotate(float theta, glm::vec3 rotationAxis) {
 }
 
 void GameObject::Translate(glm::vec3 translate) {
+  if (translate == glm::vec3(0, 0, 0)) {
+    return;
+  }
   m_Position += translate;
   m_Translate = glm::translate(m_Translate, m_Position);
+  glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
+}
+
+void GameObject::SetPos(glm::vec3 pos) {
+  m_Position = pos;
+  m_Translate = glm::translate(glm::mat4(1), m_Position);
   glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
 }
 
@@ -103,3 +112,6 @@ void GameObject::IsTextured(bool tex) {
   glUniform1i(u_IsTextured, m_IsTextured);
 }
 
+glm::vec3 GameObject::GetPos() {
+  return m_Position;
+}

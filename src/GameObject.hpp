@@ -5,7 +5,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
-#include "Renderer.hpp"
+#include "gl_assert.hpp"
 #include "model.hpp"
 
 class GameObject {
@@ -44,8 +44,10 @@ class GameObject {
     void Draw();
     void Rotate(float theta, glm::vec3 rotationAxis);
     void Translate(glm::vec3 translate);
+    void SetPos(glm::vec3 pos);
     void Scale(glm::vec3 scale);
     void IsLit(bool lit);
     void IsTextured(bool tex);
     void InitModel(std::string path);
+    glm::vec3 GetPos();
 };
