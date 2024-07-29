@@ -32,6 +32,8 @@ void Renderer::ImGuiInit() {
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+  // disable ini files
+  io.IniFilename = NULL;
   /* io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls */
   // Setup Platform/Renderer backends
   ImGui_ImplGlfw_InitForOpenGL(gWindow, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.

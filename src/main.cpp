@@ -18,8 +18,8 @@
 #include "texture.hpp"
 #include "gl_assert.hpp"
 
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = 1440;
+const int SCREEN_HEIGHT = 900;
 Renderer renderer(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main() {
@@ -58,15 +58,21 @@ int main() {
   /* LEVEL GEN */ 
   // TODO MAKE THIS A CLASS
   GameObject bulb(shader);
+  renderer.editor.AddObject(&bulb);
+  bulb.name = "Bulb";
   bulb.Color(glm::vec3(0.53, 0.13, 0.54));
   bulb.IsLit(false);
   bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
   bulb.Translate(glm::vec3(1, 0.5, 1));
+  bulb.InitLight(0);
   GameObject bulb2(shader);
+  renderer.editor.AddObject(&bulb2);
+  bulb2.name = "Bulb2";
   bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
   bulb2.IsLit(false);
   bulb2.Scale(glm::vec3(0.1, 0.1, 0.1));
   bulb2.Translate(glm::vec3(4, 0.5, 4));
+  bulb2.InitLight(1);
   GameObject floor(shader);
   floor.Color(glm::vec3(1,0,0));
   floor.Translate(glm::vec3(1,-0.5,1));
@@ -114,22 +120,13 @@ int main() {
     }
   }
 
-  renderer.editor.AddObject(&bulb);
-  // TODO temp lighting
-  int u_LightPos = glGetUniformLocation(shader, "lights[0].lightPos");
-  glm::vec3 lightPos = glm::vec3(1, 0.5, 1);
-  glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
-  int u_LightColor = glGetUniformLocation(shader, "lights[0].lightColor");
-  glm::vec3 lightColor = glm::vec3(0.53, 0.13, 0.54);
-  glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
-
-  // TODO temp lighting
-  u_LightPos = glGetUniformLocation(shader, "lights[1].lightPos");
-  lightPos = glm::vec3(4, 0.5, 4);
-  glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z);
-  u_LightColor = glGetUniformLocation(shader, "lights[1].lightColor");
-  lightColor = glm::vec3(0.13, 0.53, 0.33);
-  glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z);
+  /* // TODO temp lighting */
+  /* u_LightPos = glGetUniformLocation(shader, "lights[1].lightPos"); */
+  /* lightPos = glm::vec3(4, 0.5, 4); */
+  /* glUniform3f(u_LightPos, lightPos.x, lightPos.y, lightPos.z); */
+  /* u_LightColor = glGetUniformLocation(shader, "lights[1].lightColor"); */
+  /* lightColor = glm::vec3(0.13, 0.53, 0.33); */
+  /* glUniform3f(u_LightColor, lightColor.x, lightColor.y, lightColor.z); */
 
   glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
   glfwSetCursorPosCallback(renderer.gWindow, Input::MouseCallback);   // mouse callback
@@ -166,6 +163,10 @@ int main() {
           renderer.camera.MoveDown();
           break;  
         case 'e':
+          renderer.ToggleUI();
+          Input::keyPressed = "";
+          break;
+        case 'r':
           if (renderer.isWireFrame)
             renderer.Wireframe(false);
           else

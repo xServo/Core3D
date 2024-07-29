@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
@@ -7,6 +8,7 @@
 #include "IndexBuffer.hpp"
 #include "gl_assert.hpp"
 #include "model.hpp"
+#include "LightObject.hpp"
 
 class GameObject {
   private:
@@ -20,6 +22,9 @@ class GameObject {
     glm::vec3 m_Color;
     bool m_IsLit;
     bool m_IsTextured;
+    /* CHILDREN */
+    bool m_hasLight;
+    std::unique_ptr<LightObject> m_Light;
     /* MATRICES */ 
     glm::mat4 m_Rotate; 
     glm::mat4 m_Translate; 
@@ -34,10 +39,11 @@ class GameObject {
     int u_Scale;
 
   public: 
+    unsigned int shaderID;
+    std::string name;
+
     GameObject(unsigned int shader);
     ~GameObject();
-    unsigned int shaderID;
-    int ID;
     void Color(glm::vec3 color);
     void Shininess(float shine);
     void Bind();
@@ -49,5 +55,7 @@ class GameObject {
     void IsLit(bool lit);
     void IsTextured(bool tex);
     void InitModel(std::string path);
+    void InitLight(unsigned int id);
     glm::vec3 GetPos();
+    glm::vec3 GetColor();
 };

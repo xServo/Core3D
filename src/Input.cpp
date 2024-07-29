@@ -25,6 +25,12 @@ namespace Input {
         if (action == GLFW_RELEASE)
           Search('e');
         break;
+      case GLFW_KEY_R:
+        if (action == GLFW_PRESS)
+          keyPressed = "r";
+        if (action == GLFW_RELEASE)
+          Search('r');
+        break;
       case GLFW_KEY_W:
         if (action == GLFW_PRESS)
           keyPressed += "w";
