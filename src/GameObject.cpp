@@ -41,8 +41,8 @@ void GameObject::InitModel(std::string path) {
   }
 }
 
-void GameObject::InitLight(unsigned int id) {
-  m_Light = std::make_unique<LightObject>(shaderID, id);
+void GameObject::InitLight(unsigned int lightID) {
+  m_Light = std::make_unique<LightObject>(shaderID, lightID);
   m_Light -> SetColor(m_Color);
   m_Light -> SetPos(m_Position);
 }

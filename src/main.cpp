@@ -58,21 +58,22 @@ int main() {
   /* LEVEL GEN */ 
   // TODO MAKE THIS A CLASS
   GameObject bulb(shader);
-  renderer.editor.AddObject(&bulb);
   bulb.name = "Bulb";
   bulb.Color(glm::vec3(0.53, 0.13, 0.54));
   bulb.IsLit(false);
   bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
   bulb.Translate(glm::vec3(1, 0.5, 1));
   bulb.InitLight(0);
+  renderer.editor.AddObject(&bulb);
+  /* TODO editor::AddObject needs to be called LAST this is not good */
   GameObject bulb2(shader);
-  renderer.editor.AddObject(&bulb2);
   bulb2.name = "Bulb2";
   bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
   bulb2.IsLit(false);
   bulb2.Scale(glm::vec3(0.1, 0.1, 0.1));
   bulb2.Translate(glm::vec3(4, 0.5, 4));
   bulb2.InitLight(1);
+  renderer.editor.AddObject(&bulb2);
   GameObject floor(shader);
   floor.Color(glm::vec3(1,0,0));
   floor.Translate(glm::vec3(1,-0.5,1));

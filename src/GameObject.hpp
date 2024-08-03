@@ -40,6 +40,7 @@ class GameObject {
 
   public: 
     unsigned int shaderID;
+    unsigned int editorID;
     std::string name;
 
     GameObject(unsigned int shader);
@@ -55,7 +56,7 @@ class GameObject {
     void IsLit(bool lit);
     void IsTextured(bool tex);
     void InitModel(std::string path);
-    void InitLight(unsigned int id);
+    void InitLight(unsigned int lightID);
     glm::vec3 GetPos();
     glm::vec3 GetColor();
 };
