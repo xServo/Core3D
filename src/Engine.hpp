@@ -17,13 +17,51 @@
 #include "model.hpp"
 #include "level0.hpp"
 #include "stb_image.h"
-#include "texture.hpp"
 #include "gl_assert.hpp"
 
+// subsystems
+// texture manager
+// Renderer
+// model loader
+
+struct ObjectAttrib {
+  unsigned int editorID;
+  unsigned int shaderID;
+  unsigned int lightID;
+  std::string name;
+  glm::vec3 pos;
+  glm::vec3 color = glm::vec3(1,1,1);
+  glm::vec3 size = glm::vec3(1,1,1);
+  bool isLit = true;
+  bool isLight = false;
+  int textureSlot;
+  /* TODO BIND TEXTURE ON DRAW OF GAMEOBJECT */
+};
 class Engine {
   private:
-    // tmp 
+    const int SCREEN_HEIGHT;
+    const int SCREEN_WIDTH;
+    /* SUBSYSTEMS */
+    Renderer renderer;
+    unsigned int shader;
+
     void LoadScene();
-  public
-    Update();
+    void KeyBindings();
+
+    Engine();
+    ~Engine();
+  public:
+    static Engine& Instance() {
+        static Engine INSTANCE;
+        return INSTANCE;
+    }  
+    /* OBJ MANAGEMENT */
+    void AddObject(GameObject* obj);
+    void MapAttrib(GameObject* obj);
+    GameObject* LoadObject(ObjectAttrib attrib);
+    /* OBJ CONTAINERS */
+    std::vector<GameObject*> objects;
+    std::unordered_map<GameObject*, ObjectAttrib> attribMap;
+    /* CORE */ 
+    void Init();
 };

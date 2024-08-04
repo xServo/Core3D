@@ -1,10 +1,13 @@
 #pragma once
-
 #include <iostream>
+#include <sstream>
+#include <fstream>
 #include <signal.h>
 #include <cmath>
 #include <glew.h>
 #include <glfw3.h>
+#include "ShaderCompiler.hpp"
+#include "texture.hpp"
 #include "glm/glm.hpp"
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -12,36 +15,39 @@
 #include "Camera.hpp"
 #include "editor.hpp"
 #include "gl_assert.hpp"
+#include "GameObject.hpp"
 
 class Renderer {
   public:
     Renderer(const int WIDTH, const int HEIGHT);
     Editor editor;
-    // RENDER VARS
+    Texture textures;
+    /* RENDER VARS */
     GLFWwindow* gWindow;
     Camera camera;
-    // STATE VARS
+    /* STATE VARS */
     unsigned int shaderID;
     float deltaTime;
     bool isWireFrame;
     bool isUI;
 
-    // STATE
+    /* STATE */
     void Wireframe(bool flag);
     void ToggleUI();
     void DeltaTime();
 
-    // IMGUI
+    /* IMGUI */
     void ImGui();
     void ImGuiInit();
     void ImGuiEnd();
     void ImGuiUI();
 
-    // RENDER
+    /* RENDER */
     void Draw();
     void Swap();
     void Clear();
-    // CORE
+
+    /* CORE */
     void Init();
     void Quit();
 

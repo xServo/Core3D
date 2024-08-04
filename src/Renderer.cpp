@@ -1,29 +1,13 @@
-#include <iostream>
-#include <sstream>
-#include <fstream>
 #include "Renderer.hpp"
-#include "ShaderCompiler.hpp"
-
-/* ---------------------------GL DEBUGGING---------------------------- */
-void GLClearError() {
-  while(glGetError());
-}
-bool GLLogCall(const char* function, const char* file, int line) {
-  while(GLenum error = glGetError()) {
-    std::cout << "[OpenGL error] (" << error << ")" << function << " " << file << ":" << line << std::endl;
-    return false;
-  }
-  return true;
-}
-
 /* ---------------------------PUBLIC---------------------------- */
 Renderer::Renderer(const int WIDTH, const int HEIGHT)
-: SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), editor() {
-  GLFWwindow* gWindow = NULL;
+: SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), editor(), textures() {
+  GLFWwindow* gWindow = nullptr;
   isUI = true;
   Init();
   Shader();
   Projection();
+  textures.Init();
 }
 
 void Renderer::ImGuiInit() {
@@ -162,5 +146,6 @@ void Renderer::Shader() {
   glUseProgram(shaderID);
   camera.shaderID = shaderID;
   camera.Bind();
+  textures.shaderID = shaderID;
 }
 

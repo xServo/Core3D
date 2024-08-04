@@ -1,4 +1,4 @@
-#include "Renderer.hpp"
+#include "gl_assert.hpp"
 
 struct ShaderProgramSource {
   std::string VertexSource;

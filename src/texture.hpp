@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
-#include "Renderer.hpp"
+#include <string>
+#include <iostream>
+#include "gl_assert.hpp"
 #include "stb_image.h"
 
 class Texture {
@@ -12,4 +14,5 @@ class Texture {
     Texture();
     void Generate(std::string path, int slot);
     void Bind(int slot);
+    void Init();
 };

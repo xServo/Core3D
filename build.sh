@@ -1,3 +1,4 @@
+[ "$1" == "-c" ] && rm -rf ./build/* && echo "./Build cleaned" && exit 0
 cmake -B build || exit 0
 cd build
 make || exit 0

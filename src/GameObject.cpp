@@ -10,7 +10,7 @@ GameObject::GameObject(unsigned int shader)
     m_Color = glm::vec3(1, 1, 1);
     m_Shininess = 16;
     m_IsLit = true;
-    m_IsTextured = true;
+    m_IsTextured = false;
     m_Position = glm::vec3(0, 0, 0);
     /* MATRICES */
     m_Rotate = glm::mat4(1); 
@@ -134,6 +134,15 @@ void GameObject::IsLit(bool lit) {
 void GameObject::IsTextured(bool tex) {
   m_IsTextured = tex;
   glUniform1i(u_IsTextured, m_IsTextured);
+}
+
+void GameObject::TextureSlot(int tex) {
+  if (tex == -1) {
+    IsTextured(false);
+  } else {
+    IsTextured(true);
+    m_TextureSlot = tex;
+  }
 }
 
 glm::vec3 GameObject::GetPos() {

@@ -22,6 +22,7 @@ class GameObject {
     glm::vec3 m_Color;
     bool m_IsLit;
     bool m_IsTextured;
+    int m_TextureSlot;
     glm::vec3 m_Size;
     /* CHILDREN */
     bool m_hasLight;
@@ -57,6 +58,7 @@ class GameObject {
     void SetSize(glm::vec3 scale);
     void IsLit(bool lit);
     void IsTextured(bool tex);
+    void TextureSlot(int tex);
     void InitModel(std::string path);
     void InitLight(unsigned int lightID);
     glm::vec3 GetPos();

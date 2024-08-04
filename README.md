@@ -19,4 +19,4 @@
 #### MacOS
 1. Install **Homebrew** and **CMake**
 2. ``brew install glfw GLEW assimp``
-3. ``./build.sh``
+3. ``./build.sh -r``

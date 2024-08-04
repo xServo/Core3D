@@ -1,6 +1,10 @@
 #include "texture.hpp"
 
 Texture::Texture() {
+
+}
+
+void Texture::Init() {
   u_Texture = glGetUniformLocation(shaderID, "u_Texture");
   // transparency
   GLCall(glEnable(GL_BLEND));
