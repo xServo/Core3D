@@ -5,6 +5,7 @@
 
 class Texture {
   private:
+    int u_Texture;
     
   public:  
     unsigned int shaderID;

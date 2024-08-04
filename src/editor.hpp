@@ -16,9 +16,16 @@ class Editor {
     void MapAttrib(GameObject* obj);
   public:
     struct ObjectAttrib {
-      unsigned int id;
+      unsigned int editorID;
+      unsigned int shaderID;
+      unsigned int lightID;
+      std::string name;
       glm::vec3 pos;
-      glm::vec3 color;
+      glm::vec3 color = glm::vec3(1,1,1);
+      glm::vec3 size = glm::vec3(1,1,1);
+      bool isLit = true;
+      bool isLight = false;
+      bool isTextured;
     };
     Editor();
     ~Editor();
@@ -28,5 +35,5 @@ class Editor {
     void AddObject(GameObject* obj);
     // void GenObject(ObjectAttrib attrib);
     // void SaveObject();
-    // void LoadObject();
+    GameObject* LoadObject(ObjectAttrib attrib);
 };

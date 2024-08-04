@@ -5,7 +5,9 @@ Editor::Editor() {
 }
 
 Editor::~Editor() {
-
+  /* for (auto obj : objects) { */
+  /*   delete obj; */
+  /* } */
 }
 
 void Editor::AddObject(GameObject* obj) {
@@ -34,18 +36,31 @@ void Editor::UILoop() {
     if (ImGui::CollapsingHeader(title.c_str())) {
       /* attributes */ 
       /* pos */
-      glm::vec3 pos = obj->GetPos();
-      /* color */ 
-      attribMap[obj].color = obj -> GetColor();
+      static glm::vec3 pos = obj->GetPos();
+      /* size */
+      glm::vec3 size = obj->GetSize();
+
       /* pos sliders */ 
-      bool b1 = ImGui::SliderFloat(("x pos##" + obj->name).c_str(), &pos.x, attribMap[obj].pos.x - 1.0f, attribMap[obj].pos.x + 1.0f);
-      bool b2 = ImGui::SliderFloat(("y pos##" + obj->name).c_str(), &pos.y, attribMap[obj].pos.y - 1.0f, attribMap[obj].pos.y + 1.0f);
-      bool b3 = ImGui::SliderFloat(("z pos##" + obj->name).c_str(), &pos.z, attribMap[obj].pos.z - 1.0f, attribMap[obj].pos.z + 1.0f);
-      if (b1 || b2 || b3) {
-        obj -> SetPos(glm::vec3(pos.x, pos.y, pos.z));
+      if (ImGui::CollapsingHeader(("\tPosition:##" + obj->name).c_str())) {
+        bool b1 = ImGui::SliderFloat(("x pos##" + obj->name).c_str(), &pos.x, attribMap[obj].pos.x - 1.0f, attribMap[obj].pos.x + 1.0f);
+        bool b2 = ImGui::SliderFloat(("y pos##" + obj->name).c_str(), &pos.y, attribMap[obj].pos.y - 1.0f, attribMap[obj].pos.y + 1.0f);
+        bool b3 = ImGui::SliderFloat(("z pos##" + obj->name).c_str(), &pos.z, attribMap[obj].pos.z - 1.0f, attribMap[obj].pos.z + 1.0f);
+        if (b1 || b2 || b3) {
+          obj->SetPos(glm::vec3(pos.x, pos.y, pos.z));
+          pos = obj->GetPos();
+        }
+      }
+      /* scale sliders */ 
+      if (ImGui::CollapsingHeader(("\tScale:##" + obj->name).c_str())) {
+        bool b1 = ImGui::SliderFloat(("x scale##" + obj->name).c_str(), &size.x, attribMap[obj].size.x - 1.0f, attribMap[obj].size.x + 1.0f);
+        bool b2 = ImGui::SliderFloat(("y scale##" + obj->name).c_str(), &size.y, attribMap[obj].size.y - 1.0f, attribMap[obj].size.y + 1.0f);
+        bool b3 = ImGui::SliderFloat(("z scale##" + obj->name).c_str(), &size.z, attribMap[obj].size.z - 1.0f, attribMap[obj].size.z + 1.0f);
+        if (b1 || b2 || b3) {
+          obj->SetSize(glm::vec3(size.x, size.y, size.z));
+        }
       }
       /* color picker */
-      if (ImGui::ColorPicker3()("Pick a color##" + obj->name).c_str(), &attribMap[obj].color.x, ImGuiColorEditFlags_NoInputs)) { // divine intellect $color.x is just the first value in the 3 float color thing
+      if (ImGui::ColorPicker3(("Pick a color##" + obj->name).c_str(), &attribMap[obj].color.x, ImGuiColorEditFlags_NoInputs)) { // divine intellect $color.x is just the first value in the 3 float color thing
         obj->Color(attribMap[obj].color);
       }
       cnt++;
@@ -64,5 +79,23 @@ void Editor::MapAttrib(GameObject* obj) {
   /* } */
   attrib.pos = obj->GetPos();
   attrib.color = obj->GetColor();
+  attrib.size = obj->GetSize();
+  attrib.isLit = obj->GetIsLit();
   attribMap[obj] = attrib; // divine intellect
+}
+
+GameObject* Editor::LoadObject(ObjectAttrib attrib) {
+  // note: created on heap
+  GameObject* obj = new GameObject(attrib.shaderID);
+  obj->name = attrib.name;
+  obj->Color(attrib.color);
+  obj->IsLit(attrib.isLit);
+  obj->SetSize(attrib.size);
+  obj->Translate(attrib.pos);
+  obj->IsTextured(attrib.isTextured);
+  if (attrib.isLight) {
+    obj->InitLight(attrib.lightID);
+  }
+  AddObject(obj);
+  return obj;
 }

@@ -1,6 +1,7 @@
 #include "texture.hpp"
 
 Texture::Texture() {
+  u_Texture = glGetUniformLocation(shaderID, "u_Texture");
   // transparency
   GLCall(glEnable(GL_BLEND));
   GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -40,7 +41,6 @@ void Texture::Generate(std::string path, int slot) {
 
 void Texture::Bind(int slot) {
   // texture uniform
-  int u_Texture = glGetUniformLocation(shaderID, "u_Texture");
   GLCall(glUniform1i(u_Texture, slot));
   switch (slot) {
     case 0:

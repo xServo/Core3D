@@ -53,15 +53,22 @@ int main() {
   model.InitModel("res/models/backpack/backpack.obj");
   model.Color(glm::vec3(0.32,0.2,1));
   model.IsLit(true);
-  model.Scale(glm::vec3(0.2, 0.2, 0.2));
+  model.SetSize(glm::vec3(0.2, 0.2, 0.2));
   model.Translate(glm::vec3(2, -0.2, 1));
   /* LEVEL GEN */ 
+  Editor::ObjectAttrib cubeAttrib;
+  cubeAttrib.name = "my cube";
+  cubeAttrib.pos = glm::vec3(1,0.5,1);
+  cubeAttrib.color = glm::vec3(1,0,1);
+  cubeAttrib.shaderID = shader;
+  cubeAttrib.isTextured = false;
+  GameObject* myCube = renderer.editor.LoadObject(cubeAttrib);
   // TODO MAKE THIS A CLASS
   GameObject bulb(shader);
   bulb.name = "Bulb";
   bulb.Color(glm::vec3(0.53, 0.13, 0.54));
   bulb.IsLit(false);
-  bulb.Scale(glm::vec3(0.1, 0.1, 0.1));
+  bulb.SetSize(glm::vec3(0.1, 0.1, 0.1));
   bulb.Translate(glm::vec3(1, 0.5, 1));
   bulb.InitLight(0);
   renderer.editor.AddObject(&bulb);
@@ -70,19 +77,19 @@ int main() {
   bulb2.name = "Bulb2";
   bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
   bulb2.IsLit(false);
-  bulb2.Scale(glm::vec3(0.1, 0.1, 0.1));
+  bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1));
   bulb2.Translate(glm::vec3(4, 0.5, 4));
   bulb2.InitLight(1);
   renderer.editor.AddObject(&bulb2);
   GameObject floor(shader);
   floor.Color(glm::vec3(1,0,0));
   floor.Translate(glm::vec3(1,-0.5,1));
-  floor.Scale(glm::vec3(7,0.001,7));
+  floor.SetSize(glm::vec3(7,0.001,7));
   floor.Shininess(2);
   GameObject floor2(shader);
   floor2.Color(glm::vec3(0,0,1));
   floor2.Translate(glm::vec3(1,1,1));
-  floor2.Scale(glm::vec3(6,0.001,6));
+  floor2.SetSize(glm::vec3(6,0.001,6));
   floor2.Shininess(2);
   /* WALL GEN */
   std::vector<GameObject*> walls;
@@ -199,6 +206,7 @@ int main() {
     bulb2.Bind();
     textures.Bind(3);
     model.Bind();
+    myCube->Bind();
 
     textures.Bind(1);
 

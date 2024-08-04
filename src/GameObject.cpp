@@ -113,7 +113,16 @@ void GameObject::SetPos(glm::vec3 pos) {
 }
 
 void GameObject::Scale(glm::vec3 scale) {
-  m_Scale = glm::scale(m_Scale, scale);
+  m_Scale = glm::mat4(1);
+  m_Size *= scale;
+  m_Scale = glm::scale(m_Scale, m_Size);
+  glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
+}
+
+void GameObject::SetSize(glm::vec3 scale) {
+  m_Scale = glm::mat4(1);
+  m_Size = scale;
+  m_Scale = glm::scale(m_Scale, m_Size);
   glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
 }
 
@@ -132,4 +141,12 @@ glm::vec3 GameObject::GetPos() {
 }
 glm::vec3 GameObject::GetColor() {
   return m_Color;
+}
+
+glm::vec3 GameObject::GetSize() {
+  return m_Size;
+}
+
+bool GameObject::GetIsLit() {
+  return m_IsLit;
 }
