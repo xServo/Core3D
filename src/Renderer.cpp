@@ -55,6 +55,16 @@ void Renderer::Draw() {
   glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
   // GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
 }
+
+void Renderer::DrawObjects(std::vector<GameObject*> objects) {
+  for (auto it : objects) {
+    if (it->GetIsLit() && it->GetTextureSlot() != textures.boundSlot) {
+      textures.Bind(it->GetTextureSlot());
+    }
+    it->Bind();
+  }
+}
+
 void Renderer::Swap() {
   // Enable depth test
   GLCall(glEnable(GL_DEPTH_TEST));

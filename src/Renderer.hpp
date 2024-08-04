@@ -44,6 +44,7 @@ class Renderer {
 
     /* RENDER */
     void Draw();
+    void DrawObjects(std::vector<GameObject*> objects);
     void Swap();
     void Clear();
 

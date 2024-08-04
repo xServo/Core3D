@@ -59,6 +59,7 @@ class GameObject {
     void IsLit(bool lit);
     void IsTextured(bool tex);
     void TextureSlot(int tex);
+    int GetTextureSlot();
     void InitModel(std::string path);
     void InitLight(unsigned int lightID);
     glm::vec3 GetPos();

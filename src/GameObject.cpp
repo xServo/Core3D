@@ -144,6 +144,9 @@ void GameObject::TextureSlot(int tex) {
     m_TextureSlot = tex;
   }
 }
+int GameObject::GetTextureSlot() {
+  return m_TextureSlot;
+}
 
 glm::vec3 GameObject::GetPos() {
   return m_Position;

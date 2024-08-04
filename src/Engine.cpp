@@ -44,13 +44,9 @@ void Engine::Init() {
   model.IsLit(true);
   model.SetSize(glm::vec3(0.2, 0.2, 0.2));
   model.Translate(glm::vec3(2, -0.2, 1));
+  model.TextureSlot(3);
+  AddObject(&model);
   /* LEVEL GEN */ 
-  ObjectAttrib cubeAttrib;
-  cubeAttrib.name = "my cube";
-  cubeAttrib.pos = glm::vec3(1,0.5,1);
-  cubeAttrib.color = glm::vec3(1,0,1);
-  cubeAttrib.shaderID = shader;
-  GameObject* myCube = LoadObject(cubeAttrib);
 
   GameObject bulb(shader);
   bulb.name = "Bulb";
@@ -59,8 +55,7 @@ void Engine::Init() {
   bulb.SetSize(glm::vec3(0.1, 0.1, 0.1));
   bulb.Translate(glm::vec3(1, 0.5, 1));
   bulb.InitLight(0);
-  /* renderer.editor.AddObject(&bulb); */
-  /* TODO editor::AddObject needs to be called LAST this is not good */
+  AddObject(&bulb);
   GameObject bulb2(shader);
   bulb2.name = "Bulb2";
   bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
@@ -68,52 +63,34 @@ void Engine::Init() {
   bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1));
   bulb2.Translate(glm::vec3(4, 0.5, 4));
   bulb2.InitLight(1);
-  /* renderer.editor.AddObject(&bulb2); */
-  GameObject floor(shader);
-  floor.Color(glm::vec3(1,0,0));
-  floor.Translate(glm::vec3(1,-0.5,1));
-  floor.SetSize(glm::vec3(7,0.001,7));
-  floor.Shininess(2);
-  GameObject floor2(shader);
-  floor2.Color(glm::vec3(0,0,1));
-  floor2.Translate(glm::vec3(1,1,1));
-  floor2.SetSize(glm::vec3(6,0.001,6));
-  floor2.Shininess(2);
-  /* END SCENE */
+  AddObject(&bulb2);
   /* WALL GEN */
-  std::vector<GameObject*> walls;
+  ObjectAttrib levelAttrib;
+  levelAttrib.shaderID = shader;
+  levelAttrib.shine = 10;
   for (int i=1;i<level0Size+1;i++) {
     for (int j=1;j<level0Size+1;j++) {
       if (level0[i-1][j-1] == 1) {
-        GameObject* wall = new GameObject(shader);  
-        wall->IsTextured(true);
-        wall->Shininess(10);
-        wall->Translate(glm::vec3(i, 0, j));
-        wall->Translate(glm::vec3(-7, 0, -7));
-        walls.push_back(wall);
+        levelAttrib.pos = glm::vec3((i*2)-7,0,(j*2)-7);
+        levelAttrib.textureSlot = 1;
+        objects.push_back(LoadObject(levelAttrib));
       }
     }
   }
   /* FLOOR GEN */
-  std::vector<GameObject*> floors;
   for (int i=1;i<level0Size+1;i++) {
     for (int j=1;j<level0Size+1;j++) {
-      GameObject* floor = new GameObject(shader);  
-      floor->Shininess(10);
-      floor->Translate(glm::vec3(i, 0, j));
-      floor->Translate(glm::vec3(-7, -1.5, -7));
-      floors.push_back(floor);
+      levelAttrib.pos = glm::vec3((i*2)-7,-1.5,(j*2)-7);
+      levelAttrib.textureSlot = 0;
+      objects.push_back(LoadObject(levelAttrib));
     }
   }
   /* ROOF GEN */
-  std::vector<GameObject*> roofs;
   for (int i=1;i<level0Size+1;i++) {
     for (int j=1;j<level0Size+1;j++) {
-      GameObject* roof = new GameObject(shader);  
-      roof->Shininess(10);
-      roof->Translate(glm::vec3(i, 0, j));
-      roof->Translate(glm::vec3(-7, 2, -7));
-      roofs.push_back(roof);
+      levelAttrib.pos = glm::vec3((i*2)-7,2,(j*2)-7);
+      levelAttrib.textureSlot = 0;
+      objects.push_back(LoadObject(levelAttrib));
     }
   }
   /* main loop */
@@ -130,25 +107,7 @@ void Engine::Init() {
     /* INPUT BINDS */
     KeyBindings();
     /* DRAW FRAME */
-    renderer.textures.Bind(0);
-    bulb.Bind();
-    bulb2.Bind();
-    renderer.textures.Bind(3);
-    model.Bind();
-    myCube->Bind();
-
-    renderer.textures.Bind(1);
-
-    for (auto it : walls) { 
-      it->Bind();
-    } 
-    renderer.textures.Bind(0);
-    for (auto it : floors) { 
-      it->Bind();
-    } 
-    for (auto it : roofs) { 
-      it->Bind();
-    } 
+    renderer.DrawObjects(objects);
     renderer.ImGuiEnd();
     renderer.Swap();
     // printf("hello world\n");
@@ -236,6 +195,9 @@ GameObject* Engine::LoadObject(ObjectAttrib attrib) {
   obj->IsLit(attrib.isLit);
   obj->SetSize(attrib.size);
   obj->Translate(attrib.pos);
+  if (attrib.shine != -1) {
+    obj->Shininess(attrib.shine);
+  }
   if (attrib.textureSlot != -1) {
     obj->IsTextured(true);
     obj->TextureSlot(attrib.textureSlot);

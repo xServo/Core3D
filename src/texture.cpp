@@ -44,6 +44,7 @@ void Texture::Generate(std::string path, int slot) {
 }
 
 void Texture::Bind(int slot) {
+  boundSlot = slot;
   // texture uniform
   GLCall(glUniform1i(u_Texture, slot));
   switch (slot) {

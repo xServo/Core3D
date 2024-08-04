@@ -31,6 +31,7 @@ struct ObjectAttrib {
   std::string name;
   glm::vec3 pos;
   glm::vec3 color = glm::vec3(1,1,1);
+  float shine = -1;
   glm::vec3 size = glm::vec3(1,1,1);
   bool isLit = true;
   bool isLight = false;

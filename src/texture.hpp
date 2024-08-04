@@ -11,6 +11,7 @@ class Texture {
     
   public:  
     unsigned int shaderID;
+    int boundSlot;
     Texture();
     void Generate(std::string path, int slot);
     void Bind(int slot);
