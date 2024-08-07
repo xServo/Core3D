@@ -35,7 +35,8 @@ GameObject::~GameObject() {
 
 void GameObject::InitModel(std::string path) {
   if (m_Model == nullptr) {
-    m_Model = new Model(path.c_str()); 
+    m_ModelPath = path;
+    m_Model = new Model(path.c_str());
   } else {
     std::cout << "Error, GameObject already contains model!" << std::endl;
   }
@@ -161,4 +162,8 @@ glm::vec3 GameObject::GetSize() {
 
 bool GameObject::GetIsLit() {
   return m_IsLit;
+}
+
+std::string GameObject::GetModelPath() {
+  return m_ModelPath;
 }

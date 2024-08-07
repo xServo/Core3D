@@ -12,6 +12,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include <array>
 #include "imgui.h"
 #include "Input.hpp"
 #include "model.hpp"
@@ -24,11 +25,13 @@
 // Renderer
 // model loader
 
+// must assign shaderID
 struct ObjectAttrib {
   unsigned int editorID;
-  unsigned int shaderID;
+  unsigned int shaderID = -1;
   unsigned int lightID;
   std::string name;
+  std::string modelPath;
   glm::vec3 pos;
   glm::vec3 color = glm::vec3(1,1,1);
   float shine = -1;
@@ -47,11 +50,15 @@ class Engine {
     unsigned int shader;
 
     void LoadScene();
+    void LoadLevel(const int level[7][7]);
     void KeyBindings();
+    void BeginFrame();
+    void EndFrame();
 
     Engine();
     ~Engine();
   public:
+    // singleton
     static Engine& Instance() {
         static Engine INSTANCE;
         return INSTANCE;
@@ -59,7 +66,7 @@ class Engine {
     /* OBJ MANAGEMENT */
     void AddObject(GameObject* obj);
     void MapAttrib(GameObject* obj);
-    GameObject* LoadObject(ObjectAttrib attrib);
+    GameObject* LoadObject(const ObjectAttrib &attrib);
     /* OBJ CONTAINERS */
     std::vector<GameObject*> objects;
     std::unordered_map<GameObject*, ObjectAttrib> attribMap;

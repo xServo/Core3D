@@ -1,7 +1,15 @@
 #include "Engine.hpp"
+// personal sceen size pref
+#ifdef _WIN32
+#define S_HEIGHT 1280
+#define S_WIDTH 2320
+#else
+#define S_HEIGHT 900
+#define S_WIDTH 1440
+#endif
 
 Engine::Engine() : 
-  SCREEN_WIDTH(1440), SCREEN_HEIGHT(900), renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
+  SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH), renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
   /* pre update loop things */
   Input::lastX = SCREEN_WIDTH/2;  // init cursor pos
   Input::lastY = SCREEN_HEIGHT/2; // init cursor pos
@@ -15,38 +23,37 @@ Engine::Engine() :
 }
 
 Engine::~Engine() {
-  /* // delete heap */
-  /* for (auto wall : walls) { */
-  /*   delete wall; */
-  /* } */
-  /* for (auto floor : floors) { */
-  /*   delete floor; */
-  /* for (auto roof : roofs) { */
-  /*   delete roof; */
-  /* } */
+  for (auto obj : objects) {
+    delete(obj);
+  }
   renderer.Quit();
 }
-
 
 void Engine::LoadScene() {
 }
 
 void Engine::Init() {
+
+  // TODO TODO TODO
+  // json with textures to load, level arr to load, specific objs to load
+  // game behavior (whats in the main loop/keybindings function)
+  // TODO TODO TODO
   // scene
   renderer.camera.Pos(glm::vec3(1, 0, 1));
   renderer.textures.Generate("res/textures/slage.png", 0);
   renderer.textures.Generate("res/textures/portal_wall.png", 1);
   renderer.textures.Generate("res/models/backpack/diffuse.jpg", 3);
+  /* LEVEL GEN */
+  LoadLevel(level0);
   // backpack
-  GameObject model(shader);
-  model.InitModel("res/models/backpack/backpack.obj");
-  model.Color(glm::vec3(0.32,0.2,1));
-  model.IsLit(true);
-  model.SetSize(glm::vec3(0.2, 0.2, 0.2));
-  model.Translate(glm::vec3(2, -0.2, 1));
-  model.TextureSlot(3);
-  AddObject(&model);
-  /* LEVEL GEN */ 
+  ObjectAttrib backpackAttrib;
+  backpackAttrib.color = glm::vec3(0.32,0.2,1);
+  backpackAttrib.modelPath = "res/models/backpack/backpack.obj";
+  backpackAttrib.size = glm::vec3(0.2, 0.2, 0.2);
+  backpackAttrib.pos = glm::vec3(2, -0.2, 1);
+  backpackAttrib.textureSlot = 3;
+  backpackAttrib.shaderID = shader;
+  GameObject* backpack = LoadObject(backpackAttrib);
 
   GameObject bulb(shader);
   bulb.name = "Bulb";
@@ -64,53 +71,15 @@ void Engine::Init() {
   bulb2.Translate(glm::vec3(4, 0.5, 4));
   bulb2.InitLight(1);
   AddObject(&bulb2);
-  /* WALL GEN */
-  ObjectAttrib levelAttrib;
-  levelAttrib.shaderID = shader;
-  levelAttrib.shine = 10;
-  for (int i=1;i<level0Size+1;i++) {
-    for (int j=1;j<level0Size+1;j++) {
-      if (level0[i-1][j-1] == 1) {
-        levelAttrib.pos = glm::vec3((i*2)-7,0,(j*2)-7);
-        levelAttrib.textureSlot = 1;
-        objects.push_back(LoadObject(levelAttrib));
-      }
-    }
-  }
-  /* FLOOR GEN */
-  for (int i=1;i<level0Size+1;i++) {
-    for (int j=1;j<level0Size+1;j++) {
-      levelAttrib.pos = glm::vec3((i*2)-7,-1.5,(j*2)-7);
-      levelAttrib.textureSlot = 0;
-      objects.push_back(LoadObject(levelAttrib));
-    }
-  }
-  /* ROOF GEN */
-  for (int i=1;i<level0Size+1;i++) {
-    for (int j=1;j<level0Size+1;j++) {
-      levelAttrib.pos = glm::vec3((i*2)-7,2,(j*2)-7);
-      levelAttrib.textureSlot = 0;
-      objects.push_back(LoadObject(levelAttrib));
-    }
-  }
+
   /* main loop */
   while (!glfwWindowShouldClose(renderer.gWindow)) {
-    /* BEGIN FRAME */
-    renderer.ImGui(); 
-    renderer.DeltaTime();
-    renderer.Clear();
-    /* ROTATE */ 
-    model.Rotate(renderer.deltaTime*10, glm::vec3(0,1,0));
-    /* HANDLE INPUT */
-    GLCall(glfwPollEvents());
-    renderer.camera.Look(Input::pitch, Input::yaw);
-    /* INPUT BINDS */
-    KeyBindings();
-    /* DRAW FRAME */
-    renderer.DrawObjects(objects);
-    renderer.ImGuiEnd();
-    renderer.Swap();
-    // printf("hello world\n");
+    BeginFrame();
+
+    // game loop stuff
+    backpack->Rotate(renderer.deltaTime*10, glm::vec3(0,1,0));
+
+    EndFrame();
   }
 }
 
@@ -184,27 +153,82 @@ void Engine::MapAttrib(GameObject* obj) {
   attrib.color = obj->GetColor();
   attrib.size = obj->GetSize();
   attrib.isLit = obj->GetIsLit();
+  attrib.modelPath = obj->GetModelPath();
   attribMap[obj] = attrib; // divine intellect
 }
 
-GameObject* Engine::LoadObject(ObjectAttrib attrib) {
-  // note: created on heap
+GameObject* Engine::LoadObject(const ObjectAttrib &attrib) {
+  ASSERT(attrib.shaderID != -1);
+
   GameObject* obj = new GameObject(attrib.shaderID);
   obj->name = attrib.name;
   obj->Color(attrib.color);
   obj->IsLit(attrib.isLit);
   obj->SetSize(attrib.size);
   obj->Translate(attrib.pos);
-  if (attrib.shine != -1) {
+
+  if (!attrib.modelPath.empty())
+    obj->InitModel(attrib.modelPath);
+  if (attrib.shine != -1)
     obj->Shininess(attrib.shine);
-  }
+  if (attrib.isLight)
+    ASSERT(attrib.lightID != -1);
+    obj->InitLight(attrib.lightID);
   if (attrib.textureSlot != -1) {
     obj->IsTextured(true);
     obj->TextureSlot(attrib.textureSlot);
   }
-  if (attrib.isLight) {
-    obj->InitLight(attrib.lightID);
-  }
+
   AddObject(obj);
   return obj;
+}
+
+void Engine::LoadLevel(const int levelArr[7][7]) {
+  int levelSize = 7;
+  /* WALL GEN */
+  ObjectAttrib levelAttrib;
+  levelAttrib.shaderID = shader;
+  levelAttrib.shine = 10;
+  for (int i=1;i<levelSize+1;i++) {
+    for (int j=1;j<levelSize+1;j++) {
+      if (levelArr[i-1][j-1] == 1) {
+        levelAttrib.pos = glm::vec3((i*2)-7,0,(j*2)-7);
+        levelAttrib.textureSlot = 1;
+        objects.push_back(LoadObject(levelAttrib));
+      }
+    }
+  }
+  /* FLOOR GEN */
+  for (int i=1;i<levelSize+1;i++) {
+    for (int j=1;j<levelSize+1;j++) {
+      levelAttrib.pos = glm::vec3((i*2)-7,-1.5,(j*2)-7);
+      levelAttrib.textureSlot = 0;
+      objects.push_back(LoadObject(levelAttrib));
+    }
+  }
+  /* ROOF GEN */
+  for (int i=1;i<levelSize+1;i++) {
+    for (int j=1;j<levelSize+1;j++) {
+      levelAttrib.pos = glm::vec3((i*2)-7,2,(j*2)-7);
+      levelAttrib.textureSlot = 0;
+      objects.push_back(LoadObject(levelAttrib));
+    }
+  }
+}
+
+void Engine::BeginFrame() {
+  renderer.ImGui();
+  renderer.DeltaTime();
+  renderer.Clear();
+
+  /* HANDLE INPUT */
+  GLCall(glfwPollEvents());
+  renderer.camera.Look(Input::pitch, Input::yaw);
+  KeyBindings();
+}
+
+void Engine::EndFrame() {
+  renderer.DrawObjects(objects);
+  renderer.ImGuiEnd();
+  renderer.Swap();
 }

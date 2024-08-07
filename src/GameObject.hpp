@@ -14,7 +14,8 @@ class GameObject {
   private:
     VertexArray vao; 
     IndexBuffer ib;
-    Model* m_Model; 
+    Model* m_Model;
+    std::string m_ModelPath;
 
     /* ATTRIBUTES */
     glm::vec3 m_Position;
@@ -66,4 +67,5 @@ class GameObject {
     glm::vec3 GetColor();
     glm::vec3 GetSize();
     bool GetIsLit();
+    std::string GetModelPath();
 };

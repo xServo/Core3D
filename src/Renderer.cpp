@@ -145,7 +145,7 @@ void Renderer::Quit() {
  }
 /* ---------------------------PRIVATE---------------------------- */
 void Renderer::Projection() {
-  glm::mat4 perspective = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, NEAR_PLANE, FAR_PLANE);
+  glm::mat4 perspective = glm::perspective(glm::radians(45.0f), static_cast<float>(SCREEN_WIDTH)/static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
   int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
   glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
 }
