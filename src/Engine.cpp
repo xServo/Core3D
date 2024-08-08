@@ -8,29 +8,30 @@
 #define S_WIDTH 1440
 #endif
 
-Engine::Engine() : 
-  SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH), renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
+Engine::Engine()
+    : SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH),
+      renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
   /* pre update loop things */
-  Input::lastX = SCREEN_WIDTH/2;  // init cursor pos
-  Input::lastY = SCREEN_HEIGHT/2; // init cursor pos
+  Input::lastX = float(SCREEN_WIDTH) / 2;  // init cursor pos
+  Input::lastY = float(SCREEN_HEIGHT) / 2; // init cursor pos
   /* set shader ids */
   shader = renderer.shaderID;
   /* init input callbacks */
-  glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
-  glfwSetCursorPosCallback(renderer.gWindow, Input::MouseCallback);   // mouse callback
+  glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback); // key callback
+  glfwSetCursorPosCallback(renderer.gWindow,
+                           Input::MouseCallback); // mouse callback
   /* init imgui */
   renderer.ImGuiInit();
 }
 
 Engine::~Engine() {
-  for (auto obj : objects) {
-    delete(obj);
+  if (saveEnabled) {
+    SaveObjects("res/save1.json");
   }
   renderer.Quit();
 }
 
-void Engine::LoadScene() {
-}
+void Engine::LoadScene() {}
 
 void Engine::Init() {
 
@@ -44,16 +45,19 @@ void Engine::Init() {
   renderer.textures.Generate("res/textures/portal_wall.png", 1);
   renderer.textures.Generate("res/models/backpack/diffuse.jpg", 3);
   /* LEVEL GEN */
-  LoadLevel(level0);
+  if (levelLoadingEnabled) {
+    LoadLevel(level0);
+  }
   // backpack
   ObjectAttrib backpackAttrib;
-  backpackAttrib.color = glm::vec3(0.32,0.2,1);
+  backpackAttrib.name = "Backpack";
+  backpackAttrib.color = glm::vec3(0.32, 0.2, 1);
   backpackAttrib.modelPath = "res/models/backpack/backpack.obj";
   backpackAttrib.size = glm::vec3(0.2, 0.2, 0.2);
   backpackAttrib.pos = glm::vec3(2, -0.2, 1);
   backpackAttrib.textureSlot = 3;
   backpackAttrib.shaderID = shader;
-  GameObject* backpack = LoadObject(backpackAttrib);
+  GameObject *backpack = LoadObject(backpackAttrib);
 
   GameObject bulb(shader);
   bulb.name = "Bulb";
@@ -72,83 +76,86 @@ void Engine::Init() {
   bulb2.InitLight(1);
   AddObject(&bulb2);
 
+  PreLoop();
   /* main loop */
   while (!glfwWindowShouldClose(renderer.gWindow)) {
     BeginFrame();
 
     // game loop stuff
-    backpack->Rotate(renderer.deltaTime*10, glm::vec3(0,1,0));
+    backpack->Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
 
     EndFrame();
   }
 }
 
 void Engine::KeyBindings() {
-    for (int i=0;i<Input::keyPressed.length();i++) {
+  for (int i = 0; i < Input::keyPressed.length(); i++) {
     switch (Input::keyPressed[i]) {
-      case 'w':
-        renderer.camera.MoveForward();
-        break;
-      case 's':
-        renderer.camera.MoveBackward();
-        break;
-      case 'a':
-        renderer.camera.MoveLeft();
-        break;  
-      case 'd':
-        renderer.camera.MoveRight();
-        break;  
-      case 't':
-        renderer.camera.MoveUp();
-        break;  
-      case 'g':
-        renderer.camera.MoveDown();
-        break;  
-      case 'e':
-        renderer.ToggleUI();
-        Input::keyPressed = "";
-        break;
-      case 'r':
-        if (renderer.isWireFrame)
-          renderer.Wireframe(false);
-        else
-          renderer.Wireframe(true);
-        Input::keyPressed = "";
-        break;
-      case Input::ESC:  
-        if (Input::isMouseLock == true) {
-          glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL); 
-          Input::isMouseLock = false;
-        } else if (Input::isMouseLock == false) {
-          glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
-          Input::ResetCursor();
-          Input::isMouseLock = true;
-        }
-        Input::keyPressed = "";
-        break;
-      case Input::SHIFT:  
-        renderer.camera.isRunning = true;
-        break;
-      case Input::SHIFT_REL:  // Shift release
-        renderer.camera.isRunning = false;
-        break;
+    case 'w':
+      renderer.camera.MoveForward();
+      break;
+    case 's':
+      renderer.camera.MoveBackward();
+      break;
+    case 'a':
+      renderer.camera.MoveLeft();
+      break;
+    case 'd':
+      renderer.camera.MoveRight();
+      break;
+    case 't':
+      renderer.camera.MoveUp();
+      break;
+    case 'g':
+      renderer.camera.MoveDown();
+      break;
+    case 'e':
+      renderer.ToggleUI();
+      Input::keyPressed = "";
+      break;
+    case 'r':
+      if (renderer.isWireFrame)
+        renderer.Wireframe(false);
+      else
+        renderer.Wireframe(true);
+      Input::keyPressed = "";
+      break;
+    case Input::ESC:
+      if (Input::isMouseLock == true) {
+        glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        Input::isMouseLock = false;
+      } else if (Input::isMouseLock == false) {
+        glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        Input::ResetCursor();
+        Input::isMouseLock = true;
+      }
+      Input::keyPressed = "";
+      break;
+    case Input::SHIFT:
+      renderer.camera.isRunning = true;
+      break;
+    case Input::SHIFT_REL: // Shift release
+      renderer.camera.isRunning = false;
+      break;
     }
   }
 }
 
 /* obj management */
-void Engine::AddObject(GameObject* obj) {
+void Engine::AddObject(GameObject *obj) {
   MapAttrib(obj);
   objects.push_back(obj);
 }
 
-void Engine::MapAttrib(GameObject* obj) {
+void Engine::MapAttrib(GameObject *obj) {
   ObjectAttrib attrib;
   /* if (obj->editorID != 0) { */
   /*   attrib.id = obj->editorID; */
   /* } else { */
-  /*   std::cout << "Error generating attributes! No editorID on GameObject" << std::endl; */
+  /*   std::cout << "Error generating attributes! No editorID on GameObject" <<
+   * std::endl; */
   /* } */
+  attrib.name = obj->GetName();
   attrib.pos = obj->GetPos();
   attrib.color = obj->GetColor();
   attrib.size = obj->GetSize();
@@ -157,11 +164,11 @@ void Engine::MapAttrib(GameObject* obj) {
   attribMap[obj] = attrib; // divine intellect
 }
 
-GameObject* Engine::LoadObject(const ObjectAttrib &attrib) {
+GameObject *Engine::LoadObject(const ObjectAttrib &attrib) {
   ASSERT(attrib.shaderID != -1);
 
-  GameObject* obj = new GameObject(attrib.shaderID);
-  obj->name = attrib.name;
+  GameObject *obj = new GameObject(attrib.shaderID);
+  obj->SetName(attrib.name);
   obj->Color(attrib.color);
   obj->IsLit(attrib.isLit);
   obj->SetSize(attrib.size);
@@ -173,7 +180,7 @@ GameObject* Engine::LoadObject(const ObjectAttrib &attrib) {
     obj->Shininess(attrib.shine);
   if (attrib.isLight)
     ASSERT(attrib.lightID != -1);
-    obj->InitLight(attrib.lightID);
+  obj->InitLight(attrib.lightID);
   if (attrib.textureSlot != -1) {
     obj->IsTextured(true);
     obj->TextureSlot(attrib.textureSlot);
@@ -189,30 +196,107 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
   ObjectAttrib levelAttrib;
   levelAttrib.shaderID = shader;
   levelAttrib.shine = 10;
-  for (int i=1;i<levelSize+1;i++) {
-    for (int j=1;j<levelSize+1;j++) {
-      if (levelArr[i-1][j-1] == 1) {
-        levelAttrib.pos = glm::vec3((i*2)-7,0,(j*2)-7);
+  for (int i = 1; i < levelSize + 1; i++) {
+    for (int j = 1; j < levelSize + 1; j++) {
+      if (levelArr[i - 1][j - 1] == 1) {
+        levelAttrib.name = "wall";
+        levelAttrib.pos = glm::vec3((i * 2) - 7, 0, (j * 2) - 7);
         levelAttrib.textureSlot = 1;
         objects.push_back(LoadObject(levelAttrib));
       }
     }
   }
   /* FLOOR GEN */
-  for (int i=1;i<levelSize+1;i++) {
-    for (int j=1;j<levelSize+1;j++) {
-      levelAttrib.pos = glm::vec3((i*2)-7,-1.5,(j*2)-7);
+  for (int i = 1; i < levelSize + 1; i++) {
+    for (int j = 1; j < levelSize + 1; j++) {
+      levelAttrib.name = "floor";
+      levelAttrib.pos = glm::vec3((i * 2) - 7, -1.5, (j * 2) - 7);
       levelAttrib.textureSlot = 0;
       objects.push_back(LoadObject(levelAttrib));
     }
   }
   /* ROOF GEN */
-  for (int i=1;i<levelSize+1;i++) {
-    for (int j=1;j<levelSize+1;j++) {
-      levelAttrib.pos = glm::vec3((i*2)-7,2,(j*2)-7);
+  for (int i = 1; i < levelSize + 1; i++) {
+    for (int j = 1; j < levelSize + 1; j++) {
+      levelAttrib.name = "roof";
+      levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7);
       levelAttrib.textureSlot = 0;
       objects.push_back(LoadObject(levelAttrib));
     }
+  }
+}
+
+void Engine::SaveObjects(std::string filePath) {
+  using json = nlohmann::json;
+  std::ofstream f(filePath);
+  if (!f.is_open()) {
+    std::cerr << "Error, could not open the file!" << std::endl;
+    return;
+  }
+
+  for (auto obj : objects) {
+    json o;
+    ObjectAttrib attrib = attribMap[obj];
+    o["name"] = attrib.name;
+    o["editorID"] = attrib.editorID;
+    o["shaderID"] = attrib.shaderID;
+    o["lightID"] = attrib.lightID;
+    o["pos"] = {attrib.pos.x, attrib.pos.y, attrib.pos.z};
+    o["size"] = {attrib.size.x, attrib.size.y, attrib.size.z};
+    o["textureSlot"] = attrib.textureSlot;
+    o["color"] = {attrib.color.x, attrib.color.y, attrib.color.z};
+    o["isLit"] = attrib.isLit;
+    o["isLight"] = attrib.isLight;
+    o["modelPath"] = attrib.modelPath;
+    o["shine"] = attrib.shine;
+    if (prettyJson) {
+      f << o.dump(2) << "\n";
+    } else {
+      f << o << "\n";
+    }
+  }
+
+  f.close();
+}
+
+void Engine::LoadObjects(const std::string &filePath) {
+  using json = nlohmann::json;
+  std::ifstream f(filePath);
+  if (!f.is_open()) {
+    std::cerr << "Error, could not open the file!" << std::endl;
+    return;
+  }
+
+  std::string line;
+  while (std::getline(f, line)) {
+    json j;
+    try {
+      j = json::parse(line);
+    } catch (json::parse_error &e) {
+      std::cerr << "JSON parse error: " << e.what() << std::endl;
+      continue;
+    }
+
+    ObjectAttrib attrib;
+    attrib.shaderID = 0;
+    /* TODO INTS DONT WORK */
+    attrib.name = j["name"];
+    /* attrib.pos = glm::vec3(j["pos"][0], j["pos"][1], j["pos"][2]); */
+    /* attrib.color = glm::vec3(j["color"][0], j["color"][1], j["color"][2]); */
+    /* attrib.size = glm::vec3(j["size"][0], j["size"][1], j["size"][2]); */
+
+    LoadObject(attrib);
+  }
+
+  f.close();
+}
+
+void Engine::PreLoop() {
+  /* PRELOOP */
+  /* PRELOOP */
+  /* PRELOOP */
+  if (loadEnabled) {
+    LoadObjects("res/save1.json");
   }
 }
 

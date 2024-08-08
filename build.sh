@@ -1,5 +1,5 @@
 [ "$1" == "-c" ] && rm -rf ./build/* && echo "./Build cleaned" && exit 0
-cmake -B build || exit 0
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ./ -B build || exit 0
 cd build
 make || exit 0
 if [ "$1" == "-r" ]; then

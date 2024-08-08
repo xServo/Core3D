@@ -4,5 +4,6 @@ res/models/
 res/textures/
 build/
 .idea/
+.cache/
 Core3D.exe
 Core3D

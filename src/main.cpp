@@ -1,7 +1,8 @@
 #include "Engine.hpp"
+float VERSION = 0.0f;
 
 int main() {
-  Engine& engine = Engine::Instance();
+  std::cout << "Core3D Version: " << VERSION << std::endl;
+  Engine &engine = Engine::Instance();
   engine.Init();
-  /* Engine::Instance().Init(); */
 }

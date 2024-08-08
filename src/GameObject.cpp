@@ -2,36 +2,34 @@
 #include "data.hpp"
 
 GameObject::GameObject(unsigned int shader)
-  : vao(d_Positions, 36, 8), ib(d_Indicies, 36) {
-    shaderID = shader;
-    m_Model = nullptr;
+    : vao(d_Positions, 36, 8), ib(d_Indicies, 36) {
+  shaderID = shader;
+  m_Model = nullptr;
 
-    int ID;
-    m_Color = glm::vec3(1, 1, 1);
-    m_Shininess = 16;
-    m_IsLit = true;
-    m_IsTextured = false;
-    m_Position = glm::vec3(0, 0, 0);
-    /* MATRICES */
-    m_Rotate = glm::mat4(1); 
-    m_Scale = glm::mat4(1);
-    m_Translate = glm::mat4(1);
+  int ID;
+  m_Color = glm::vec3(1, 1, 1);
+  m_Shininess = 16;
+  m_IsLit = true;
+  m_IsTextured = false;
+  m_Position = glm::vec3(0, 0, 0);
+  /* MATRICES */
+  m_Rotate = glm::mat4(1);
+  m_Scale = glm::mat4(1);
+  m_Translate = glm::mat4(1);
 
-    /* UNIFORMS */
-    u_Shininess = glGetUniformLocation(shaderID, "material.shininess");
-    u_Color = glGetUniformLocation(shaderID, "u_Color");
-    u_IsLit = glGetUniformLocation(shaderID, "u_IsLit");
-    u_IsTextured = glGetUniformLocation(shaderID, "u_IsTextured");
-    u_Rotate = glGetUniformLocation(shaderID, "u_Rotate");
-    u_Translate = glGetUniformLocation(shaderID, "u_Translate");
-    u_Scale = glGetUniformLocation(shaderID, "u_Scale");
+  /* UNIFORMS */
+  u_Shininess = glGetUniformLocation(shaderID, "material.shininess");
+  u_Color = glGetUniformLocation(shaderID, "u_Color");
+  u_IsLit = glGetUniformLocation(shaderID, "u_IsLit");
+  u_IsTextured = glGetUniformLocation(shaderID, "u_IsTextured");
+  u_Rotate = glGetUniformLocation(shaderID, "u_Rotate");
+  u_Translate = glGetUniformLocation(shaderID, "u_Translate");
+  u_Scale = glGetUniformLocation(shaderID, "u_Scale");
 
-    Bind();
+  Bind();
 }
 
-GameObject::~GameObject() {
-  delete m_Model;
-}
+GameObject::~GameObject() { delete m_Model; }
 
 void GameObject::InitModel(std::string path) {
   if (m_Model == nullptr) {
@@ -44,8 +42,8 @@ void GameObject::InitModel(std::string path) {
 
 void GameObject::InitLight(unsigned int lightID) {
   m_Light = std::make_unique<LightObject>(shaderID, lightID);
-  m_Light -> SetColor(m_Color);
-  m_Light -> SetPos(m_Position);
+  m_Light->SetColor(m_Color);
+  m_Light->SetPos(m_Position);
 }
 
 void GameObject::Bind() {
@@ -78,7 +76,7 @@ void GameObject::Color(glm::vec3 color) {
   m_Color = color;
   glUniform3f(u_Color, m_Color.x, m_Color.y, m_Color.z);
   if (m_Light != nullptr) {
-    m_Light -> SetColor(m_Color);
+    m_Light->SetColor(m_Color);
   }
 }
 
@@ -100,16 +98,18 @@ void GameObject::Translate(glm::vec3 translate) {
   m_Translate = glm::translate(m_Translate, m_Position);
   glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
   if (m_Light != nullptr) {
-    m_Light -> SetPos(m_Position);
+    m_Light->SetPos(m_Position);
   }
 }
+
+void GameObject::SetName(std::string name) { m_Name = name; }
 
 void GameObject::SetPos(glm::vec3 pos) {
   m_Position = pos;
   m_Translate = glm::translate(glm::mat4(1), m_Position);
   glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
   if (m_Light != nullptr) {
-    m_Light -> SetPos(m_Position);
+    m_Light->SetPos(m_Position);
   }
 }
 
@@ -145,25 +145,15 @@ void GameObject::TextureSlot(int tex) {
     m_TextureSlot = tex;
   }
 }
-int GameObject::GetTextureSlot() {
-  return m_TextureSlot;
-}
+int GameObject::GetTextureSlot() { return m_TextureSlot; }
 
-glm::vec3 GameObject::GetPos() {
-  return m_Position;
-}
-glm::vec3 GameObject::GetColor() {
-  return m_Color;
-}
+glm::vec3 GameObject::GetPos() { return m_Position; }
+glm::vec3 GameObject::GetColor() { return m_Color; }
 
-glm::vec3 GameObject::GetSize() {
-  return m_Size;
-}
+glm::vec3 GameObject::GetSize() { return m_Size; }
 
-bool GameObject::GetIsLit() {
-  return m_IsLit;
-}
+bool GameObject::GetIsLit() { return m_IsLit; }
 
-std::string GameObject::GetModelPath() {
-  return m_ModelPath;
-}
+std::string GameObject::GetModelPath() { return m_ModelPath; }
+
+std::string GameObject::GetName() { return m_Name; }
