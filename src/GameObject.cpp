@@ -40,7 +40,8 @@ void GameObject::InitModel(std::string path) {
   }
 }
 
-void GameObject::InitLight(unsigned int lightID) {
+void GameObject::InitLight(int lightID) {
+  m_LightID = lightID;
   m_Light = std::make_unique<LightObject>(shaderID, lightID);
   m_Light->SetColor(m_Color);
   m_Light->SetPos(m_Position);
@@ -55,8 +56,6 @@ void GameObject::Bind() {
   glUniform1f(u_Shininess, m_Shininess);
   glUniform3f(u_Color, m_Color.x, m_Color.y, m_Color.z);
   glUniform1i(u_IsLit, m_IsLit);
-  glUniform1i(u_IsTextured, m_IsTextured);
-  glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &m_Rotate[0][0]);
   glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
   glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
 
@@ -145,15 +144,13 @@ void GameObject::TextureSlot(int tex) {
     m_TextureSlot = tex;
   }
 }
-int GameObject::GetTextureSlot() { return m_TextureSlot; }
 
 glm::vec3 GameObject::GetPos() { return m_Position; }
 glm::vec3 GameObject::GetColor() { return m_Color; }
-
 glm::vec3 GameObject::GetSize() { return m_Size; }
-
 bool GameObject::GetIsLit() { return m_IsLit; }
-
 std::string GameObject::GetModelPath() { return m_ModelPath; }
-
 std::string GameObject::GetName() { return m_Name; }
+int GameObject::GetTextureSlot() { return m_TextureSlot; }
+float GameObject::GetShine() { return m_Shininess; }
+int GameObject::GetLightID() { return m_LightID; }

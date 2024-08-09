@@ -23,18 +23,16 @@
 // must assign shaderID
 struct ObjectAttrib {
   /* ID */
-  unsigned int editorID;
-  unsigned int shaderID = -1;
-  unsigned int lightID;
+  int editorID = -1;
+  int shaderID = -1; // unsigned
+  int lightID = -1;
   /* basic attributes */
   std::string name;
-  glm::vec3 pos;
+  glm::vec3 pos = glm::vec3(0, 0, 0);
   glm::vec3 size = glm::vec3(1, 1, 1);
   /* graphics */
   glm::vec3 color = glm::vec3(1, 1, 1);
   int textureSlot = -1;
-  bool isLit = true;
-  bool isLight = false;
   std::string modelPath;
   float shine = -1;
   /* TODO BIND TEXTURE ON DRAW OF GAMEOBJECT */
@@ -62,10 +60,10 @@ private:
   ~Engine();
 
 public:
-  bool levelLoadingEnabled = false;
+  bool levelLoadingEnabled = true;
   bool prettyJson = false;
-  bool saveEnabled = false;
-  bool loadEnabled = true;
+  bool saveEnabled = true;
+  bool loadEnabled = false;
   // singleton
   static Engine &Instance() {
     static Engine INSTANCE;
@@ -74,7 +72,7 @@ public:
   /* OBJ MANAGEMENT */
   void AddObject(GameObject *obj);
   void MapAttrib(GameObject *obj);
-  GameObject *LoadObject(const ObjectAttrib &attrib);
+  GameObject *LoadAttrib(const ObjectAttrib &attrib);
   /* OBJ CONTAINERS */
   std::vector<GameObject *> objects;
   std::unordered_map<GameObject *, ObjectAttrib> attribMap;

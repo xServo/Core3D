@@ -27,7 +27,8 @@ private:
   int m_TextureSlot;
   glm::vec3 m_Size;
   /* CHILDREN */
-  bool m_hasLight;
+  bool m_HasLight;
+  int m_LightID = -1;
   std::unique_ptr<LightObject> m_Light;
   /* MATRICES */
   glm::mat4 m_Rotate;
@@ -62,13 +63,15 @@ public:
   void IsLit(bool lit);
   void IsTextured(bool tex);
   void TextureSlot(int tex);
-  int GetTextureSlot();
   void InitModel(std::string path);
-  void InitLight(unsigned int lightID);
+  void InitLight(int lightID);
   glm::vec3 GetPos();
   glm::vec3 GetColor();
   glm::vec3 GetSize();
   bool GetIsLit();
   std::string GetModelPath();
   std::string GetName();
+  int GetTextureSlot();
+  float GetShine();
+  int GetLightID();
 };
