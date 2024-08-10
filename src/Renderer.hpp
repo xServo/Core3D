@@ -13,14 +13,12 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "Camera.hpp"
-#include "editor.hpp"
 #include "gl_assert.hpp"
 #include "GameObject.hpp"
 
 class Renderer {
   public:
     Renderer(const int WIDTH, const int HEIGHT);
-    Editor editor;
     Texture textures;
     /* RENDER VARS */
     GLFWwindow* gWindow;
@@ -33,7 +31,6 @@ class Renderer {
 
     /* STATE */
     void Wireframe(bool flag);
-    void ToggleUI();
     void DeltaTime();
 
     /* IMGUI */
@@ -55,8 +52,8 @@ class Renderer {
   private:
     const int SCREEN_WIDTH;
     const int SCREEN_HEIGHT;
-    const float NEAR_PLANE = 0.01; 
-    const float FAR_PLANE = 50;
+    const float NEAR_PLANE = 0.01f;
+    const float FAR_PLANE = 50.0f;
     float m_LastFrameTime;
 
     void Shader();

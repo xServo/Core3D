@@ -1,28 +1,47 @@
 #include "editor.hpp"
 
-Editor::Editor() {
+Editor::Editor(std::string VERSION)
+  : VERSION(VERSION)
+{
 
 }
 
-Editor::~Editor() {
-  /* for (auto obj : objects) { */
-  /*   delete obj; */
-  /* } */
-}
+Editor::~Editor() = default;
 
 
 void Editor::UILoop() {
-  /* // TODO RUN THROUGH OBJECTS AND INIT A VECTOR OF ATTRIBUTES */
+  // TODO PLAN
+  // TODO PLAN
+  // * attrib bool defining if obj is part of editor
+  // 1. loop through objects and find what is part of editor at construct
+  // 2. put those obj into an editor std vector by refrence so any changes apply
+  // 3. ? how to make this work while still using attribs on editor?
+  // # extra functionality
+  // * button to create object
+  // * fields to type in values for pos etc
+    // * sliders update upon field update
+  // make sure saving works
+  // TODO PLAN
+  // TODO PLAN
 
   /* // Create window with name */
-  /* ImGui::SetNextWindowSize(ImVec2(300, 400)); */
-  /* ImGui::SetNextWindowPos(ImVec2(0, 0)); */
-  /* std::string windowTitle = "Core3D Version 0. FPS: " + std::to_string(static_cast<int>(ImGui::GetIO().Framerate)); */
-  /* ImGui::Begin("Core3D Version 0");  // Create a window and append into it. */
-  /* // FPS */
-  /* int fps = static_cast<int>(ImGui::GetIO().Framerate); */
-  /* ImGui::Text("FPS: %i\n", fps);  // Display some text */
+  ImGui::SetNextWindowSize(ImVec2(300, 400));
+  ImGui::SetNextWindowPos(ImVec2(0, 0));
+  std::string windowTitle = "Core3D Version " + VERSION;
+  ImGui::Begin(windowTitle.c_str());  // Create a window and append into it.
+  // FPS
+  int fps = static_cast<int>(ImGui::GetIO().Framerate);
+  ImGui::Text("FPS: %i\n", fps);  // Display some text
 
+  std::string temp;
+  if (Engine::Instance().loadEnabled)
+    temp = "enabled";
+  else
+    temp = "disabled";
+
+  if (ImGui::CollapsingHeader(("Load Enabled? " + temp).c_str())) {
+    ImGui::Text("Hello world");
+  }
   /* std::vector<glm::vec3> colors; */
   /* // objects */
   /* int cnt = 0; */
@@ -63,5 +82,5 @@ void Editor::UILoop() {
   /*   } */
   /* } */
 
-  /* ImGui::End(); */
+  ImGui::End();
 }

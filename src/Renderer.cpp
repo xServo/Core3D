@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 /* ---------------------------PUBLIC---------------------------- */
 Renderer::Renderer(const int WIDTH, const int HEIGHT)
-: SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), editor(), textures() {
+: SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), textures() {
   GLFWwindow* gWindow = nullptr;
   isUI = true;
   Init();
@@ -35,13 +35,7 @@ void Renderer::ImGui() {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
-
   /* ImGui::ShowDemoWindow(); // Show demo window! :) */
-  if (isUI) {
-    editor.UILoop();
-  }
-
-                           // ImGui::Text("Hello, world %d", 123);
 }
 void Renderer::ImGuiEnd() {
   // Rendering
@@ -83,14 +77,6 @@ void Renderer::Wireframe(bool flag) {
   } else if (flag == false) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); // enable wireframe mode:w
     isWireFrame = false;
-  }
-}
-
-void Renderer::ToggleUI() {
-  if (isUI) {
-    isUI = false;
-  } else {
-    isUI = true;
   }
 }
 

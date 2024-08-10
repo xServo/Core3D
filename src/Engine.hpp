@@ -46,6 +46,8 @@ private:
   /* SUBSYSTEMS */
   Renderer renderer;
   unsigned int shader;
+  std::function<void()> editorUpdateCallback;
+  bool isUI;
 
   void LoadScene();
   void LoadLevel(const int level[7][7]);
@@ -76,6 +78,9 @@ public:
   /* OBJ CONTAINERS */
   std::vector<GameObject *> objects;
   std::unordered_map<GameObject *, ObjectAttrib> attribMap;
+  /* EDITOR UI */
+  void ToggleUI();
+  void SetEditorUpdateCallback(std::function<void()> callback);
   /* CORE */
   void Init();
 };

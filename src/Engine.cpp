@@ -12,7 +12,8 @@
 Engine::Engine()
     : SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH),
       renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
-  /* pre update loop things */
+    /* pre update loop things */
+  // editorUpdateCallback = nullptr;
   Input::lastX = float(SCREEN_WIDTH) / 2;  // init cursor pos
   Input::lastY = float(SCREEN_HEIGHT) / 2; // init cursor pos
   /* set shader ids */
@@ -26,13 +27,22 @@ Engine::Engine()
 }
 
 Engine::~Engine() {
-  if (saveEnabled) {
+  if (saveEnabled)
     SaveObjects("res/save1.json");
-  }
   renderer.Quit();
 }
 
 void Engine::LoadScene() {}
+
+void Engine::ToggleUI() {
+  if (isUI)
+    isUI = false;
+  else
+    isUI = true;
+}
+
+// get ui loop pointer
+void Engine::SetEditorUpdateCallback(std::function<void()> callback) { editorUpdateCallback = callback; }
 
 void Engine::Init() {
 
@@ -118,7 +128,7 @@ void Engine::KeyBindings() {
       renderer.camera.MoveDown();
       break;
     case 'e':
-      renderer.ToggleUI();
+      ToggleUI();
       Input::keyPressed = "";
       break;
     case 'r':
@@ -312,9 +322,12 @@ void Engine::PreLoop() {
 
 void Engine::BeginFrame() {
   renderer.ImGui();
+  // load editor ui if enabled
+  if (editorUpdateCallback && isUI) {
+    editorUpdateCallback();
+  }
   renderer.DeltaTime();
   renderer.Clear();
-
   /* HANDLE INPUT */
   GLCall(glfwPollEvents());
   renderer.camera.Look(Input::pitch, Input::yaw);
