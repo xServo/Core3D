@@ -50,29 +50,30 @@ void Engine::Init() {
     LoadLevel(level0);
   }
   // backpack
-  ObjectAttrib backpackAttrib;
-  backpackAttrib.name = "Backpack";
-  backpackAttrib.color = glm::vec3(0.32, 0.2, 1);
-  backpackAttrib.modelPath = "res/models/backpack/backpack.obj";
-  backpackAttrib.size = glm::vec3(0.2, 0.2, 0.2);
-  backpackAttrib.pos = glm::vec3(2, -0.2, 1);
-  backpackAttrib.textureSlot = 3;
-  backpackAttrib.shaderID = shader;
-  GameObject *backpack = LoadAttrib(backpackAttrib);
+  // ObjectAttrib backpackAttrib;
+  // backpackAttrib.name = "Backpack";
+  // backpackAttrib.color = glm::vec3(0.32, 0.2, 1);
+  // backpackAttrib.modelPath = "res/models/backpack/backpack.obj";
+  // backpackAttrib.size = glm::vec3(0.2, 0.2, 0.2);
+  // backpackAttrib.pos = glm::vec3(2, -0.2, 1);
+  // backpackAttrib.textureSlot = 3;
+  // backpackAttrib.shaderID = shader;
+  // GameObject *backpack = LoadAttrib(backpackAttrib);
 
-  ObjectAttrib bulbAttrib;
-  bulbAttrib.name = "Bulb";
-  bulbAttrib.shaderID = shader;
-  bulbAttrib.color = glm::vec3(0.53, 0.13, 0.54);
-  bulbAttrib.size = glm::vec3(0.1, 0.1, 0.1);
-  bulbAttrib.pos = glm::vec3(1, 0.5, 1);
-  bulbAttrib.lightID = 0;
-  LoadAttrib(bulbAttrib);
+  // ObjectAttrib bulbAttrib;
+  // bulbAttrib.name = "Bulb";
+  // bulbAttrib.shaderID = shader;
+  // bulbAttrib.color = glm::vec3(0.53, 0.13, 0.54);
+  // bulbAttrib.size = glm::vec3(0.1, 0.1, 0.1);
+  // bulbAttrib.pos = glm::vec3(1, 0.5, 1);
+  // bulbAttrib.lightID = 0;
+  // LoadAttrib(bulbAttrib);
 
   GameObject bulb2(shader);
   bulb2.name = "Bulb2";
   bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
-  bulb2.IsLit(false);
+  bulb2.SetIsLit(false);
+  bulb2.SetIsTextured(false);
   bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1));
   bulb2.Translate(glm::vec3(4, 0.5, 4));
   bulb2.InitLight(1);
@@ -82,11 +83,13 @@ void Engine::Init() {
   /* main loop */
   while (!glfwWindowShouldClose(renderer.gWindow)) {
     BeginFrame();
-
+    // bulb2.Translate(glm::vec3(0.00001,0,0));
     // game loop stuff
-    /* bulb2.Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0)); */
+    bulb2.Color(glm::vec3(1,1,1));
 
-    backpack->Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
+    bulb2.Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
+
+    // backpack->Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
     /* backpack->Rotate(0, glm::vec3(0, 1, 0)); */
 
     EndFrame();
@@ -161,7 +164,8 @@ void Engine::MapAttrib(GameObject *obj) {
   attrib.color = obj->GetColor();
   attrib.size = obj->GetSize();
   attrib.modelPath = obj->GetModelPath();
-  attrib.textureSlot = obj->GetTextureSlot();
+  if (obj->GetIsTextured())
+    attrib.textureSlot = obj->GetTextureSlot();
   attribMap[obj] = attrib; // divine intellect
 }
 
@@ -185,7 +189,7 @@ GameObject *Engine::LoadAttrib(const ObjectAttrib &attrib) {
   if (attrib.lightID != -1)
     obj->InitLight(attrib.lightID);
   if (attrib.textureSlot != -1) {
-    obj->IsTextured(true);
+    obj->SetIsTextured(true);
     obj->TextureSlot(attrib.textureSlot);
   }
 

@@ -56,7 +56,7 @@ void Renderer::Draw() {
   // GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
 }
 
-void Renderer::DrawObjects(std::vector<GameObject*> objects) {
+void Renderer::DrawObjects(const std::vector<GameObject*> &objects) {
   for (auto it : objects) {
     if (it->GetIsLit() && it->GetTextureSlot() != textures.boundSlot) {
       textures.Bind(it->GetTextureSlot());

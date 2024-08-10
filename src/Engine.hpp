@@ -32,7 +32,7 @@ struct ObjectAttrib {
   glm::vec3 size = glm::vec3(1, 1, 1);
   /* graphics */
   glm::vec3 color = glm::vec3(1, 1, 1);
-  int textureSlot = -1;
+  int textureSlot = 1;
   std::string modelPath;
   float shine = -1;
   /* TODO BIND TEXTURE ON DRAW OF GAMEOBJECT */
