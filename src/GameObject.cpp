@@ -42,6 +42,7 @@ void GameObject::InitModel(std::string path) {
 
 void GameObject::InitLight(int lightID) {
   m_LightID = lightID;
+  m_HasLight = true;
   m_Light = std::make_unique<LightObject>(shaderID, lightID);
   m_Light->SetColor(m_Color);
   m_Light->SetPos(m_Position);
@@ -155,5 +156,12 @@ std::string GameObject::GetModelPath() { return m_ModelPath; }
 std::string GameObject::GetName() { return m_Name; }
 int GameObject::GetTextureSlot() const { return m_TextureSlot; }
 float GameObject::GetShine() const { return m_Shininess; }
-int GameObject::GetLightID() const { return m_LightID; }
+int GameObject::GetLightID() const {
+  if (m_HasLight) {
+    return m_LightID;
+  }
+  std::cout << "Error GameObject doesn't have light" << std::endl;
+  return -1;
+}
 bool GameObject::GetIsTextured() const { return m_IsTextured; }
+bool GameObject::GetHasLight() const { return m_HasLight; }

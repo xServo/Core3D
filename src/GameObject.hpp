@@ -75,4 +75,5 @@ public:
   float GetShine() const;
   int GetLightID() const;
   bool GetIsTextured() const;
+  bool GetHasLight() const;
 };

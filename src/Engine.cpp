@@ -60,14 +60,15 @@ void Engine::Init() {
   // backpackAttrib.shaderID = shader;
   // GameObject *backpack = LoadAttrib(backpackAttrib);
 
-  // ObjectAttrib bulbAttrib;
-  // bulbAttrib.name = "Bulb";
-  // bulbAttrib.shaderID = shader;
-  // bulbAttrib.color = glm::vec3(0.53, 0.13, 0.54);
-  // bulbAttrib.size = glm::vec3(0.1, 0.1, 0.1);
-  // bulbAttrib.pos = glm::vec3(1, 0.5, 1);
-  // bulbAttrib.lightID = 0;
-  // LoadAttrib(bulbAttrib);
+  ObjectAttrib bulbAttrib;
+  bulbAttrib.name = "Bulb";
+  bulbAttrib.shaderID = shader;
+  bulbAttrib.color = glm::vec3(0.53, 0.13, 0.54);
+  bulbAttrib.size = glm::vec3(0.1, 0.1, 0.1);
+  bulbAttrib.pos = glm::vec3(1, 0.5, 1);
+  bulbAttrib.lightID = 0;
+  bulbAttrib.isLit = false;
+  LoadAttrib(bulbAttrib);
 
   GameObject bulb2(shader);
   bulb2.name = "Bulb2";
@@ -85,9 +86,8 @@ void Engine::Init() {
     BeginFrame();
     // bulb2.Translate(glm::vec3(0.00001,0,0));
     // game loop stuff
-    bulb2.Color(glm::vec3(1,1,1));
 
-    bulb2.Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
+    // bulb2.Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
 
     // backpack->Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
     /* backpack->Rotate(0, glm::vec3(0, 1, 0)); */
@@ -164,6 +164,9 @@ void Engine::MapAttrib(GameObject *obj) {
   attrib.color = obj->GetColor();
   attrib.size = obj->GetSize();
   attrib.modelPath = obj->GetModelPath();
+  attrib.isLit = obj->GetIsLit();
+  if (obj->GetHasLight())
+    attrib.lightID = obj->GetLightID();
   if (obj->GetIsTextured())
     attrib.textureSlot = obj->GetTextureSlot();
   attribMap[obj] = attrib; // divine intellect
@@ -181,6 +184,7 @@ GameObject *Engine::LoadAttrib(const ObjectAttrib &attrib) {
   obj->Color(attrib.color);
   obj->SetSize(attrib.size);
   obj->Translate(attrib.pos);
+  obj->SetIsLit(attrib.isLit);
 
   if (!attrib.modelPath.empty())
     obj->InitModel(attrib.modelPath);
@@ -191,7 +195,8 @@ GameObject *Engine::LoadAttrib(const ObjectAttrib &attrib) {
   if (attrib.textureSlot != -1) {
     obj->SetIsTextured(true);
     obj->TextureSlot(attrib.textureSlot);
-  }
+  } else
+    obj->SetIsTextured(false);
 
   AddObject(obj);
   return obj;
@@ -257,11 +262,8 @@ void Engine::SaveObjects(std::string filePath) {
     o["color"] = {attrib.color.x, attrib.color.y, attrib.color.z};
     o["modelPath"] = attrib.modelPath;
     o["shine"] = attrib.shine;
-    if (prettyJson) {
-      f << o.dump(2) << "\n";
-    } else {
-      f << o << "\n";
-    }
+    // f << o.dump(2) << "\n"; // pretty json
+    f << o << "\n";
   }
 
   f.close();

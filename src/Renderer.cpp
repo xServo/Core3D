@@ -58,7 +58,7 @@ void Renderer::Draw() {
 
 void Renderer::DrawObjects(const std::vector<GameObject*> &objects) {
   for (auto it : objects) {
-    if (it->GetIsLit() && it->GetTextureSlot() != textures.boundSlot) {
+    if (it->GetIsTextured() && it->GetTextureSlot() != textures.boundSlot) {
       textures.Bind(it->GetTextureSlot());
     }
     it->Bind();

@@ -32,9 +32,10 @@ struct ObjectAttrib {
   glm::vec3 size = glm::vec3(1, 1, 1);
   /* graphics */
   glm::vec3 color = glm::vec3(1, 1, 1);
-  int textureSlot = 1;
+  int textureSlot = -1;
   std::string modelPath;
   float shine = -1;
+  bool isLit = true;
   /* TODO BIND TEXTURE ON DRAW OF GAMEOBJECT */
 };
 
@@ -60,10 +61,9 @@ private:
   ~Engine();
 
 public:
-  bool levelLoadingEnabled = true;
-  bool prettyJson = false;
-  bool saveEnabled = true;
-  bool loadEnabled = false;
+  bool levelLoadingEnabled = false;
+  bool saveEnabled = false;
+  bool loadEnabled = true;
   // singleton
   static Engine &Instance() {
     static Engine INSTANCE;
