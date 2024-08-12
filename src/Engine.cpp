@@ -10,18 +10,17 @@
 #endif
 
 Engine::Engine()
-    : SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH),
-      renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
-    /* pre update loop things */
+    : SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH), renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
+  /* pre update loop things */
   // editorUpdateCallback = nullptr;
-  Input::lastX = float(SCREEN_WIDTH) / 2;  // init cursor pos
-  Input::lastY = float(SCREEN_HEIGHT) / 2; // init cursor pos
+  Input::lastX = float(SCREEN_WIDTH) / 2;   // init cursor pos
+  Input::lastY = float(SCREEN_HEIGHT) / 2;  // init cursor pos
   /* set shader ids */
   shader = renderer.shaderID;
   /* init input callbacks */
-  glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback); // key callback
+  glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
   glfwSetCursorPosCallback(renderer.gWindow,
-                           Input::MouseCallback); // mouse callback
+                           Input::MouseCallback);  // mouse callback
   /* init imgui */
   renderer.ImGuiInit();
 }
@@ -42,10 +41,11 @@ void Engine::ToggleUI() {
 }
 
 // get ui loop pointer
-void Engine::SetEditorUpdateCallback(std::function<void()> callback) { editorUpdateCallback = callback; }
+void Engine::SetEditorUpdateCallback(std::function<void()> callback) {
+  editorUpdateCallback = callback;
+}
 
 void Engine::Init() {
-
   // TODO TODO TODO
   // json with textures to load, level arr to load, specific objs to load
   // game behavior (whats in the main loop/keybindings function)
@@ -94,7 +94,6 @@ void Engine::Init() {
   /* main loop */
   while (!glfwWindowShouldClose(renderer.gWindow)) {
     BeginFrame();
-    // bulb2.Translate(glm::vec3(0.00001,0,0));
     // game loop stuff
 
     // bulb2.Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
@@ -109,52 +108,52 @@ void Engine::Init() {
 void Engine::KeyBindings() {
   for (int i = 0; i < Input::keyPressed.length(); i++) {
     switch (Input::keyPressed[i]) {
-    case 'w':
-      renderer.camera.MoveForward();
-      break;
-    case 's':
-      renderer.camera.MoveBackward();
-      break;
-    case 'a':
-      renderer.camera.MoveLeft();
-      break;
-    case 'd':
-      renderer.camera.MoveRight();
-      break;
-    case 't':
-      renderer.camera.MoveUp();
-      break;
-    case 'g':
-      renderer.camera.MoveDown();
-      break;
-    case 'e':
-      ToggleUI();
-      Input::keyPressed = "";
-      break;
-    case 'r':
-      if (renderer.isWireFrame)
-        renderer.Wireframe(false);
-      else
-        renderer.Wireframe(true);
-      Input::keyPressed = "";
-      break;
-    case Input::ESC:
-      if (Input::isMouseLock == true) {
-        glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        Input::isMouseLock = false;
-      } else if (Input::isMouseLock == false) {
-        glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        Input::ResetCursor();
-        Input::isMouseLock = true;
-      }
-      Input::keyPressed = "";
-      break;
-    case Input::SHIFT:
-      renderer.camera.isRunning = true;
-      break;
-    case Input::SHIFT_REL: // Shift release
-      renderer.camera.isRunning = false;
-      break;
+      case 'w':
+        renderer.camera.MoveForward();
+        break;
+      case 's':
+        renderer.camera.MoveBackward();
+        break;
+      case 'a':
+        renderer.camera.MoveLeft();
+        break;
+      case 'd':
+        renderer.camera.MoveRight();
+        break;
+      case 't':
+        renderer.camera.MoveUp();
+        break;
+      case 'g':
+        renderer.camera.MoveDown();
+        break;
+      case 'e':
+        ToggleUI();
+        Input::keyPressed = "";
+        break;
+      case 'r':
+        if (renderer.isWireFrame)
+          renderer.Wireframe(false);
+        else
+          renderer.Wireframe(true);
+        Input::keyPressed = "";
+        break;
+      case Input::ESC:
+        if (Input::isMouseLock == true) {
+          glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+          Input::isMouseLock = false;
+        } else if (Input::isMouseLock == false) {
+          glfwSetInputMode(renderer.gWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+          Input::ResetCursor();
+          Input::isMouseLock = true;
+        }
+        Input::keyPressed = "";
+        break;
+      case Input::SHIFT:
+        renderer.camera.isRunning = true;
+        break;
+      case Input::SHIFT_REL:  // Shift release
+        renderer.camera.isRunning = false;
+        break;
     }
   }
 }
@@ -179,7 +178,7 @@ void Engine::MapAttrib(GameObject *obj) {
     attrib.lightID = obj->GetLightID();
   if (obj->GetIsTextured())
     attrib.textureSlot = obj->GetTextureSlot();
-  attribMap[obj] = attrib; // divine intellect
+  attribMap[obj] = attrib;  // divine intellect
 }
 
 GameObject *Engine::LoadAttrib(const ObjectAttrib &attrib) {

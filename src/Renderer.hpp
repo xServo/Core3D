@@ -17,45 +17,45 @@
 #include "GameObject.hpp"
 
 class Renderer {
-  public:
-    Renderer(const int WIDTH, const int HEIGHT);
-    Texture textures;
-    /* RENDER VARS */
-    GLFWwindow* gWindow;
-    Camera camera;
-    /* STATE VARS */
-    unsigned int shaderID;
-    float deltaTime;
-    bool isWireFrame;
-    bool isUI;
+public:
+  Renderer(const int WIDTH, const int HEIGHT);
+  Texture textures;
+  /* RENDER VARS */
+  GLFWwindow* gWindow;
+  Camera camera;
+  /* STATE VARS */
+  unsigned int shaderID;
+  float deltaTime;
+  bool isWireFrame;
+  bool isUI;
 
-    /* STATE */
-    void Wireframe(bool flag);
-    void DeltaTime();
+  /* STATE */
+  void Wireframe(bool flag);
+  void DeltaTime();
 
-    /* IMGUI */
-    void ImGui();
-    void ImGuiInit();
-    void ImGuiEnd();
-    void ImGuiUI();
+  /* IMGUI */
+  void ImGui();
+  void ImGuiInit();
+  void ImGuiEnd();
+  void ImGuiUI();
 
-    /* RENDER */
-    void Draw();
-    void DrawObjects(const std::vector<GameObject*> &objects);
-    void Swap();
-    void Clear();
+  /* RENDER */
+  void Draw();
+  void DrawObjects(const std::vector<GameObject*>& objects);
+  void Swap();
+  void Clear();
 
-    /* CORE */
-    void Init();
-    void Quit();
+  /* CORE */
+  void Init();
+  void Quit();
 
-  private:
-    const int SCREEN_WIDTH;
-    const int SCREEN_HEIGHT;
-    const float NEAR_PLANE = 0.01f;
-    const float FAR_PLANE = 50.0f;
-    float m_LastFrameTime;
+private:
+  const int SCREEN_WIDTH;
+  const int SCREEN_HEIGHT;
+  const float NEAR_PLANE = 0.01f;
+  const float FAR_PLANE = 50.0f;
+  float m_LastFrameTime;
 
-    void Shader();
-    void Projection();
+  void Shader();
+  void Projection();
 };

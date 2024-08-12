@@ -6,7 +6,7 @@ Model::Model(std::string path) {
 
 void Model::LoadModel(std::string path) {
   Assimp::Importer import;
-  const aiScene *scene = import.ReadFile(path, ASSIMP_FLAGS);
+  const aiScene* scene = import.ReadFile(path, ASSIMP_FLAGS);
   // check if root note loaded successfully
   if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
       !scene->mRootNode) {
@@ -138,7 +138,7 @@ std::vector<Mesh::Texture> Model::LoadMaterialTextures(aiMaterial* mat, aiTextur
     textures.push_back(texture);
   }
   return textures;
-}  
+}
 unsigned int Model::TextureFromFile(const char* path, const std::string& directory) {
   std::string filename = std::string(path);
   filename = directory + '/' + filename;

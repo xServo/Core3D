@@ -1,13 +1,10 @@
 #include "editor.hpp"
 
 Editor::Editor(std::string VERSION)
-  : VERSION(VERSION)
-{
-
+    : VERSION(VERSION) {
 }
 
 Editor::~Editor() = default;
-
 
 void Editor::UILoop() {
   // TODO PLAN
@@ -19,7 +16,7 @@ void Editor::UILoop() {
   // # extra functionality
   // * button to create object
   // * fields to type in values for pos etc
-    // * sliders update upon field update
+  // * sliders update upon field update
   // make sure saving works
   // TODO PLAN
   // TODO PLAN
@@ -46,16 +43,16 @@ void Editor::UILoop() {
   /* // objects */
   /* int cnt = 0; */
   /* for (auto obj : objects ) { */
-  /*   /1* ImGui::Text(); *1/ */ 
+  /*   /1* ImGui::Text(); *1/ */
   /*   std::string title = obj->name + ":"; */
   /*   if (ImGui::CollapsingHeader(title.c_str())) { */
-  /*     /1* attributes *1/ */ 
+  /*     /1* attributes *1/ */
   /*     /1* pos *1/ */
   /*     static glm::vec3 pos = obj->GetPos(); */
   /*     /1* size *1/ */
   /*     glm::vec3 size = obj->GetSize(); */
 
-  /*     /1* pos sliders *1/ */ 
+  /*     /1* pos sliders *1/ */
   /*     if (ImGui::CollapsingHeader(("\tPosition:##" + obj->name).c_str())) { */
   /*       bool b1 = ImGui::SliderFloat(("x pos##" + obj->name).c_str(), &pos.x, attribMap[obj].pos.x - 1.0f, attribMap[obj].pos.x + 1.0f); */
   /*       bool b2 = ImGui::SliderFloat(("y pos##" + obj->name).c_str(), &pos.y, attribMap[obj].pos.y - 1.0f, attribMap[obj].pos.y + 1.0f); */
@@ -65,7 +62,7 @@ void Editor::UILoop() {
   /*         pos = obj->GetPos(); */
   /*       } */
   /*     } */
-  /*     /1* scale sliders *1/ */ 
+  /*     /1* scale sliders *1/ */
   /*     if (ImGui::CollapsingHeader(("\tScale:##" + obj->name).c_str())) { */
   /*       bool b1 = ImGui::SliderFloat(("x scale##" + obj->name).c_str(), &size.x, attribMap[obj].size.x - 1.0f, attribMap[obj].size.x + 1.0f); */
   /*       bool b2 = ImGui::SliderFloat(("y scale##" + obj->name).c_str(), &size.y, attribMap[obj].size.y - 1.0f, attribMap[obj].size.y + 1.0f); */

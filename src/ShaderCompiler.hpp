@@ -1,4 +1,8 @@
 #include "gl_assert.hpp"
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>
 
 struct ShaderProgramSource {
   std::string VertexSource;
@@ -34,7 +38,7 @@ static ShaderProgramSource ParseShader(const std::string filepath) {
     }
   }
 
-  return { ss[0].str(), ss[1].str() };
+  return {ss[0].str(), ss[1].str()};
 }
 
 static unsigned int CompileShader(unsigned int type, const std::string source) {
@@ -47,7 +51,7 @@ static unsigned int CompileShader(unsigned int type, const std::string source) {
   int result;
   glGetShaderiv(id, GL_COMPILE_STATUS, &result);
   if (result == GL_FALSE) {
-    int length; 
+    int length;
     glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
     char* message = (char*)alloca(length * sizeof(char));
     glGetShaderInfoLog(id, length, &length, message);

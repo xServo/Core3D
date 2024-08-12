@@ -14,7 +14,7 @@ class GameObject {
 private:
   VertexArray vao;
   IndexBuffer ib;
-  Model *m_Model;
+  Model* m_Model;
   std::string m_ModelPath;
 
   /* ATTRIBUTES */

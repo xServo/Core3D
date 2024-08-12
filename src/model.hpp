@@ -10,18 +10,18 @@
 
 #define ASSIMP_FLAGS aiProcess_Triangulate | aiProcess_FlipUVs
 
-
 class Model {
-  private:
-    std::vector<Mesh> m_Meshes;
-    std::string m_Directory;
+private:
+  std::vector<Mesh> m_Meshes;
+  std::string m_Directory;
 
-    void LoadModel(std::string path);
-    void ProcessNode(aiNode* node, const aiScene* scene);
-    Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
-    std::vector<Mesh::Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-    unsigned int TextureFromFile(const char* path, const std::string& directory);
-  public:
-    Model(std::string path);
-    void Draw();
+  void LoadModel(std::string path);
+  void ProcessNode(aiNode* node, const aiScene* scene);
+  Mesh ProcessMesh(aiMesh* mesh, const aiScene* scene);
+  std::vector<Mesh::Texture> LoadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+  unsigned int TextureFromFile(const char* path, const std::string& directory);
+
+public:
+  Model(std::string path);
+  void Draw();
 };

@@ -1,4 +1,11 @@
 #pragma once
+#include <array>
+#include <fstream>
+#include <glew.h>
+#include <glfw3.h>
+#include <iostream>
+#include <string>
+#include <vector>
 #include "GameObject.hpp"
 #include "Input.hpp"
 #include "Renderer.hpp"
@@ -12,19 +19,12 @@
 #include "model.hpp"
 #include "nlohmann/json.hpp"
 #include "stb_image.h"
-#include <array>
-#include <fstream>
-#include <glew.h>
-#include <glfw3.h>
-#include <iostream>
-#include <string>
-#include <vector>
 
 // must assign shaderID
 struct ObjectAttrib {
   /* ID */
   int editorID = -1;
-  int shaderID = -1; // unsigned
+  int shaderID = -1;  // unsigned
   int lightID = -1;
   /* basic attributes */
   std::string name;
@@ -57,7 +57,7 @@ private:
   void EndFrame();
   /* JSON */
   void SaveObjects(std::string filePath);
-  void LoadObjects(const std::string &filePath);
+  void LoadObjects(const std::string& filePath);
 
   Engine();
   ~Engine();
@@ -67,17 +67,17 @@ public:
   bool saveEnabled = false;
   bool loadEnabled = true;
   // singleton
-  static Engine &Instance() {
+  static Engine& Instance() {
     static Engine INSTANCE;
     return INSTANCE;
   }
   /* OBJ MANAGEMENT */
-  void AddObject(GameObject *obj);
-  void MapAttrib(GameObject *obj);
-  GameObject *LoadAttrib(const ObjectAttrib &attrib);
+  void AddObject(GameObject* obj);
+  void MapAttrib(GameObject* obj);
+  GameObject* LoadAttrib(const ObjectAttrib& attrib);
   /* OBJ CONTAINERS */
-  std::vector<GameObject *> objects;
-  std::unordered_map<GameObject *, ObjectAttrib> attribMap;
+  std::vector<GameObject*> objects;
+  std::unordered_map<GameObject*, ObjectAttrib> attribMap;
   /* EDITOR UI */
   void ToggleUI();
   void SetEditorUpdateCallback(std::function<void()> callback);

@@ -1,4 +1,4 @@
-# pragma once
+#pragma once
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -8,6 +8,7 @@
 class Editor {
 private:
   const std::string VERSION;
+
 public:
   Editor(std::string VERSION);
   ~Editor();

@@ -1,16 +1,17 @@
-#include "Engine.hpp"
-#include "Editor.hpp"
 #include <string>
+#include "Engine.hpp"
+#include "editor.hpp"
+
 std::string VERSION = "0";
 
 int main() {
   std::cout << "Core3D Version: " << VERSION << std::endl;
   // init engine
-  Engine &engine = Engine::Instance();
+  Engine& engine = Engine::Instance();
 
   // init editor
   Editor editor(VERSION);
-  engine.SetEditorUpdateCallback([&editor]() { editor.UILoop(); }); // pass in UI loop
+  engine.SetEditorUpdateCallback([&editor]() { editor.UILoop(); });  // pass in UI loop
 
   // begin engine and loop
   engine.Init();

@@ -5,7 +5,6 @@ LightObject::LightObject(unsigned int shader, unsigned int id) {
   m_LightID = id;
   u_LightPos = glGetUniformLocation(shader, ("lights[" + std::to_string(m_LightID) + "].lightPos").c_str());
   u_LightColor = glGetUniformLocation(shader, ("lights[" + std::to_string(m_LightID) + "].lightColor").c_str());
-  
 }
 
 void LightObject::SetPos(glm::vec3 pos) {

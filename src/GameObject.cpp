@@ -68,7 +68,7 @@ void GameObject::Bind() {
 
 void GameObject::Draw() {
   if (m_Model == nullptr) {
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr); // use ib
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);  // use ib
   } else {
     m_Model->Draw();
   }

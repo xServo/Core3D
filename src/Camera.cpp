@@ -1,15 +1,14 @@
 #include "Camera.hpp"
 
 Camera::Camera() {
-  m_Pos = glm::vec3(0,0,0);
-  m_Target = glm::vec3(0,0,-1);
-  m_Up = glm::vec3(0,1,0);
+  m_Pos = glm::vec3(0, 0, 0);
+  m_Target = glm::vec3(0, 0, -1);
+  m_Up = glm::vec3(0, 1, 0);
   speed = 1.5;
   m_walkSpeed = speed;
   m_runSpeed = speed * 2;
   isRunning = false;
-} 
-
+}
 
 void Camera::Bind() {
   // check for running
@@ -18,7 +17,7 @@ void Camera::Bind() {
   } else {
     speed = m_walkSpeed;
   }
-  // locations happen here because shader is not bound upon construction 
+  // locations happen here because shader is not bound upon construction
   u_View = glGetUniformLocation(shaderID, "u_View");
   glm::mat4 view = glm::lookAt(m_Pos, m_Pos + m_Target, m_Up);
   glUniformMatrix4fv(u_View, 1, GL_FALSE, &view[0][0]);
@@ -47,11 +46,11 @@ void Camera::MoveRight() {
   Bind();
 }
 void Camera::MoveUp() {
-  m_Pos += glm::vec3(0,1,0) * speed * deltaTime;
+  m_Pos += glm::vec3(0, 1, 0) * speed * deltaTime;
   Bind();
 }
 void Camera::MoveDown() {
-  m_Pos += glm::vec3(0,-1,0) * speed * deltaTime;
+  m_Pos += glm::vec3(0, -1, 0) * speed * deltaTime;
   Bind();
 }
 void Camera::Look(float pitch, float yaw) {
@@ -59,6 +58,6 @@ void Camera::Look(float pitch, float yaw) {
   direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
   direction.y = sin(glm::radians(pitch));
   direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-  m_Target = glm::normalize(direction);    
+  m_Target = glm::normalize(direction);
   Bind();
 }
