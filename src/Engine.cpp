@@ -225,25 +225,25 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
     }
   }
   /* FLOOR GEN */
-  for (int i = 1; i < levelSize + 1; i++) {
-    for (int j = 1; j < levelSize + 1; j++) {
-      levelAttrib.name = "floor";
-      levelAttrib.pos = glm::vec3((i * 2) - 7, -1.5, (j * 2) - 7);
-      levelAttrib.textureSlot = 0;
-      /* objects.push_back(LoadAttrib(levelAttrib)); */
-      LoadAttrib(levelAttrib);
-    }
-  }
-  /* ROOF GEN */
-  for (int i = 1; i < levelSize + 1; i++) {
-    for (int j = 1; j < levelSize + 1; j++) {
-      levelAttrib.name = "roof";
-      levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7);
-      levelAttrib.textureSlot = 0;
-      /* objects.push_back(LoadAttrib(levelAttrib)); */
-      LoadAttrib(levelAttrib);
-    }
-  }
+   for (int i = 1; i < levelSize + 1; i++) {
+     for (int j = 1; j < levelSize + 1; j++) {
+       levelAttrib.name = "floor";
+       levelAttrib.pos = glm::vec3((i * 2) - 7, -1.5, (j * 2) - 7);
+       levelAttrib.textureSlot = 0;
+       /* objects.push_back(LoadAttrib(levelAttrib)); */
+       LoadAttrib(levelAttrib);
+     }
+   }
+   /* ROOF GEN */
+   for (int i = 1; i < levelSize + 1; i++) {
+     for (int j = 1; j < levelSize + 1; j++) {
+       levelAttrib.name = "roof";
+       levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7);
+       levelAttrib.textureSlot = 0;
+       /* objects.push_back(LoadAttrib(levelAttrib)); */
+       LoadAttrib(levelAttrib);
+     }
+   }
 }
 
 void Engine::SaveObjects(std::string filePath) {
@@ -308,8 +308,12 @@ void Engine::LoadObjects(const std::string &filePath) {
 
 void Engine::PreLoop() {
   // TODO TEMP
-  tempBuffer = renderer.GenFrameBuffer();
   tempBufferShader = renderer.Shader("res/shaders/texture.glsl");
+  BindShader(tempBufferShader);
+  tempTextureUniform = glGetUniformLocation(tempBufferShader, "u_Texture");
+  GLCall(glUniform1i(tempTextureUniform, 9));
+  GLCall(glActiveTexture(GL_TEXTURE9));
+  tempBuffer = renderer.GenFrameBuffer();
   float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
     // positions   // texCoords
     -1.0f,  1.0f,  0.0f, 1.0f,
@@ -363,14 +367,13 @@ void Engine::MainLoop() {
 
 void Engine::EndFrame() {
   renderer.Clear();
-  renderer.textures.UnBind();
   renderer.DrawObjects(objects);
+  renderer.textures.Bind(9);
   // TODO TEMP
   BindShader(tempBufferShader);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   // back to default
-  renderer.Clear();
-
+  glClear(GL_COLOR_BUFFER_BIT);
   glBindVertexArray(quadVAO);
   glDisable(GL_DEPTH_TEST);
   glBindTexture(GL_TEXTURE_2D, renderer.tempColorBufferTexture);

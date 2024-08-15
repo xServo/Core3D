@@ -47,6 +47,7 @@ private:
   unsigned int tempBuffer;
   unsigned int tempBufferShader;
   unsigned int quadVAO, quadVBO;
+  int tempTextureUniform;
   // TODO TEMP
   /* SUBSYSTEMS */
   Renderer renderer;
@@ -69,9 +70,9 @@ private:
   ~Engine();
 
 public:
-  bool levelLoadingEnabled = false;
+  bool levelLoadingEnabled = true;
   bool saveEnabled = false;
-  bool loadEnabled = true;
+  bool loadEnabled = false;
   // singleton
   static Engine& Instance() {
     static Engine INSTANCE;
