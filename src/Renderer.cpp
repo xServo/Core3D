@@ -5,7 +5,11 @@ Renderer::Renderer(const int WIDTH, const int HEIGHT)
   GLFWwindow* gWindow = nullptr;
   isUI = true;
   Init();
-  Shader();
+  shaderID = Shader("res/shaders/basic.shader");
+  glUseProgram(shaderID);
+  camera.shaderID = shaderID;
+  camera.Bind();
+  textures.shaderID = shaderID;
   Projection();
   textures.Init();
 }
@@ -70,6 +74,48 @@ void Renderer::Swap() {
 void Renderer::Clear() {
   GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
+
+unsigned int Renderer::GenFrameBuffer() {
+  unsigned int fbo;
+  glGenFramebuffers(1, &fbo);
+  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+  // texture
+  unsigned int texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+  tempColorBufferTexture = texture;
+
+  // render buffer object
+  unsigned int rbo;
+  glGenRenderbuffers(1, &rbo);
+  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT);
+  glBindRenderbuffer(GL_RENDERBUFFER, 0);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+  // check if frame buffer is complete
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    std::cout << "Error, could not create framebuffer" << std::endl;
+    ASSERT(0);
+  }
+  glBindFramebuffer(GL_FRAMEBUFFER, 0); // unbind
+  return fbo;
+}
+
+void Renderer::DrawFrameBuffer(unsigned int id) {
+  // Clear();
+  // glBindVertexArray(quadVAO);
+  // glDisable(GL_DEPTH_TEST);
+  // glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+  // glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
 void Renderer::Wireframe(bool flag) {
   if (flag == true) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // enable wireframe mode:w
@@ -129,6 +175,12 @@ void Renderer::DeltaTime() {
   m_LastFrameTime = currentFrameTime;
   camera.deltaTime = deltaTime;
 }
+
+unsigned int Renderer::Shader(const std::string &path) {
+  ShaderProgramSource source = ParseShader(path);
+  unsigned int tempID = CreateShader(source.VertexSource, source.FragmentSource);
+  return tempID;
+}
 /* ---------------------------PRIVATE---------------------------- */
 void Renderer::Projection() {
   glm::mat4 perspective = glm::perspective(glm::radians(45.0f), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
@@ -136,11 +188,4 @@ void Renderer::Projection() {
   glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
 }
 
-void Renderer::Shader() {
-  ShaderProgramSource source = ParseShader("res/shaders/basic.shader");
-  shaderID = CreateShader(source.VertexSource, source.FragmentSource);
-  glUseProgram(shaderID);
-  camera.shaderID = shaderID;
-  camera.Bind();
-  textures.shaderID = shaderID;
-}
+

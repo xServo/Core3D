@@ -43,6 +43,11 @@ class Engine {
 private:
   const int SCREEN_HEIGHT;
   const int SCREEN_WIDTH;
+  // TODO TEMP
+  unsigned int tempBuffer;
+  unsigned int tempBufferShader;
+  unsigned int quadVAO, quadVBO;
+  // TODO TEMP
   /* SUBSYSTEMS */
   Renderer renderer;
   unsigned int shader;
@@ -54,6 +59,7 @@ private:
   void KeyBindings();
   void PreLoop();
   void BeginFrame();
+  void MainLoop();
   void EndFrame();
   /* JSON */
   void SaveObjects(std::string filePath);

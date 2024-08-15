@@ -4,6 +4,7 @@ Texture::Texture() {
 }
 
 void Texture::Init() {
+  boundSlot = -1;
   u_Texture = glGetUniformLocation(shaderID, "u_Texture");
   // transparency
   GLCall(glEnable(GL_BLEND));
@@ -80,4 +81,9 @@ void Texture::Bind(int slot) {
     default:
       std::cout << "Error, invalid slot!" << std::endl;
   }
+}
+
+void Texture::UnBind() {
+  GLCall(glActiveTexture(GL_TEXTURE9));
+  boundSlot = -1;
 }

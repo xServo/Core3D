@@ -15,5 +15,6 @@ public:
   Texture();
   void Generate(std::string path, int slot);
   void Bind(int slot);
+  void UnBind();
   void Init();
 };

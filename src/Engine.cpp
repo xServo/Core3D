@@ -94,12 +94,8 @@ void Engine::Init() {
   /* main loop */
   while (!glfwWindowShouldClose(renderer.gWindow)) {
     BeginFrame();
-    // game loop stuff
 
-    // bulb2.Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
-
-    // backpack->Rotate(renderer.deltaTime * 10, glm::vec3(0, 1, 0));
-    /* backpack->Rotate(0, glm::vec3(0, 1, 0)); */
+    MainLoop();
 
     EndFrame();
   }
@@ -311,15 +307,44 @@ void Engine::LoadObjects(const std::string &filePath) {
 }
 
 void Engine::PreLoop() {
-  /* PRELOOP */
-  /* PRELOOP */
-  /* PRELOOP */
+  // TODO TEMP
+  tempBuffer = renderer.GenFrameBuffer();
+  tempBufferShader = renderer.Shader("res/shaders/texture.glsl");
+  float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+    // positions   // texCoords
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    -1.0f, -1.0f,  0.0f, 0.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+
+    -1.0f,  1.0f,  0.0f, 1.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+     1.0f,  1.0f,  1.0f, 1.0f
+};
+  glGenVertexArrays(1, &quadVAO);
+  glGenBuffers(1, &quadVBO);
+  glBindVertexArray(quadVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+  // TODO TEMP
+
+
   if (loadEnabled) {
     LoadObjects("res/save1.json");
   }
 }
 
 void Engine::BeginFrame() {
+  // TODO TEMP
+  BindShader(renderer.shaderID);
+  glEnable(GL_DEPTH_TEST);
+  // bind temp frame buffer
+  glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
+  // TODO TEMP
   renderer.ImGui();
   // load editor ui if enabled
   if (editorUpdateCallback && isUI) {
@@ -332,9 +357,26 @@ void Engine::BeginFrame() {
   renderer.camera.Look(Input::pitch, Input::yaw);
   KeyBindings();
 }
+void Engine::MainLoop() {
+
+}
 
 void Engine::EndFrame() {
+  renderer.Clear();
+  renderer.textures.UnBind();
   renderer.DrawObjects(objects);
+  // TODO TEMP
+  BindShader(tempBufferShader);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  // back to default
+  renderer.Clear();
+
+  glBindVertexArray(quadVAO);
+  glDisable(GL_DEPTH_TEST);
+  glBindTexture(GL_TEXTURE_2D, renderer.tempColorBufferTexture);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  // glBindTexture(GL_TEXTURE_2D, 0);
+  // TODO TEMP
   renderer.ImGuiEnd();
   renderer.Swap();
 }

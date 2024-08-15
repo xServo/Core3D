@@ -15,7 +15,6 @@
 #include "Camera.hpp"
 #include "gl_assert.hpp"
 #include "GameObject.hpp"
-
 class Renderer {
 public:
   Renderer(const int WIDTH, const int HEIGHT);
@@ -28,6 +27,9 @@ public:
   float deltaTime;
   bool isWireFrame;
   bool isUI;
+  // TODO TEMP
+  unsigned int tempColorBufferTexture;
+  // TODO TEMP
 
   /* STATE */
   void Wireframe(bool flag);
@@ -40,10 +42,13 @@ public:
   void ImGuiUI();
 
   /* RENDER */
+  unsigned int Shader(const std::string &path);
   void Draw();
   void DrawObjects(const std::vector<GameObject*>& objects);
   void Swap();
   void Clear();
+  unsigned int GenFrameBuffer();
+  void DrawFrameBuffer(unsigned int id);
 
   /* CORE */
   void Init();
@@ -56,6 +61,5 @@ private:
   const float FAR_PLANE = 50.0f;
   float m_LastFrameTime;
 
-  void Shader();
   void Projection();
 };
