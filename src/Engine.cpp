@@ -60,15 +60,15 @@ void Engine::Init() {
     LoadLevel(level0);
   }
   // backpack
-  // ObjectAttrib backpackAttrib;
-  // backpackAttrib.name = "Backpack";
-  // backpackAttrib.color = glm::vec3(0.32, 0.2, 1);
-  // backpackAttrib.modelPath = "res/models/backpack/backpack.obj";
-  // backpackAttrib.size = glm::vec3(0.2, 0.2, 0.2);
-  // backpackAttrib.pos = glm::vec3(2, -0.2, 1);
-  // backpackAttrib.textureSlot = 3;
-  // backpackAttrib.shaderID = shader;
-  // GameObject *backpack = LoadAttrib(backpackAttrib);
+  ObjectAttrib backpackAttrib;
+  backpackAttrib.name = "Backpack";
+  backpackAttrib.color = glm::vec3(0.32, 0.2, 1);
+  backpackAttrib.modelPath = "res/models/backpack/backpack.obj";
+  backpackAttrib.size = glm::vec3(0.2, 0.2, 0.2);
+  backpackAttrib.pos = glm::vec3(2, -0.2, 1);
+  backpackAttrib.textureSlot = 3;
+  backpackAttrib.shaderID = shader;
+  GameObject *backpack = LoadAttrib(backpackAttrib);
 
   ObjectAttrib bulbAttrib;
   bulbAttrib.name = "Bulb";
