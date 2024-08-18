@@ -7,7 +7,8 @@
 + Game object management
 + Assimp model loading
 + Phong Lighting Model
-+ ImGui 
++ ImGui
++ Post Processing
 
 ### How To build
 #### Windows 
