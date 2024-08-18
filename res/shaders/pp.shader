@@ -23,9 +23,11 @@ vec4 BoxBlur(int degree);
 
 vec4 color;
 void main() {
-    color = BoxBlur(10);
+    // color = BoxBlur(10);
+    // FragColor = BlackWhite();
 
-    FragColor = BlackWhite();
+    // FragColor = BoxBlur(10);
+    FragColor = Standard();
 }
 
 vec4 Standard() {

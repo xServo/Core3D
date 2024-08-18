@@ -43,12 +43,6 @@ class Engine {
 private:
   const int SCREEN_HEIGHT;
   const int SCREEN_WIDTH;
-  // TODO TEMP
-  unsigned int tempBuffer;
-  unsigned int tempBufferShader;
-  unsigned int quadVAO, quadVBO;
-  int tempTextureUniform;
-  // TODO TEMP
   /* SUBSYSTEMS */
   Renderer renderer;
   unsigned int shader;
@@ -78,6 +72,8 @@ public:
     static Engine INSTANCE;
     return INSTANCE;
   }
+  // outside get stuff
+  void GetResolution();
   /* OBJ MANAGEMENT */
   void AddObject(GameObject* obj);
   void MapAttrib(GameObject* obj);

@@ -5,8 +5,8 @@
 #define S_HEIGHT 1280
 #define S_WIDTH 2320
 #else
-#define S_HEIGHT 900
-#define S_WIDTH 1440
+#define S_HEIGHT 800
+#define S_WIDTH 1340
 #endif
 
 Engine::Engine()
@@ -68,7 +68,7 @@ void Engine::Init() {
   backpackAttrib.pos = glm::vec3(2, -0.2, 1);
   backpackAttrib.textureSlot = 3;
   backpackAttrib.shaderID = shader;
-  GameObject *backpack = LoadAttrib(backpackAttrib);
+  GameObject* backpack = LoadAttrib(backpackAttrib);
 
   ObjectAttrib bulbAttrib;
   bulbAttrib.name = "Bulb";
@@ -154,13 +154,17 @@ void Engine::KeyBindings() {
   }
 }
 
+void Engine::GetResolution() {
+  std::cout << "Resolution: " << SCREEN_WIDTH << "x" << SCREEN_HEIGHT << std::endl;
+}
+
 /* obj management */
-void Engine::AddObject(GameObject *obj) {
+void Engine::AddObject(GameObject* obj) {
   MapAttrib(obj);
   objects.push_back(obj);
 }
 
-void Engine::MapAttrib(GameObject *obj) {
+void Engine::MapAttrib(GameObject* obj) {
   ObjectAttrib attrib;
   attrib.name = obj->GetName();
   attrib.editorID = obj->editorID;
@@ -177,13 +181,13 @@ void Engine::MapAttrib(GameObject *obj) {
   attribMap[obj] = attrib;  // divine intellect
 }
 
-GameObject *Engine::LoadAttrib(const ObjectAttrib &attrib) {
+GameObject* Engine::LoadAttrib(const ObjectAttrib& attrib) {
   // if shader is undefined use current engine shader
   int tempShaderID = shader;
   if (attrib.shaderID == -1)
     tempShaderID = attrib.shaderID;
 
-  GameObject *obj = new GameObject(tempShaderID);
+  GameObject* obj = new GameObject(tempShaderID);
 
   obj->SetName(attrib.name);
   obj->Color(attrib.color);
@@ -225,25 +229,25 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
     }
   }
   /* FLOOR GEN */
-   for (int i = 1; i < levelSize + 1; i++) {
-     for (int j = 1; j < levelSize + 1; j++) {
-       levelAttrib.name = "floor";
-       levelAttrib.pos = glm::vec3((i * 2) - 7, -1.5, (j * 2) - 7);
-       levelAttrib.textureSlot = 0;
-       /* objects.push_back(LoadAttrib(levelAttrib)); */
-       LoadAttrib(levelAttrib);
-     }
-   }
-   /* ROOF GEN */
-   for (int i = 1; i < levelSize + 1; i++) {
-     for (int j = 1; j < levelSize + 1; j++) {
-       levelAttrib.name = "roof";
-       levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7);
-       levelAttrib.textureSlot = 0;
-       /* objects.push_back(LoadAttrib(levelAttrib)); */
-       LoadAttrib(levelAttrib);
-     }
-   }
+  for (int i = 1; i < levelSize + 1; i++) {
+    for (int j = 1; j < levelSize + 1; j++) {
+      levelAttrib.name = "floor";
+      levelAttrib.pos = glm::vec3((i * 2) - 7, -1.5, (j * 2) - 7);
+      levelAttrib.textureSlot = 0;
+      /* objects.push_back(LoadAttrib(levelAttrib)); */
+      LoadAttrib(levelAttrib);
+    }
+  }
+  /* ROOF GEN */
+  for (int i = 1; i < levelSize + 1; i++) {
+    for (int j = 1; j < levelSize + 1; j++) {
+      levelAttrib.name = "roof";
+      levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7);
+      levelAttrib.textureSlot = 0;
+      /* objects.push_back(LoadAttrib(levelAttrib)); */
+      LoadAttrib(levelAttrib);
+    }
+  }
 }
 
 void Engine::SaveObjects(std::string filePath) {
@@ -274,7 +278,7 @@ void Engine::SaveObjects(std::string filePath) {
   f.close();
 }
 
-void Engine::LoadObjects(const std::string &filePath) {
+void Engine::LoadObjects(const std::string& filePath) {
   using json = nlohmann::json;
   std::ifstream f(filePath);
   if (!f.is_open()) {
@@ -287,7 +291,7 @@ void Engine::LoadObjects(const std::string &filePath) {
     json j;
     try {
       j = json::parse(line);
-    } catch (json::parse_error &e) {
+    } catch (json::parse_error& e) {
       std::cerr << "JSON parse error: " << e.what() << std::endl;
       continue;
     }
@@ -307,48 +311,13 @@ void Engine::LoadObjects(const std::string &filePath) {
 }
 
 void Engine::PreLoop() {
-  // TODO TEMP
-  tempBufferShader = renderer.Shader("res/shaders/texture.glsl");
-  BindShader(tempBufferShader);
-  tempTextureUniform = glGetUniformLocation(tempBufferShader, "u_Texture");
-  GLCall(glUniform1i(tempTextureUniform, 9));
-  GLCall(glActiveTexture(GL_TEXTURE9));
-  tempBuffer = renderer.GenFrameBuffer();
-  float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-    // positions   // texCoords
-    -1.0f,  1.0f,  0.0f, 1.0f,
-    -1.0f, -1.0f,  0.0f, 0.0f,
-     1.0f, -1.0f,  1.0f, 0.0f,
-
-    -1.0f,  1.0f,  0.0f, 1.0f,
-     1.0f, -1.0f,  1.0f, 0.0f,
-     1.0f,  1.0f,  1.0f, 1.0f
-};
-  glGenVertexArrays(1, &quadVAO);
-  glGenBuffers(1, &quadVBO);
-  glBindVertexArray(quadVAO);
-  glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-  // TODO TEMP
-
-
+  renderer.ppStart();
   if (loadEnabled) {
     LoadObjects("res/save1.json");
   }
 }
 
 void Engine::BeginFrame() {
-  // TODO TEMP
-  BindShader(renderer.shaderID);
-  glEnable(GL_DEPTH_TEST);
-  // bind temp frame buffer
-  glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
-  // TODO TEMP
   renderer.ImGui();
   // load editor ui if enabled
   if (editorUpdateCallback && isUI) {
@@ -361,25 +330,12 @@ void Engine::BeginFrame() {
   renderer.camera.Look(Input::pitch, Input::yaw);
   KeyBindings();
 }
-void Engine::MainLoop() {
 
+void Engine::MainLoop() {
 }
 
 void Engine::EndFrame() {
   renderer.Clear();
   renderer.DrawObjects(objects);
-  renderer.textures.Bind(9);
-  // TODO TEMP
-  BindShader(tempBufferShader);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  // back to default
-  glClear(GL_COLOR_BUFFER_BIT);
-  glBindVertexArray(quadVAO);
-  glDisable(GL_DEPTH_TEST);
-  glBindTexture(GL_TEXTURE_2D, renderer.tempColorBufferTexture);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-  // glBindTexture(GL_TEXTURE_2D, 0);
-  // TODO TEMP
-  renderer.ImGuiEnd();
-  renderer.Swap();
+  renderer.Draw();
 }

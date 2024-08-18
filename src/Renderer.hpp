@@ -27,9 +27,6 @@ public:
   float deltaTime;
   bool isWireFrame;
   bool isUI;
-  // TODO TEMP
-  unsigned int tempColorBufferTexture;
-  // TODO TEMP
 
   /* STATE */
   void Wireframe(bool flag);
@@ -42,13 +39,29 @@ public:
   void ImGuiUI();
 
   /* RENDER */
-  unsigned int Shader(const std::string &path);
+  unsigned int Shader(const std::string& path);
+  void GLDraw();
   void Draw();
   void DrawObjects(const std::vector<GameObject*>& objects);
   void Swap();
   void Clear();
-  unsigned int GenFrameBuffer();
-  void DrawFrameBuffer(unsigned int id);
+  /* FRAMEBUFFER */
+  unsigned int ppInit();
+  void ppStart();
+  void ppDraw(unsigned int id);
+  unsigned int ppTexture;
+  float screenQuadVert[24] = {
+      -1.0f, 1.0f, 0.0f, 1.0f,
+      -1.0f, -1.0f, 0.0f, 0.0f,
+      1.0f, -1.0f, 1.0f, 0.0f,
+      -1.0f, 1.0f, 0.0f, 1.0f,
+      1.0f, -1.0f, 1.0f, 0.0f,
+      1.0f, 1.0f, 1.0f, 1.0f};
+  unsigned int tempBuffer;
+  unsigned int ppShader;
+  unsigned int ppVao;
+  unsigned int ppVBO;
+  int ppTexUniform;
 
   /* CORE */
   void Init();

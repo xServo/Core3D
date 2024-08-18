@@ -8,6 +8,7 @@ int main() {
   std::cout << "Core3D Version: " << VERSION << std::endl;
   // init engine
   Engine& engine = Engine::Instance();
+  engine.GetResolution();
 
   // init editor
   Editor editor(VERSION);

@@ -49,9 +49,29 @@ void Renderer::ImGuiEnd() {
   // (Your code calls glfwSwapBuffers() etc.)
 }
 
-void Renderer::Draw() {
+void Renderer::GLDraw() {
   glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);  // use ib
   // GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
+}
+
+void Renderer::Draw() {
+  // PP texture slot
+  textures.Bind(9);
+  BindShader(ppShader);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glClear(GL_COLOR_BUFFER_BIT);
+  // render to screen quad
+  glBindVertexArray(ppVao);
+  glDisable(GL_DEPTH_TEST);
+  glBindTexture(GL_TEXTURE_2D, ppTexture);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+
+  // return to default and draw
+  glEnable(GL_DEPTH_TEST);
+  BindShader(shaderID);
+  ImGuiEnd();
+  Swap();
+  glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
 }
 
 void Renderer::DrawObjects(const std::vector<GameObject*>& objects) {
@@ -75,7 +95,7 @@ void Renderer::Clear() {
   GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-unsigned int Renderer::GenFrameBuffer() {
+unsigned int Renderer::ppInit() {
   unsigned int fbo;
   glGenFramebuffers(1, &fbo);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -89,7 +109,7 @@ unsigned int Renderer::GenFrameBuffer() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glBindTexture(GL_TEXTURE_2D, 0);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-  tempColorBufferTexture = texture;
+  ppTexture = texture;
 
   // render buffer object
   unsigned int rbo;
@@ -100,15 +120,36 @@ unsigned int Renderer::GenFrameBuffer() {
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
   // check if frame buffer is complete
-  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
     std::cout << "Error, could not create framebuffer" << std::endl;
     ASSERT(0);
   }
-  glBindFramebuffer(GL_FRAMEBUFFER, 0); // unbind
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);  // unbind
   return fbo;
 }
 
-void Renderer::DrawFrameBuffer(unsigned int id) {
+void Renderer::ppStart() {
+  ppShader = Shader("res/shaders/pp.shader");
+  BindShader(ppShader);
+  ppTexUniform = glGetUniformLocation(ppShader, "u_Texture");
+  GLCall(glUniform1i(ppTexUniform, 9));
+  GLCall(glActiveTexture(GL_TEXTURE9));
+  tempBuffer = ppInit();
+  glGenVertexArrays(1, &ppVao);
+  glGenBuffers(1, &ppVBO);
+  glBindVertexArray(ppVao);
+  glBindBuffer(GL_ARRAY_BUFFER, ppVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(screenQuadVert), &screenQuadVert, GL_STATIC_DRAW);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+  BindShader(shaderID);
+  glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
+}
+
+void Renderer::ppDraw(unsigned int id) {
   // Clear();
   // glBindVertexArray(quadVAO);
   // glDisable(GL_DEPTH_TEST);
@@ -176,7 +217,7 @@ void Renderer::DeltaTime() {
   camera.deltaTime = deltaTime;
 }
 
-unsigned int Renderer::Shader(const std::string &path) {
+unsigned int Renderer::Shader(const std::string& path) {
   ShaderProgramSource source = ParseShader(path);
   unsigned int tempID = CreateShader(source.VertexSource, source.FragmentSource);
   return tempID;
@@ -187,5 +228,3 @@ void Renderer::Projection() {
   int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
   glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
 }
-
-
