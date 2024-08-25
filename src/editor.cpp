@@ -31,7 +31,7 @@ void Editor::UILoop() {
   ImGui::Text("FPS: %i\n", fps);  // Display some text
 
   // Player info
-  glm::vec3 playerPos = Engine::Instance().renderer.camera.GetPos();
+  glm::vec3 playerPos = Engine::Instance().player.camera.GetPos();
   ImGui::Text("Player pos: \nx:%.2f y:%.2f z:%.2f", playerPos.x, playerPos.y, playerPos.z);  // Display some text
 
   // debugging info

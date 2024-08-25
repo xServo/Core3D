@@ -19,6 +19,7 @@
 #include "model.hpp"
 #include "nlohmann/json.hpp"
 #include "stb_image.h"
+#include "Player.hpp"
 
 // must assign shaderID
 struct ObjectAttrib {
@@ -44,7 +45,6 @@ private:
   const int SCREEN_HEIGHT;
   const int SCREEN_WIDTH;
   /* SUBSYSTEMS */
-  unsigned int shader;
   std::function<void()> editorUpdateCallback;
   bool isUI;
 
@@ -65,6 +65,8 @@ private:
 public:
   /* SUBSYSTEMS */
   Renderer renderer;
+  unsigned int shader;
+  Player player;
   /* TEMP */
   bool CanMoveTo(glm::vec3 toPos);
   bool levelLoadingEnabled = true;

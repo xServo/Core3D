@@ -7,8 +7,6 @@ Renderer::Renderer(const int WIDTH, const int HEIGHT)
   Init();
   shaderID = Shader("res/shaders/basic.shader");
   glUseProgram(shaderID);
-  camera.shaderID = shaderID;
-  camera.Bind();
   textures.shaderID = shaderID;
   Projection();
   textures.Init();
@@ -223,7 +221,6 @@ void Renderer::DeltaTime() {
   double currentFrameTime = glfwGetTime();
   deltaTime = currentFrameTime - m_LastFrameTime;
   m_LastFrameTime = currentFrameTime;
-  camera.deltaTime = deltaTime;
 }
 
 unsigned int Renderer::Shader(const std::string& path) {

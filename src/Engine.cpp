@@ -30,19 +30,26 @@ bool Engine::CanMoveTo(glm::vec3 toPos) {
 }
 
 Engine::Engine()
-    : SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH), renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
+    : SCREEN_HEIGHT(S_HEIGHT),
+      SCREEN_WIDTH(S_WIDTH),
+      renderer(SCREEN_WIDTH, SCREEN_HEIGHT),
+      shader(renderer.shaderID),
+      player(shader) {
   /* pre update loop things */
   // editorUpdateCallback = nullptr;
   Input::lastX = float(SCREEN_WIDTH) / 2;   // init cursor pos
   Input::lastY = float(SCREEN_HEIGHT) / 2;  // init cursor pos
   /* set shader ids */
-  shader = renderer.shaderID;
   /* init input callbacks */
   glfwSetKeyCallback(renderer.gWindow, Input::KeyCallback);  // key callback
   glfwSetCursorPosCallback(renderer.gWindow,
                            Input::MouseCallback);  // mouse callback
   /* init imgui */
   renderer.ImGuiInit();
+
+  /* init player */
+  Player player(shader);
+  player.camera.Pos(glm::vec3(1, 0, 1));
 }
 
 Engine::~Engine() {
@@ -71,7 +78,7 @@ void Engine::Init() {
   // game behavior (whats in the main loop/keybindings function)
   // TODO TODO TODO
   // scene
-  renderer.camera.Pos(glm::vec3(1, 0, 1));
+
   renderer.textures.Generate("res/textures/slage.png", 0);
   renderer.textures.Generate("res/textures/portal_wall.png", 1);
   renderer.textures.Generate("res/models/backpack/diffuse.jpg", 3);
@@ -141,38 +148,38 @@ void Engine::KeyBindings() {
   for (int i = 0; i < Input::keyPressed.length(); i++) {
     switch (Input::keyPressed[i]) {
       case 'w': {
-        glm::vec3 newPos = renderer.camera.MoveForward();
+        glm::vec3 newPos = player.camera.MoveForward();
         if (CanMoveTo(newPos) || !playMode) {
-          renderer.camera.Pos(newPos);
+          player.camera.Pos(newPos);
         }
         break;
       }
       case 's': {
-        glm::vec3 newPos = renderer.camera.MoveBackward();
+        glm::vec3 newPos = player.camera.MoveBackward();
         if (CanMoveTo(newPos) || !playMode) {
-          renderer.camera.Pos(newPos);
+          player.camera.Pos(newPos);
         }
         break;
       }
       case 'a': {
-        glm::vec3 newPos = renderer.camera.MoveLeft();
+        glm::vec3 newPos = player.camera.MoveLeft();
         if (CanMoveTo(newPos) || !playMode) {
-          renderer.camera.Pos(newPos);
+          player.camera.Pos(newPos);
         }
         break;
       }
       case 'd': {
-        glm::vec3 newPos = renderer.camera.MoveRight();
+        glm::vec3 newPos = player.camera.MoveRight();
         if (CanMoveTo(newPos) || !playMode) {
-          renderer.camera.Pos(newPos);
+          player.camera.Pos(newPos);
         }
         break;
       }
       case 't':
-        renderer.camera.MoveUp();
+        player.camera.MoveUp();
         break;
       case 'g':
-        renderer.camera.MoveDown();
+        player.camera.MoveDown();
         break;
       case 'e':
         ToggleUI();
@@ -197,10 +204,10 @@ void Engine::KeyBindings() {
         Input::keyPressed = "";
         break;
       case Input::SHIFT:
-        renderer.camera.isRunning = true;
+        player.camera.isRunning = true;
         break;
       case Input::SHIFT_REL:  // Shift release
-        renderer.camera.isRunning = false;
+        player.camera.isRunning = false;
         break;
     }
   }
@@ -377,10 +384,11 @@ void Engine::BeginFrame() {
     editorUpdateCallback();
   }
   renderer.DeltaTime();
+  player.camera.deltaTime = renderer.deltaTime;
   renderer.Clear();
   /* HANDLE INPUT */
   GLCall(glfwPollEvents());
-  renderer.camera.Look(Input::pitch, Input::yaw);
+  player.camera.Look(Input::pitch, Input::yaw);
   KeyBindings();
 }
 
