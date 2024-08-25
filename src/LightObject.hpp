@@ -8,6 +8,7 @@
 #include "VertexArray.hpp"
 #include "IndexBuffer.hpp"
 #include "gl_assert.hpp"
+
 class LightObject : public GameObject {
 private:
   /* ids */
@@ -23,7 +24,7 @@ private:
   void SetLightPos(glm::vec3 pos);
 
 public:
-  LightObject(unsigned int shader, unsigned int id);
+  LightObject(unsigned int shader, unsigned int lightID);
   void Color(glm::vec3 color) override;
   void Translate(glm::vec3 translate) override;
   void SetPos(glm::vec3 pos) override;

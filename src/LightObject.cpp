@@ -1,5 +1,4 @@
 #include "LightObject.hpp"
-#include "GameObject.hpp"
 
 /* private */
 void LightObject::SetLightPos(glm::vec3 pos) {
@@ -8,11 +7,11 @@ void LightObject::SetLightPos(glm::vec3 pos) {
 }
 
 /* public */
-LightObject::LightObject(unsigned int shader, unsigned int id) : GameObject(shader) {
+LightObject::LightObject(unsigned int shader, unsigned int lightID) : GameObject(shader) {
   m_ShaderID = shader;
-  m_LightID = id;
-  u_LightPos = glGetUniformLocation(shader, ("lights[" + std::to_string(m_LightID) + "].lightPos").c_str());
-  u_LightColor = glGetUniformLocation(shader, ("lights[" + std::to_string(m_LightID) + "].lightColor").c_str());
+  m_LightID = lightID;
+  u_LightPos = glGetUniformLocation(m_ShaderID, ("lights[" + std::to_string(m_LightID) + "].lightPos").c_str());
+  u_LightColor = glGetUniformLocation(m_ShaderID, ("lights[" + std::to_string(m_LightID) + "].lightColor").c_str());
 }
 
 void LightObject::Color(glm::vec3 color) {

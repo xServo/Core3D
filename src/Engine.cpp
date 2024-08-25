@@ -78,7 +78,6 @@ void Engine::Init() {
   bulb1.SetIsLit(false);
   bulb1.SetIsTextured(false);
   bulb1.SetSize(glm::vec3(0.1, 0.1, 0.1));
-  bulb1.Translate(glm::vec3(4, 0.5, 4));
   AddObject(&bulb1);
 
   LightObject bulb2(shader, 1);
@@ -87,7 +86,7 @@ void Engine::Init() {
   bulb2.SetIsLit(false);
   bulb2.SetIsTextured(false);
   bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1));
-  bulb2.Translate(glm::vec3(4, 0.5, 4));
+  bulb2.SetPos(glm::vec3(4, 0.5, 4));
   AddObject(&bulb2);
 
   PreLoop();
