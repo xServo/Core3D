@@ -44,7 +44,6 @@ private:
   const int SCREEN_HEIGHT;
   const int SCREEN_WIDTH;
   /* SUBSYSTEMS */
-  Renderer renderer;
   unsigned int shader;
   std::function<void()> editorUpdateCallback;
   bool isUI;
@@ -64,9 +63,14 @@ private:
   ~Engine();
 
 public:
+  /* SUBSYSTEMS */
+  Renderer renderer;
+  /* TEMP */
+  bool CanMoveTo(glm::vec3 toPos);
   bool levelLoadingEnabled = true;
   bool saveEnabled = false;
   bool loadEnabled = false;
+  bool playMode = true;
   // singleton
   static Engine& Instance() {
     static Engine INSTANCE;
@@ -82,6 +86,7 @@ public:
   std::vector<GameObject*> objects;
   std::unordered_map<GameObject*, ObjectAttrib> attribMap;
   /* EDITOR UI */
+  std::string debugString;
   void ToggleUI();
   void SetEditorUpdateCallback(std::function<void()> callback);
   /* CORE */

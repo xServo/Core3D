@@ -28,22 +28,27 @@ void Camera::Bind() {
 
 void Camera::Pos(glm::vec3 newPos) {
   m_Pos = newPos;
-}
-void Camera::MoveForward() {
-  m_Pos += glm::vec3(m_Target.x, 0, m_Target.z) * speed * deltaTime;
   Bind();
 }
-void Camera::MoveBackward() {
-  m_Pos -= glm::vec3(m_Target.x, 0, m_Target.z) * speed * deltaTime;
-  Bind();
+glm::vec3 Camera::MoveForward() {
+  glm::vec3 tempVec = m_Pos;
+  tempVec += glm::vec3(m_Target.x, 0, m_Target.z) * speed * deltaTime;
+  return tempVec;
 }
-void Camera::MoveLeft() {
-  m_Pos -= glm::normalize(glm::cross(m_Target, m_Up)) * speed * deltaTime;
-  Bind();
+glm::vec3 Camera::MoveBackward() {
+  glm::vec3 tempVec = m_Pos;
+  tempVec -= glm::vec3(m_Target.x, 0, m_Target.z) * speed * deltaTime;
+  return tempVec;
 }
-void Camera::MoveRight() {
-  m_Pos += glm::normalize(glm::cross(m_Target, m_Up)) * speed * deltaTime;
-  Bind();
+glm::vec3 Camera::MoveLeft() {
+  glm::vec3 tempVec = m_Pos;
+  tempVec -= glm::normalize(glm::cross(m_Target, m_Up)) * speed * deltaTime;
+  return tempVec;
+}
+glm::vec3 Camera::MoveRight() {
+  glm::vec3 tempVec = m_Pos;
+  tempVec += glm::normalize(glm::cross(m_Target, m_Up)) * speed * deltaTime;
+  return tempVec;
 }
 void Camera::MoveUp() {
   m_Pos += glm::vec3(0, 1, 0) * speed * deltaTime;

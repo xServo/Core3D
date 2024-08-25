@@ -1,5 +1,7 @@
 #include "Engine.hpp"
 #include <iostream>
+#include <ostream>
+#include "GameObject.hpp"
 #include "LightObject.hpp"
 // personal sceen size pref
 #ifdef _WIN32
@@ -9,6 +11,23 @@
 #define S_HEIGHT 800
 #define S_WIDTH 1390
 #endif
+
+// TODO temp
+bool Engine::CanMoveTo(glm::vec3 toPos) {
+  char buffer[256];
+  toPos += 2;
+  int toX = std::floor(toPos.x / 2) + 2;
+  int toZ = std::floor(toPos.z / 2) + 2;
+  if (level0[toX][toZ] == 1) {
+    std::snprintf(buffer, sizeof(buffer), "\nX:%i Z:%i \nBlocked", toX, toZ);
+    debugString = buffer;
+    return false;
+  } else {
+    std::snprintf(buffer, sizeof(buffer), "\nX:%i Z:%i \nClear", toX, toZ);
+    debugString = buffer;
+    return true;
+  }
+}
 
 Engine::Engine()
     : SCREEN_HEIGHT(S_HEIGHT), SCREEN_WIDTH(S_WIDTH), renderer(SCREEN_WIDTH, SCREEN_HEIGHT) {
@@ -89,6 +108,24 @@ void Engine::Init() {
   bulb2.SetPos(glm::vec3(4, 0.5, 4));
   AddObject(&bulb2);
 
+  GameObject box(shader);
+  box.SetIsLit(false);
+  box.SetSize(glm::vec3(0.05, 1, 0.05));
+  box.SetPos(glm::vec3(0, 0.5, 0));
+  AddObject(&box);
+
+  GameObject box2(shader);
+  box2.SetIsLit(false);
+  box2.SetSize(glm::vec3(0.05, 1, 0.05));
+  box2.SetPos(glm::vec3(2, 0.1, 2));
+  AddObject(&box2);
+
+  GameObject box3(shader);
+  box3.SetIsLit(false);
+  box3.SetSize(glm::vec3(0.05, 1, 0.05));
+  box3.SetPos(glm::vec3(4, 0.1, 2));
+  AddObject(&box3);
+
   PreLoop();
   /* main loop */
   while (!glfwWindowShouldClose(renderer.gWindow)) {
@@ -103,18 +140,34 @@ void Engine::Init() {
 void Engine::KeyBindings() {
   for (int i = 0; i < Input::keyPressed.length(); i++) {
     switch (Input::keyPressed[i]) {
-      case 'w':
-        renderer.camera.MoveForward();
+      case 'w': {
+        glm::vec3 newPos = renderer.camera.MoveForward();
+        if (CanMoveTo(newPos) || !playMode) {
+          renderer.camera.Pos(newPos);
+        }
         break;
-      case 's':
-        renderer.camera.MoveBackward();
+      }
+      case 's': {
+        glm::vec3 newPos = renderer.camera.MoveBackward();
+        if (CanMoveTo(newPos) || !playMode) {
+          renderer.camera.Pos(newPos);
+        }
         break;
-      case 'a':
-        renderer.camera.MoveLeft();
+      }
+      case 'a': {
+        glm::vec3 newPos = renderer.camera.MoveLeft();
+        if (CanMoveTo(newPos) || !playMode) {
+          renderer.camera.Pos(newPos);
+        }
         break;
-      case 'd':
-        renderer.camera.MoveRight();
+      }
+      case 'd': {
+        glm::vec3 newPos = renderer.camera.MoveRight();
+        if (CanMoveTo(newPos) || !playMode) {
+          renderer.camera.Pos(newPos);
+        }
         break;
+      }
       case 't':
         renderer.camera.MoveUp();
         break;
@@ -191,7 +244,7 @@ GameObject* Engine::LoadAttrib(const ObjectAttrib& attrib) {
   obj->SetName(attrib.name);
   obj->Color(attrib.color);
   obj->SetSize(attrib.size);
-  obj->Translate(attrib.pos);
+  obj->SetPos(attrib.pos);
   obj->SetIsLit(attrib.isLit);
 
   if (!attrib.modelPath.empty())
@@ -212,6 +265,7 @@ GameObject* Engine::LoadAttrib(const ObjectAttrib& attrib) {
 
 void Engine::LoadLevel(const int levelArr[7][7]) {
   int levelSize = 7;
+  float offset = 7;
   /* WALL GEN */
   ObjectAttrib levelAttrib;
   levelAttrib.shaderID = shader;
@@ -220,7 +274,7 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
     for (int j = 1; j < levelSize + 1; j++) {
       if (levelArr[i - 1][j - 1] == 1) {
         levelAttrib.name = "wall";
-        levelAttrib.pos = glm::vec3((i * 2) - 7, 0, (j * 2) - 7);
+        levelAttrib.pos = glm::vec3((i * 2) - offset, 0, (j * 2) - offset);
         levelAttrib.textureSlot = 1;
         /* objects.push_back(LoadAttrib(levelAttrib)); */
         LoadAttrib(levelAttrib);
@@ -231,8 +285,8 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
   for (int i = 1; i < levelSize + 1; i++) {
     for (int j = 1; j < levelSize + 1; j++) {
       levelAttrib.name = "floor";
-      levelAttrib.pos = glm::vec3((i * 2) - 7, -1.5, (j * 2) - 7);
-      levelAttrib.textureSlot = 0;
+      levelAttrib.pos = glm::vec3((i * 2) - offset, -1.5, (j * 2) - offset);
+      levelAttrib.textureSlot = 1;  // 0
       /* objects.push_back(LoadAttrib(levelAttrib)); */
       LoadAttrib(levelAttrib);
     }

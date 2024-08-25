@@ -55,6 +55,11 @@ void Renderer::GLDraw() {
 }
 
 void Renderer::Draw() {
+  // disable wireframe while drawing final image
+  bool tempWireFrame = isWireFrame;
+  if (tempWireFrame) {
+    Wireframe(false);
+  }
   // PP texture slot
   textures.Bind(9);
   BindShader(ppShader);
@@ -72,6 +77,10 @@ void Renderer::Draw() {
   ImGuiEnd();
   Swap();
   glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
+  // reenable wireframe
+  if (tempWireFrame) {
+    Wireframe(true);
+  }
 }
 
 void Renderer::DrawObjects(const std::vector<GameObject*>& objects) {

@@ -25,10 +25,11 @@ public:
   void Bind();
   void Look(float pitch, float yaw);
   void Pos(glm::vec3 newPos);
-  void MoveForward();
-  void MoveBackward();
-  void MoveLeft();
-  void MoveRight();
+  glm::vec3 MoveForward();
+  glm::vec3 MoveBackward();
+  glm::vec3 MoveLeft();
+  glm::vec3 MoveRight();
   void MoveUp();
   void MoveDown();
+  inline glm::vec3 GetPos() const { return m_Pos; };
 };
