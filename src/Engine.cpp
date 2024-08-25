@@ -1,12 +1,13 @@
 #include "Engine.hpp"
 #include <iostream>
+#include "LightObject.hpp"
 // personal sceen size pref
 #ifdef _WIN32
 #define S_HEIGHT 1280
 #define S_WIDTH 2320
 #else
 #define S_HEIGHT 800
-#define S_WIDTH 1340
+#define S_WIDTH 1390
 #endif
 
 Engine::Engine()
@@ -70,24 +71,23 @@ void Engine::Init() {
   backpackAttrib.shaderID = shader;
   GameObject* backpack = LoadAttrib(backpackAttrib);
 
-  ObjectAttrib bulbAttrib;
-  bulbAttrib.name = "Bulb";
-  bulbAttrib.shaderID = shader;
-  bulbAttrib.color = glm::vec3(0.53, 0.13, 0.54);
-  bulbAttrib.size = glm::vec3(0.1, 0.1, 0.1);
-  bulbAttrib.pos = glm::vec3(1, 0.5, 1);
-  bulbAttrib.lightID = 0;
-  bulbAttrib.isLit = false;
-  LoadAttrib(bulbAttrib);
+  LightObject bulb1(shader, 0);
+  bulb1.name = "Bulb1";
+  bulb1.SetPos(glm::vec3(1, 0.5, 1));
+  bulb1.Color(glm::vec3(0.53, 0.13, 0.54));
+  bulb1.SetIsLit(false);
+  bulb1.SetIsTextured(false);
+  bulb1.SetSize(glm::vec3(0.1, 0.1, 0.1));
+  bulb1.Translate(glm::vec3(4, 0.5, 4));
+  AddObject(&bulb1);
 
-  GameObject bulb2(shader);
+  LightObject bulb2(shader, 1);
   bulb2.name = "Bulb2";
   bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
   bulb2.SetIsLit(false);
   bulb2.SetIsTextured(false);
   bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1));
   bulb2.Translate(glm::vec3(4, 0.5, 4));
-  bulb2.InitLight(1);
   AddObject(&bulb2);
 
   PreLoop();
@@ -174,8 +174,8 @@ void Engine::MapAttrib(GameObject* obj) {
   attrib.size = obj->GetSize();
   attrib.modelPath = obj->GetModelPath();
   attrib.isLit = obj->GetIsLit();
-  if (obj->GetHasLight())
-    attrib.lightID = obj->GetLightID();
+  /* if (obj->GetHasLight()) */
+  /*   attrib.lightID = obj->GetLightID(); */
   if (obj->GetIsTextured())
     attrib.textureSlot = obj->GetTextureSlot();
   attribMap[obj] = attrib;  // divine intellect
@@ -199,8 +199,8 @@ GameObject* Engine::LoadAttrib(const ObjectAttrib& attrib) {
     obj->InitModel(attrib.modelPath);
   if (attrib.shine != -1)
     obj->Shininess(attrib.shine);
-  if (attrib.lightID != -1)
-    obj->InitLight(attrib.lightID);
+  /* if (attrib.lightID != -1) */
+  /*   obj->InitLight(attrib.lightID); */
   if (attrib.textureSlot != -1) {
     obj->SetIsTextured(true);
     obj->TextureSlot(attrib.textureSlot);
@@ -264,7 +264,7 @@ void Engine::SaveObjects(std::string filePath) {
     o["name"] = attrib.name;
     o["editorID"] = attrib.editorID;
     o["shaderID"] = attrib.shaderID;
-    o["lightID"] = attrib.lightID;
+    /* o["lightID"] = attrib.lightID; */
     o["pos"] = {attrib.pos.x, attrib.pos.y, attrib.pos.z};
     o["size"] = {attrib.size.x, attrib.size.y, attrib.size.z};
     o["textureSlot"] = attrib.textureSlot;
