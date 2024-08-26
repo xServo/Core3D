@@ -7,8 +7,6 @@ Renderer::Renderer(const int WIDTH, const int HEIGHT)
   Init();
   shaderID = Shader("res/shaders/basic.shader");
   glUseProgram(shaderID);
-  camera.shaderID = shaderID;
-  camera.Bind();
   textures.shaderID = shaderID;
   Projection();
   textures.Init();
@@ -55,6 +53,11 @@ void Renderer::GLDraw() {
 }
 
 void Renderer::Draw() {
+  // disable wireframe while drawing final image
+  bool tempWireFrame = isWireFrame;
+  if (tempWireFrame) {
+    Wireframe(false);
+  }
   // PP texture slot
   textures.Bind(9);
   BindShader(ppShader);
@@ -72,6 +75,10 @@ void Renderer::Draw() {
   ImGuiEnd();
   Swap();
   glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
+  // reenable wireframe
+  if (tempWireFrame) {
+    Wireframe(true);
+  }
 }
 
 void Renderer::DrawObjects(const std::vector<GameObject*>& objects) {
@@ -214,7 +221,6 @@ void Renderer::DeltaTime() {
   double currentFrameTime = glfwGetTime();
   deltaTime = currentFrameTime - m_LastFrameTime;
   m_LastFrameTime = currentFrameTime;
-  camera.deltaTime = deltaTime;
 }
 
 unsigned int Renderer::Shader(const std::string& path) {

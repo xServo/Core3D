@@ -19,6 +19,7 @@
 #include "model.hpp"
 #include "nlohmann/json.hpp"
 #include "stb_image.h"
+#include "Player.hpp"
 
 // must assign shaderID
 struct ObjectAttrib {
@@ -35,6 +36,8 @@ struct ObjectAttrib {
   int textureSlot = -1;
   std::string modelPath;
   float shine = -1;
+  float roughness = -1;
+  float metallic = -1;
   bool isLit = true;
   /* TODO BIND TEXTURE ON DRAW OF GAMEOBJECT */
 };
@@ -44,8 +47,6 @@ private:
   const int SCREEN_HEIGHT;
   const int SCREEN_WIDTH;
   /* SUBSYSTEMS */
-  Renderer renderer;
-  unsigned int shader;
   std::function<void()> editorUpdateCallback;
   bool isUI;
 
@@ -64,9 +65,16 @@ private:
   ~Engine();
 
 public:
+  /* SUBSYSTEMS */
+  Renderer renderer;
+  unsigned int shader;
+  Player player;
+  /* TEMP */
+  bool CanMoveTo(glm::vec3 toPos);
   bool levelLoadingEnabled = true;
   bool saveEnabled = false;
   bool loadEnabled = false;
+  bool playMode = true;
   // singleton
   static Engine& Instance() {
     static Engine INSTANCE;
@@ -82,6 +90,7 @@ public:
   std::vector<GameObject*> objects;
   std::unordered_map<GameObject*, ObjectAttrib> attribMap;
   /* EDITOR UI */
+  std::string debugString;
   void ToggleUI();
   void SetEditorUpdateCallback(std::function<void()> callback);
   /* CORE */

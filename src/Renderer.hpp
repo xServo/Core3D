@@ -12,7 +12,6 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include "Camera.hpp"
 #include "gl_assert.hpp"
 #include "GameObject.hpp"
 class Renderer {
@@ -21,7 +20,6 @@ public:
   Texture textures;
   /* RENDER VARS */
   GLFWwindow* gWindow;
-  Camera camera;
   /* STATE VARS */
   unsigned int shaderID;
   float deltaTime;
