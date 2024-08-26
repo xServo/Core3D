@@ -4,11 +4,12 @@
 ### Features
 + Input handling
 + Moveable camera
-+ Game object management
++ Game object management using inheritance
 + Assimp model loading
 + Phong Lighting Model
-+ ImGui
++ PBR Lighting Model
 + Post Processing
++ ImGui for debugging
 
 ### How To build
 #### Windows 
