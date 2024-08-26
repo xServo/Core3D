@@ -100,7 +100,7 @@ void Engine::Init() {
   LightObject bulb1(shader, 0);
   bulb1.name = "Bulb1";
   bulb1.SetPos(glm::vec3(1, 0.5, 1));
-  bulb1.Color(glm::vec3(0.53, 0.13, 0.54));
+  bulb1.Color(glm::vec3(0.7, 0.13, 1));
   bulb1.SetIsLit(false);
   bulb1.SetIsTextured(false);
   bulb1.SetSize(glm::vec3(0.1, 0.1, 0.1));
@@ -108,30 +108,39 @@ void Engine::Init() {
 
   LightObject bulb2(shader, 1);
   bulb2.name = "Bulb2";
-  bulb2.Color(glm::vec3(0.13, 0.43, 0.54));
+  bulb2.Color(glm::vec3(0, 0, 1));
   bulb2.SetIsLit(false);
   bulb2.SetIsTextured(false);
   bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1));
   bulb2.SetPos(glm::vec3(4, 0.5, 4));
   AddObject(&bulb2);
 
-  GameObject box(shader);
-  box.SetIsLit(false);
-  box.SetSize(glm::vec3(0.05, 1, 0.05));
-  box.SetPos(glm::vec3(0, 0.5, 0));
-  AddObject(&box);
+  LightObject bulb3(shader, 2);
+  bulb3.name = "Bulb2";
+  bulb3.Color(glm::vec3(1, 1, 1));
+  bulb3.SetIsLit(false);
+  bulb3.SetIsTextured(false);
+  bulb3.SetSize(glm::vec3(0.1, 0.1, 0.1));
+  bulb3.SetPos(glm::vec3(-3.5, 0.5, 4));
+  AddObject(&bulb3);
 
-  GameObject box2(shader);
-  box2.SetIsLit(false);
-  box2.SetSize(glm::vec3(0.05, 1, 0.05));
-  box2.SetPos(glm::vec3(2, 0.1, 2));
-  AddObject(&box2);
-
-  GameObject box3(shader);
-  box3.SetIsLit(false);
-  box3.SetSize(glm::vec3(0.05, 1, 0.05));
-  box3.SetPos(glm::vec3(4, 0.1, 2));
-  AddObject(&box3);
+  // GameObject box(shader);
+  // box.SetIsLit(false);
+  // box.SetSize(glm::vec3(0.05, 1, 0.05));
+  // box.SetPos(glm::vec3(0, 0.5, 0));
+  // AddObject(&box);
+  //
+  // GameObject box2(shader);
+  // box2.SetIsLit(false);
+  // box2.SetSize(glm::vec3(0.05, 1, 0.05));
+  // box2.SetPos(glm::vec3(2, 0.1, 2));
+  // AddObject(&box2);
+  //
+  // GameObject box3(shader);
+  // box3.SetIsLit(false);
+  // box3.SetSize(glm::vec3(0.05, 1, 0.05));
+  // box3.SetPos(glm::vec3(4, 0.1, 2));
+  // AddObject(&box3);
 
   PreLoop();
   /* main loop */
@@ -258,6 +267,10 @@ GameObject* Engine::LoadAttrib(const ObjectAttrib& attrib) {
     obj->InitModel(attrib.modelPath);
   if (attrib.shine != -1)
     obj->Shininess(attrib.shine);
+  if (attrib.metallic != -1)
+    obj->SetMetallic(attrib.metallic);
+  if (attrib.roughness != -1)
+    obj->SetRoughness(attrib.roughness);
   /* if (attrib.lightID != -1) */
   /*   obj->InitLight(attrib.lightID); */
   if (attrib.textureSlot != -1) {
@@ -292,8 +305,10 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
   for (int i = 1; i < levelSize + 1; i++) {
     for (int j = 1; j < levelSize + 1; j++) {
       levelAttrib.name = "floor";
+      levelAttrib.roughness = 1;
+      levelAttrib.metallic = 0;
       levelAttrib.pos = glm::vec3((i * 2) - offset, -1.5, (j * 2) - offset);
-      levelAttrib.textureSlot = 1;  // 0
+      levelAttrib.textureSlot = 0;
       /* objects.push_back(LoadAttrib(levelAttrib)); */
       LoadAttrib(levelAttrib);
     }
@@ -302,6 +317,8 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
   for (int i = 1; i < levelSize + 1; i++) {
     for (int j = 1; j < levelSize + 1; j++) {
       levelAttrib.name = "roof";
+      levelAttrib.roughness = 1;
+      levelAttrib.metallic = 0;
       levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7);
       levelAttrib.textureSlot = 0;
       /* objects.push_back(LoadAttrib(levelAttrib)); */

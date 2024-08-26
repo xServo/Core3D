@@ -36,6 +36,8 @@ struct ObjectAttrib {
   int textureSlot = -1;
   std::string modelPath;
   float shine = -1;
+  float roughness = -1;
+  float metallic = -1;
   bool isLit = true;
   /* TODO BIND TEXTURE ON DRAW OF GAMEOBJECT */
 };

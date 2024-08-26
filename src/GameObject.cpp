@@ -9,6 +9,9 @@ GameObject::GameObject(unsigned int shader)
   int ID;
   m_Color = glm::vec3(1, 1, 1);
   m_Shininess = 16;
+  m_Metallic = 0;
+  m_Roughness = 0.2;
+  m_AO = 0.5;
   m_IsLit = true;
   m_IsTextured = false;
   m_Position = glm::vec3(0, 0, 0);
@@ -19,6 +22,10 @@ GameObject::GameObject(unsigned int shader)
 
   /* UNIFORMS */
   u_Shininess = glGetUniformLocation(shaderID, "material.shininess");
+  u_Metallic = glGetUniformLocation(shaderID, "material.metallic");
+  u_Roughness = glGetUniformLocation(shaderID, "material.roughness");
+  u_AO = glGetUniformLocation(shaderID, "material.ao");
+
   u_Color = glGetUniformLocation(shaderID, "u_Color");
   u_IsLit = glGetUniformLocation(shaderID, "u_IsLit");
   u_IsTextured = glGetUniformLocation(shaderID, "u_IsTextured");
@@ -47,6 +54,9 @@ void GameObject::Bind() {
   }
 
   glUniform1f(u_Shininess, m_Shininess);
+  glUniform1f(u_Roughness, m_Roughness);
+  glUniform1f(u_AO, m_AO);
+  glUniform1f(u_Metallic, m_Metallic);
   glUniform3f(u_Color, m_Color.x, m_Color.y, m_Color.z);
   glUniform1i(u_IsLit, m_IsLit);
   glUniform1i(u_IsTextured, m_IsTextured);
@@ -74,6 +84,21 @@ void GameObject::Color(glm::vec3 color) {
 void GameObject::Shininess(float shine) {
   m_Shininess = shine;
   glUniform1f(u_Shininess, m_Shininess);
+}
+
+void GameObject::SetRoughness(float rough) {
+  m_Roughness = rough;
+  glUniform1f(u_Roughness, m_Roughness);
+}
+
+void GameObject::SetAO(float ao) {
+  m_AO = ao;
+  glUniform1f(u_AO, m_AO);
+}
+
+void GameObject::SetMetallic(float metallic) {
+  m_Metallic = metallic;
+  glUniform1f(u_Metallic, m_Metallic);
 }
 
 void GameObject::Rotate(float theta, glm::vec3 rotationAxis) {

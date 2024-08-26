@@ -20,6 +20,9 @@ private:
   std::string m_Name;
   glm::vec3 m_Position;
   float m_Shininess;
+  float m_Roughness;
+  float m_Metallic;
+  float m_AO;
   glm::vec3 m_Color;
   bool m_IsLit;
   bool m_IsTextured;
@@ -31,6 +34,10 @@ private:
   glm::mat4 m_Scale;
   /* UNIFORMS */
   int u_Shininess;
+  int u_Metallic;
+  int u_Roughness;
+  int u_AO;
+
   int u_Color;
   int u_IsLit;
   int u_IsTextured;
@@ -47,6 +54,12 @@ public:
   ~GameObject();
   virtual void Color(glm::vec3 color);
   void Shininess(float shine);
+  void SetRoughness(float rough);
+  void SetAO(float ao);
+  void SetMetallic(float metallic);
+
+
+
   void Bind();
   void Draw();
   void Rotate(float theta, glm::vec3 rotationAxis);
