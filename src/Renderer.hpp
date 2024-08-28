@@ -14,6 +14,8 @@
 #include "imgui_impl_opengl3.h"
 #include "gl_assert.hpp"
 #include "GameObject.hpp"
+#include "FrameBuffer.hpp"
+
 class Renderer {
 public:
   Renderer(const int WIDTH, const int HEIGHT);
@@ -44,9 +46,8 @@ public:
   void Swap();
   void Clear();
   /* FRAMEBUFFER */
-  unsigned int ppInit();
+  FrameBuffer ppBuffer;
   void ppStart();
-  void ppDraw(unsigned int id);
   unsigned int ppTexture;
   float screenQuadVert[24] = {
       -1.0f, 1.0f, 0.0f, 1.0f,

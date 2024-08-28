@@ -1,7 +1,7 @@
 #include "Renderer.hpp"
 /* ---------------------------PUBLIC---------------------------- */
 Renderer::Renderer(const int WIDTH, const int HEIGHT)
-    : SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), textures() {
+    : SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), textures(), ppBuffer(WIDTH, HEIGHT) {
   GLFWwindow* gWindow = nullptr;
   isUI = true;
   Init();
@@ -61,12 +61,12 @@ void Renderer::Draw() {
   // PP texture slot
   textures.Bind(9);
   BindShader(ppShader);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  FrameBuffer::BindDefault();
   glClear(GL_COLOR_BUFFER_BIT);
   // render to screen quad
   glBindVertexArray(ppVao);
   glDisable(GL_DEPTH_TEST);
-  glBindTexture(GL_TEXTURE_2D, ppTexture);
+  glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture());
   glDrawArrays(GL_TRIANGLES, 0, 6);
 
   // return to default and draw
@@ -74,7 +74,7 @@ void Renderer::Draw() {
   BindShader(shaderID);
   ImGuiEnd();
   Swap();
-  glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
+  ppBuffer.Bind();
   // reenable wireframe
   if (tempWireFrame) {
     Wireframe(true);
@@ -102,46 +102,13 @@ void Renderer::Clear() {
   GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-unsigned int Renderer::ppInit() {
-  unsigned int fbo;
-  glGenFramebuffers(1, &fbo);
-  glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-  // texture
-  unsigned int texture;
-  glGenTextures(1, &texture);
-  glBindTexture(GL_TEXTURE_2D, texture);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glBindTexture(GL_TEXTURE_2D, 0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-  ppTexture = texture;
-
-  // render buffer object
-  unsigned int rbo;
-  glGenRenderbuffers(1, &rbo);
-  glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT);
-  glBindRenderbuffer(GL_RENDERBUFFER, 0);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-  // check if frame buffer is complete
-  if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-    std::cout << "Error, could not create framebuffer" << std::endl;
-    ASSERT(0);
-  }
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);  // unbind
-  return fbo;
-}
-
 void Renderer::ppStart() {
   ppShader = Shader("res/shaders/pp.shader");
   BindShader(ppShader);
   ppTexUniform = glGetUniformLocation(ppShader, "u_Texture");
   GLCall(glUniform1i(ppTexUniform, 9));
   GLCall(glActiveTexture(GL_TEXTURE9));
-  tempBuffer = ppInit();
+  ppBuffer.Init(); 
   glGenVertexArrays(1, &ppVao);
   glGenBuffers(1, &ppVBO);
   glBindVertexArray(ppVao);
@@ -152,16 +119,9 @@ void Renderer::ppStart() {
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
+  // return to the default shader and drawing buffer
   BindShader(shaderID);
-  glBindFramebuffer(GL_FRAMEBUFFER, tempBuffer);
-}
-
-void Renderer::ppDraw(unsigned int id) {
-  // Clear();
-  // glBindVertexArray(quadVAO);
-  // glDisable(GL_DEPTH_TEST);
-  // glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
-  // glDrawArrays(GL_TRIANGLES, 0, 6);
+  ppBuffer.Bind();
 }
 
 void Renderer::Wireframe(bool flag) {
