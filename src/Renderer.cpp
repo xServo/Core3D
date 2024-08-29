@@ -1,11 +1,19 @@
 #include "Renderer.hpp"
 /* ---------------------------PUBLIC---------------------------- */
 Renderer::Renderer(const int WIDTH, const int HEIGHT)
-    : SCREEN_WIDTH(WIDTH), SCREEN_HEIGHT(HEIGHT), textures(), ppBuffer(WIDTH, HEIGHT) {
+    : SCREEN_WIDTH(WIDTH),
+      SCREEN_HEIGHT(HEIGHT),
+      textures(),
+      ppBuffer(WIDTH, HEIGHT),
+      shadowBuffer(SHADOW_RES, SHADOW_RES) {
   GLFWwindow* gWindow = nullptr;
   isUI = true;
   Init();
   shaderID = Shader("res/shaders/basic.shader");
+  ppShader = Shader("res/shaders/pp.shader");
+  shadowShader = Shader("res/shaders/shadow.shader");
+  displayShadowShader = Shader("res/shaders/debug_shadow.shader");
+  ppShader = Shader("res/shaders/pp.shader");
   glUseProgram(shaderID);
   textures.shaderID = shaderID;
   Projection();
@@ -52,8 +60,22 @@ void Renderer::GLDraw() {
   // GLCall(glDrawArrays(GL_TRIANGLES, 0, 36)); // use vertex matrix
 }
 
-void Renderer::Draw() {
-  // disable wireframe while drawing final image
+// renders everything
+void Renderer::Draw(const std::vector<GameObject*>&objects) {
+  /* ---------- SHADOW MAPPING --------- */
+  BindShader(shadowShader);
+  ShadowProj();
+  shadowBuffer.Bind();
+  glClear(GL_DEPTH_BUFFER_BIT);
+  DrawObjects(objects, shadowShader);
+  /* ---------- MAIN PASS --------- */
+  BindShader(shaderID);
+  Projection();
+  ppBuffer.Bind();
+  Clear();
+  DrawObjects(objects, shaderID);
+  /* ---------- POST PROCESSING --------- */
+  // disable wireframe 
   bool tempWireFrame = isWireFrame;
   if (tempWireFrame) {
     Wireframe(false);
@@ -66,25 +88,42 @@ void Renderer::Draw() {
   // render to screen quad
   glBindVertexArray(ppVao);
   glDisable(GL_DEPTH_TEST);
-  glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture());
+  // set the texture that gets drawn
+  // glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture()); 
+  // glDrawArrays(GL_TRIANGLES, 0, 6);
+  
+
+  // TEMP DRAW SHADOW BUFFER
+  BindShader(displayShadowShader);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture());
   glDrawArrays(GL_TRIANGLES, 0, 6);
 
-  // return to default and draw
+
+
   glEnable(GL_DEPTH_TEST);
+  /* ---------- SWAP --------- */
+  // swap and rebind shader for game stuff on begin frame
   BindShader(shaderID);
   ImGuiEnd();
   Swap();
-  ppBuffer.Bind();
   // reenable wireframe
   if (tempWireFrame) {
     Wireframe(true);
   }
 }
 
-void Renderer::DrawObjects(const std::vector<GameObject*>& objects) {
+void Renderer::DrawObjects(const std::vector<GameObject*>& objects, unsigned int shader) {
   for (auto it : objects) {
-    if (it->GetIsTextured() && it->GetTextureSlot() != textures.boundSlot) {
-      textures.Bind(it->GetTextureSlot());
+    it->SetShader(shader); // TODO TODO PERFORMANCE MAKE IT STATIC TODO
+    // if (shader == shadowShader) {
+    //   it->BindModelMat();
+    // }
+    // only do texture stuff on default shader
+    if (shader == shaderID) {
+      if (it->GetIsTextured() && it->GetTextureSlot() != textures.boundSlot) {
+        textures.Bind(it->GetTextureSlot());
+      }
     }
     it->Bind();
   }
@@ -102,12 +141,26 @@ void Renderer::Clear() {
   GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
+void Renderer::ShadowStart() {
+  GLCall(glActiveTexture(GL_TEXTURE8));
+  shadowBuffer.SetTexType(FrameBuffer::DEPTH);
+  shadowBuffer.Init();
+  // steps
+  // shadow pass
+    // change viewport to shadow res
+    // bind shadow buffer
+    // clear the buffer
+    // configure matrices and shader
+    // render the scene
+  // now the typical render process
+}
+
 void Renderer::ppStart() {
-  ppShader = Shader("res/shaders/pp.shader");
   BindShader(ppShader);
   ppTexUniform = glGetUniformLocation(ppShader, "u_Texture");
   GLCall(glUniform1i(ppTexUniform, 9));
   GLCall(glActiveTexture(GL_TEXTURE9));
+  ppBuffer.SetTexType(FrameBuffer::RGB);
   ppBuffer.Init(); 
   glGenVertexArrays(1, &ppVao);
   glGenBuffers(1, &ppVBO);
@@ -118,7 +171,6 @@ void Renderer::ppStart() {
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
   // return to the default shader and drawing buffer
   BindShader(shaderID);
   ppBuffer.Bind();
@@ -193,4 +245,27 @@ void Renderer::Projection() {
   glm::mat4 perspective = glm::perspective(glm::radians(45.0f), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
   int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
   glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
+  
+  glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+void Renderer::ShadowProj() {
+  float near_plane = 1.0f, far_plane = 7.5f;
+  glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+
+  // TODO GIVE REAL LIGHT VALUE
+  glm::mat4 lightView = glm::lookAt(glm::vec3(2.0f, 1.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 lightSpaceMatrix = lightProjection * lightView; 
+
+  // pass matrix to the shader
+  int u_Perspective = glGetUniformLocation(shadowShader, "u_LightSpace");
+  glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
+
+  // FOR displaying shadow buffer
+  int near = glGetUniformLocation(displayShadowShader, "near_plane");
+  int far = glGetUniformLocation(displayShadowShader, "far_plane");
+  glUniform1f(near, near_plane);
+  glUniform1f(far, far_plane);
+
+  glViewport(0, 0, SHADOW_RES, SHADOW_RES);
 }

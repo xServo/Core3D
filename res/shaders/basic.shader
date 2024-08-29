@@ -9,17 +9,15 @@ out vec3 Normal;
 out vec2 TexCoords;
 
 uniform mat4 u_Perspective;
-uniform mat4 u_Translate;
-uniform mat4 u_Scale;
-uniform mat4 u_Rotate;
 uniform mat4 u_View;
 
-void main() {
-  mat4 model = u_Translate * u_Rotate * u_Scale;
-  gl_Position = u_Perspective * u_View * model * vec4(aPos, 1);
+uniform mat4 u_Model;
 
-  FragPos = vec3(model * vec4(aPos, 1));
-  Normal = mat3(transpose(inverse(model))) * aNormal;
+void main() {
+  gl_Position = u_Perspective * u_View * u_Model * vec4(aPos, 1);
+
+  FragPos = vec3(u_Model * vec4(aPos, 1));
+  Normal = mat3(transpose(inverse(u_Model))) * aNormal;
   TexCoords = vec2(aTexCoord.x, aTexCoord.y);
 }
 

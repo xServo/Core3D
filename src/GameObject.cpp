@@ -3,14 +3,13 @@
 
 GameObject::GameObject(unsigned int shader)
     : vao(d_Positions, 36, 8), ib(d_Indicies, 36) {
-  shaderID = shader;
   m_Model = nullptr;
 
   int ID;
   m_Color = glm::vec3(1, 1, 1);
   m_Shininess = 16;
   m_Metallic = 0;
-  m_Roughness = 0.2;
+  m_Roughness = 0.2f;
   m_AO = 0.5;
   m_IsLit = true;
   m_IsTextured = false;
@@ -20,19 +19,7 @@ GameObject::GameObject(unsigned int shader)
   m_Scale = glm::mat4(1);
   m_Translate = glm::mat4(1);
 
-  /* UNIFORMS */
-  u_Shininess = glGetUniformLocation(shaderID, "material.shininess");
-  u_Metallic = glGetUniformLocation(shaderID, "material.metallic");
-  u_Roughness = glGetUniformLocation(shaderID, "material.roughness");
-  u_AO = glGetUniformLocation(shaderID, "material.ao");
-
-  u_Color = glGetUniformLocation(shaderID, "u_Color");
-  u_IsLit = glGetUniformLocation(shaderID, "u_IsLit");
-  u_IsTextured = glGetUniformLocation(shaderID, "u_IsTextured");
-  u_Rotate = glGetUniformLocation(shaderID, "u_Rotate");
-  u_Translate = glGetUniformLocation(shaderID, "u_Translate");
-  u_Scale = glGetUniformLocation(shaderID, "u_Scale");
-
+  SetShader(shader);
   Bind();
 }
 
@@ -60,9 +47,10 @@ void GameObject::Bind() {
   glUniform3f(u_Color, m_Color.x, m_Color.y, m_Color.z);
   glUniform1i(u_IsLit, m_IsLit);
   glUniform1i(u_IsTextured, m_IsTextured);
-  glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &m_Rotate[0][0]);
-  glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
-  glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
+
+  // calculate model matrix
+  glm::mat4 modelMat = m_Translate * m_Rotate * m_Scale;
+  glUniformMatrix4fv(u_Model, 1, GL_FALSE, &modelMat[0][0]);
 
   // TODO TEMP
   Draw();
@@ -103,7 +91,6 @@ void GameObject::SetMetallic(float metallic) {
 
 void GameObject::Rotate(float theta, glm::vec3 rotationAxis) {
   m_Rotate = glm::rotate(m_Rotate, glm::radians(theta), rotationAxis);
-  glUniformMatrix4fv(u_Rotate, 1, GL_FALSE, &m_Rotate[0][0]);
 }
 
 void GameObject::Translate(glm::vec3 translate) {
@@ -112,29 +99,42 @@ void GameObject::Translate(glm::vec3 translate) {
   }
   m_Position += translate;
   m_Translate = glm::translate(m_Translate, m_Position);
-  glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
 }
 
 void GameObject::SetName(std::string name) { m_Name = name; }
 
+void GameObject::SetShader(unsigned int shader) {
+  shaderID = shader;
+  /* UNIFORMS */
+  // pbr
+  u_Metallic = glGetUniformLocation(shaderID, "material.metallic");
+  u_Roughness = glGetUniformLocation(shaderID, "material.roughness");
+  u_AO = glGetUniformLocation(shaderID, "material.ao");
+  // phong
+  u_Shininess = glGetUniformLocation(shaderID, "material.shininess");
+  // misc
+  u_Color = glGetUniformLocation(shaderID, "u_Color");
+  u_IsLit = glGetUniformLocation(shaderID, "u_IsLit");
+  u_IsTextured = glGetUniformLocation(shaderID, "u_IsTextured");
+  // model
+  u_Model = glGetUniformLocation(shaderID, "u_Model");
+}
+
 void GameObject::SetPos(glm::vec3 pos) {
   m_Position = pos;
   m_Translate = glm::translate(glm::mat4(1), m_Position);
-  glUniformMatrix4fv(u_Translate, 1, GL_FALSE, &m_Translate[0][0]);
 }
 
 void GameObject::Scale(glm::vec3 scale) {
   m_Scale = glm::mat4(1);
   m_Size *= scale;
   m_Scale = glm::scale(m_Scale, m_Size);
-  glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
 }
 
 void GameObject::SetSize(glm::vec3 scale) {
   m_Scale = glm::mat4(1);
   m_Size = scale;
   m_Scale = glm::scale(m_Scale, m_Size);
-  glUniformMatrix4fv(u_Scale, 1, GL_FALSE, &m_Scale[0][0]);
 }
 
 void GameObject::SetIsLit(bool lit) {

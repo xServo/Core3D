@@ -41,9 +41,7 @@ private:
   int u_Color;
   int u_IsLit;
   int u_IsTextured;
-  int u_Rotate;
-  int u_Translate;
-  int u_Scale;
+  int u_Model;
 
 public:
   unsigned int shaderID;
@@ -58,13 +56,13 @@ public:
   void SetAO(float ao);
   void SetMetallic(float metallic);
 
-
-
   void Bind();
+  void BindModelMat();
   void Draw();
   void Rotate(float theta, glm::vec3 rotationAxis);
   virtual void Translate(glm::vec3 translate);
   void SetName(std::string name);
+  void SetShader(unsigned int shader);
   virtual void SetPos(glm::vec3 pos);
   void Scale(glm::vec3 scale);
   void SetSize(glm::vec3 scale);
