@@ -79,7 +79,7 @@ private:
   const int SCREEN_HEIGHT;
   const float NEAR_PLANE = 0.01f;
   const float FAR_PLANE = 50.0f;
-  const int SHADOW_RES = 1024;
+  static const int SHADOW_RES = 1024;
   float m_LastFrameTime;
 
   void Projection();

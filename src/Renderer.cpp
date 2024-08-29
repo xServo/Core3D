@@ -89,15 +89,15 @@ void Renderer::Draw(const std::vector<GameObject*>&objects) {
   glBindVertexArray(ppVao);
   glDisable(GL_DEPTH_TEST);
   // set the texture that gets drawn
-  // glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture()); 
-  // glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture()); 
+  glDrawArrays(GL_TRIANGLES, 0, 6);
   
 
   // TEMP DRAW SHADOW BUFFER
   BindShader(displayShadowShader);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture());
-  glDrawArrays(GL_TRIANGLES, 0, 6);
+  GLCall(glActiveTexture(GL_TEXTURE0));
+  GLCall(glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture()));
+  GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 
 
 
@@ -142,24 +142,14 @@ void Renderer::Clear() {
 }
 
 void Renderer::ShadowStart() {
-  GLCall(glActiveTexture(GL_TEXTURE8));
   shadowBuffer.SetTexType(FrameBuffer::DEPTH);
   shadowBuffer.Init();
-  // steps
-  // shadow pass
-    // change viewport to shadow res
-    // bind shadow buffer
-    // clear the buffer
-    // configure matrices and shader
-    // render the scene
-  // now the typical render process
 }
 
 void Renderer::ppStart() {
   BindShader(ppShader);
   ppTexUniform = glGetUniformLocation(ppShader, "u_Texture");
   GLCall(glUniform1i(ppTexUniform, 9));
-  GLCall(glActiveTexture(GL_TEXTURE9));
   ppBuffer.SetTexType(FrameBuffer::RGB);
   ppBuffer.Init(); 
   glGenVertexArrays(1, &ppVao);
@@ -244,13 +234,14 @@ unsigned int Renderer::Shader(const std::string& path) {
 void Renderer::Projection() {
   glm::mat4 perspective = glm::perspective(glm::radians(45.0f), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
   int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
-  glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]);
+  GLCall(glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]));
   
   glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void Renderer::ShadowProj() {
-  float near_plane = 1.0f, far_plane = 7.5f;
+  float near_plane = 1.0f;
+  float far_plane = 7.5f;
   glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
 
   // TODO GIVE REAL LIGHT VALUE
@@ -259,13 +250,15 @@ void Renderer::ShadowProj() {
 
   // pass matrix to the shader
   int u_Perspective = glGetUniformLocation(shadowShader, "u_LightSpace");
-  glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &lightSpaceMatrix[0][0]);
+  GLCall(glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
 
+  BindShader(displayShadowShader);
   // FOR displaying shadow buffer
   int near = glGetUniformLocation(displayShadowShader, "near_plane");
   int far = glGetUniformLocation(displayShadowShader, "far_plane");
-  glUniform1f(near, near_plane);
-  glUniform1f(far, far_plane);
+  GLCall(glUniform1f(near, near_plane));
+  GLCall(glUniform1f(far, far_plane));
+  BindShader(shadowShader);
 
   glViewport(0, 0, SHADOW_RES, SHADOW_RES);
 }
