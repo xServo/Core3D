@@ -190,6 +190,8 @@ void Engine::KeyBindings() {
       case 'g':
         player.camera.MoveDown();
         break;
+      case 'h':
+        renderer.ToggleShadowBufferView();
       case 'e':
         ToggleUI();
         Input::keyPressed = "";
@@ -286,10 +288,11 @@ GameObject* Engine::LoadAttrib(const ObjectAttrib& attrib) {
 void Engine::LoadLevel(const int levelArr[7][7]) {
   int levelSize = 7;
   float offset = 7;
-  /* WALL GEN */
+
   ObjectAttrib levelAttrib;
   levelAttrib.shaderID = shader;
   levelAttrib.shine = 10;
+  /* WALL GEN */
   for (int i = 1; i < levelSize + 1; i++) {
     for (int j = 1; j < levelSize + 1; j++) {
       if (levelArr[i - 1][j - 1] == 1) {

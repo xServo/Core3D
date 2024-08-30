@@ -49,6 +49,7 @@ public:
   void DrawObjects(const std::vector<GameObject*>&objects, unsigned int shader);
   void Swap();
   void Clear();
+  void ToggleShadowBufferView();
   /* FRAMEBUFFER */
   FrameBuffer shadowBuffer;
   FrameBuffer ppBuffer;
@@ -81,6 +82,7 @@ private:
   const float FAR_PLANE = 50.0f;
   static const int SHADOW_RES = 1024;
   float m_LastFrameTime;
+  bool m_RenderShadowBuffer;
 
   void Projection();
   void ShadowProj();

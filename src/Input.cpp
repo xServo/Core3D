@@ -67,6 +67,12 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
       if (action == GLFW_RELEASE)
         Search('g');
       break;
+    case GLFW_KEY_H:
+      if (action == GLFW_PRESS)
+        keyPressed += "h";
+      if (action == GLFW_RELEASE)
+        Search('h');
+      break;
     case GLFW_KEY_ESCAPE:
       if (action == GLFW_PRESS)
         keyPressed = ESC;

@@ -94,10 +94,12 @@ void Renderer::Draw(const std::vector<GameObject*>&objects) {
   
 
   // TEMP DRAW SHADOW BUFFER
-  BindShader(displayShadowShader);
-  GLCall(glActiveTexture(GL_TEXTURE0));
-  GLCall(glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture()));
-  GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+  if (m_RenderShadowBuffer) {
+    BindShader(displayShadowShader);
+    GLCall(glActiveTexture(GL_TEXTURE0));
+    GLCall(glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture()));
+    GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+  }
 
 
 
@@ -139,6 +141,14 @@ void Renderer::Swap() {
 }
 void Renderer::Clear() {
   GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+}
+
+void Renderer::ToggleShadowBufferView() {
+  if (m_RenderShadowBuffer) {
+    m_RenderShadowBuffer = false;
+  } else {
+    m_RenderShadowBuffer = true;
+  }
 }
 
 void Renderer::ShadowStart() {
@@ -240,19 +250,28 @@ void Renderer::Projection() {
 }
 
 void Renderer::ShadowProj() {
-  float near_plane = 1.0f;
+  float near_plane = 0.1f;
   float far_plane = 7.5f;
-  glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+  glm::mat4 lightProjection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, near_plane, far_plane);
 
   // TODO GIVE REAL LIGHT VALUE
   glm::mat4 lightView = glm::lookAt(glm::vec3(2.0f, 1.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 lightSpaceMatrix = lightProjection * lightView; 
 
   // pass matrix to the shader
-  int u_Perspective = glGetUniformLocation(shadowShader, "u_LightSpace");
-  GLCall(glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
+  int shadowShaderLightMatrix = glGetUniformLocation(shadowShader, "u_LightSpace");
+  GLCall(glUniformMatrix4fv(shadowShaderLightMatrix, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
+  // now for main shader
+  BindShader(shaderID);
+  int shaderLightMatrix = glGetUniformLocation(shaderID, "u_LightSpace");
+  GLCall(glUniformMatrix4fv(shaderLightMatrix, 1, GL_FALSE, &lightSpaceMatrix[0][0]));
 
-  BindShader(displayShadowShader);
+  // pass the shadow map
+  GLCall(glActiveTexture(GL_TEXTURE8));
+  glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture()); 
+  int shadowMap = glGetUniformLocation(shaderID, "u_ShadowMap");
+  glUniform1f(shaderID, 8);
+
   // FOR displaying shadow buffer
   int near = glGetUniformLocation(displayShadowShader, "near_plane");
   int far = glGetUniformLocation(displayShadowShader, "far_plane");
