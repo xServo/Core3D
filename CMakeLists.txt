@@ -36,7 +36,9 @@ if(WIN32)
   target_link_libraries(${PROJECT_NAME} glfw3 glew32 assimp-vc143-mt opengl32)
 # mac
 elseif(APPLE)
-  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for lsp
+  set(CMAKE_CXX_FLAGS_DEBUG "-g") # for debug symbols
+  set(CMAKE_C_FLAGS_DEBUG "-g") # for debug symbols
   target_link_directories(${PROJECT_NAME} PRIVATE
     /opt/homebrew/lib
     )
