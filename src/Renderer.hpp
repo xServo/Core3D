@@ -14,6 +14,12 @@
 #include "imgui_impl_opengl3.h"
 #include "gl_assert.hpp"
 #include "GameObject.hpp"
+#include "FrameBuffer.hpp"
+
+// TEXTURE SLOTS
+// 8 IS RESERVED FOR SHADOW MAP
+// 9 IS RESERVED FOR POST PROCESSING
+
 class Renderer {
 public:
   Renderer(const int WIDTH, const int HEIGHT);
@@ -39,15 +45,17 @@ public:
   /* RENDER */
   unsigned int Shader(const std::string& path);
   void GLDraw();
-  void Draw();
-  void DrawObjects(const std::vector<GameObject*>& objects);
+  void Draw(const std::vector<GameObject*>&objects);
+  void DrawObjects(const std::vector<GameObject*>&objects, unsigned int shader);
   void Swap();
   void Clear();
+  void ToggleShadowBufferView();
   /* FRAMEBUFFER */
-  unsigned int ppInit();
-  void ppStart();
-  void ppDraw(unsigned int id);
+  FrameBuffer shadowBuffer;
+  FrameBuffer ppBuffer;
   unsigned int ppTexture;
+  void ppStart();
+  void ShadowStart();
   float screenQuadVert[24] = {
       -1.0f, 1.0f, 0.0f, 1.0f,
       -1.0f, -1.0f, 0.0f, 0.0f,
@@ -57,6 +65,8 @@ public:
       1.0f, 1.0f, 1.0f, 1.0f};
   unsigned int tempBuffer;
   unsigned int ppShader;
+  unsigned int shadowShader;
+  unsigned int displayShadowShader; 
   unsigned int ppVao;
   unsigned int ppVBO;
   int ppTexUniform;
@@ -70,7 +80,10 @@ private:
   const int SCREEN_HEIGHT;
   const float NEAR_PLANE = 0.01f;
   const float FAR_PLANE = 50.0f;
+  static const int SHADOW_RES = 1024;
   float m_LastFrameTime;
+  bool m_RenderShadowBuffer;
 
   void Projection();
+  void ShadowProj();
 };

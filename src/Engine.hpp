@@ -74,7 +74,7 @@ public:
   bool levelLoadingEnabled = true;
   bool saveEnabled = false;
   bool loadEnabled = false;
-  bool playMode = true;
+  bool playMode = false;
   // singleton
   static Engine& Instance() {
     static Engine INSTANCE;
