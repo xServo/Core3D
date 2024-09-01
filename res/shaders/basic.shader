@@ -77,7 +77,7 @@ void main() {
     if (tempShadows == 0) {
       tempShadows = 0.5;
     }
-    FragColor = vec4(CalculatePBR(color), 1.0) * tempShadows;
+    FragColor = vec4(CalculatePBR(color * tempShadows), 1.0);
   } else {
     FragColor = vec4(u_Color.x, u_Color.y, u_Color.z, 1.0);
   }

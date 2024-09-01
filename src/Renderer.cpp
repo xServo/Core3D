@@ -7,6 +7,7 @@ Renderer::Renderer(const int WIDTH, const int HEIGHT)
       ppBuffer(WIDTH, HEIGHT),
       shadowBuffer(SHADOW_RES, SHADOW_RES) {
   GLFWwindow* gWindow = nullptr;
+  projectionFOV = 40;
   isUI = true;
   Init();
   shaderID = Shader("res/shaders/basic.shader");
@@ -18,6 +19,7 @@ Renderer::Renderer(const int WIDTH, const int HEIGHT)
   textures.shaderID = shaderID;
   Projection();
   textures.Init();
+  glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 }
 
 void Renderer::ImGuiInit() {
@@ -61,7 +63,7 @@ void Renderer::GLDraw() {
 }
 
 // renders everything
-void Renderer::Draw(const std::vector<GameObject*>&objects) {
+void Renderer::Draw(const std::vector<GameObject*>& objects) {
   /* ---------- SHADOW MAPPING --------- */
   BindShader(shadowShader);
   ShadowProj();
@@ -75,7 +77,7 @@ void Renderer::Draw(const std::vector<GameObject*>&objects) {
   Clear();
   DrawObjects(objects, shaderID);
   /* ---------- POST PROCESSING --------- */
-  // disable wireframe 
+  // disable wireframe
   bool tempWireFrame = isWireFrame;
   if (tempWireFrame) {
     Wireframe(false);
@@ -89,9 +91,8 @@ void Renderer::Draw(const std::vector<GameObject*>&objects) {
   glBindVertexArray(ppVao);
   glDisable(GL_DEPTH_TEST);
   // set the texture that gets drawn
-  glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture()); 
+  glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture());
   glDrawArrays(GL_TRIANGLES, 0, 6);
-  
 
   // TEMP DRAW SHADOW BUFFER
   if (m_RenderShadowBuffer) {
@@ -100,8 +101,6 @@ void Renderer::Draw(const std::vector<GameObject*>&objects) {
     GLCall(glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture()));
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
   }
-
-
 
   glEnable(GL_DEPTH_TEST);
   /* ---------- SWAP --------- */
@@ -117,7 +116,7 @@ void Renderer::Draw(const std::vector<GameObject*>&objects) {
 
 void Renderer::DrawObjects(const std::vector<GameObject*>& objects, unsigned int shader) {
   for (auto it : objects) {
-    it->SetShader(shader); // TODO TODO PERFORMANCE MAKE IT STATIC TODO
+    it->SetShader(shader);  // TODO TODO PERFORMANCE MAKE IT STATIC TODO
     // if (shader == shadowShader) {
     //   it->BindModelMat();
     // }
@@ -161,7 +160,7 @@ void Renderer::ppStart() {
   ppTexUniform = glGetUniformLocation(ppShader, "u_Texture");
   GLCall(glUniform1i(ppTexUniform, 9));
   ppBuffer.SetTexType(FrameBuffer::RGB);
-  ppBuffer.Init(); 
+  ppBuffer.Init();
   glGenVertexArrays(1, &ppVao);
   glGenBuffers(1, &ppVBO);
   glBindVertexArray(ppVao);
@@ -211,6 +210,7 @@ void Renderer::Init() {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
         return;
       }
+      glfwGetFramebufferSize(gWindow, &m_InitialWidth, &m_InitialHeight);
     }
   }
 
@@ -242,11 +242,11 @@ unsigned int Renderer::Shader(const std::string& path) {
 }
 /* ---------------------------PRIVATE---------------------------- */
 void Renderer::Projection() {
-  glm::mat4 perspective = glm::perspective(glm::radians(45.0f), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
+  glm::mat4 perspective = glm::perspective(glm::radians(projectionFOV), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
   int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
   GLCall(glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]));
-  
-  glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+  glViewport(0, 0, m_InitialWidth, m_InitialHeight);
 }
 
 void Renderer::ShadowProj() {
@@ -255,8 +255,8 @@ void Renderer::ShadowProj() {
   glm::mat4 lightProjection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, near_plane, far_plane);
 
   // TODO GIVE REAL LIGHT VALUE
-  glm::mat4 lightView = glm::lookAt(glm::vec3(2.0f, 1.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-  glm::mat4 lightSpaceMatrix = lightProjection * lightView; 
+  glm::mat4 lightView = glm::lookAt(glm::vec3(-3.0f, 0.5f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
   // pass matrix to the shader
   int shadowShaderLightMatrix = glGetUniformLocation(shadowShader, "u_LightSpace");
@@ -268,7 +268,7 @@ void Renderer::ShadowProj() {
 
   // pass the shadow map
   GLCall(glActiveTexture(GL_TEXTURE8));
-  glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture()); 
+  glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture());
   int shadowMap = glGetUniformLocation(shaderID, "u_ShadowMap");
   glUniform1f(shaderID, 8);
 
