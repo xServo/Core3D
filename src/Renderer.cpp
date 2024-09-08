@@ -64,6 +64,7 @@ void Renderer::GLDraw() {
 
 // renders everything
 void Renderer::Draw(const std::vector<GameObject*>& objects) {
+  textures.boundSlot = -1;  // set directly as boundSlot is only used for game objects
   /* ---------- SHADOW MAPPING --------- */
   BindShader(shadowShader);
   ShadowProj();
@@ -97,8 +98,10 @@ void Renderer::Draw(const std::vector<GameObject*>& objects) {
   // TEMP DRAW SHADOW BUFFER
   if (m_RenderShadowBuffer) {
     BindShader(displayShadowShader);
-    GLCall(glActiveTexture(GL_TEXTURE0));
+    GLCall(glActiveTexture(GL_TEXTURE7));
     GLCall(glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture()));
+    int u_DepthMap = glGetUniformLocation(displayShadowShader, "u_DepthMap");
+    glUniform1i(u_DepthMap, 7);
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
   }
 
@@ -117,10 +120,6 @@ void Renderer::Draw(const std::vector<GameObject*>& objects) {
 void Renderer::DrawObjects(const std::vector<GameObject*>& objects, unsigned int shader) {
   for (auto it : objects) {
     it->SetShader(shader);  // TODO TODO PERFORMANCE MAKE IT STATIC TODO
-    // if (shader == shadowShader) {
-    //   it->BindModelMat();
-    // }
-    // only do texture stuff on default shader
     if (shader == shaderID) {
       if (it->GetIsTextured() && it->GetTextureSlot() != textures.boundSlot) {
         textures.Bind(it->GetTextureSlot());
@@ -151,6 +150,7 @@ void Renderer::ToggleShadowBufferView() {
 }
 
 void Renderer::ShadowStart() {
+  GLCall(glUniform1i(ppTexUniform, 8));
   shadowBuffer.SetTexType(FrameBuffer::DEPTH);
   shadowBuffer.Init();
 }
@@ -177,10 +177,10 @@ void Renderer::ppStart() {
 
 void Renderer::Wireframe(bool flag) {
   if (flag == true) {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // enable wireframe mode:w
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);  // enable wireframe mode
     isWireFrame = true;
   } else if (flag == false) {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // enable wireframe mode:w
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);  // enable wireframe mode
     isWireFrame = false;
   }
 }
@@ -255,7 +255,7 @@ void Renderer::ShadowProj() {
   glm::mat4 lightProjection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, near_plane, far_plane);
 
   // TODO GIVE REAL LIGHT VALUE
-  glm::mat4 lightView = glm::lookAt(glm::vec3(-3.0f, 0.5f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  glm::mat4 lightView = glm::lookAt(shadowPos, glm::vec3(0.0f, shadowPos.y, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
   glm::mat4 lightSpaceMatrix = lightProjection * lightView;
 
   // pass matrix to the shader
@@ -270,7 +270,7 @@ void Renderer::ShadowProj() {
   GLCall(glActiveTexture(GL_TEXTURE8));
   glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture());
   int shadowMap = glGetUniformLocation(shaderID, "u_ShadowMap");
-  glUniform1f(shaderID, 8);
+  glUniform1i(shadowMap, 8);
 
   // FOR displaying shadow buffer
   int near = glGetUniformLocation(displayShadowShader, "near_plane");

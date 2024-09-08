@@ -122,7 +122,7 @@ float CalculateShadow() {
 }
 
 vec3 CalculatePhong(vec4 color) {
-  vec3 ambient = ambientStrength * vec3(0.2, 0.2, 0.2);
+  vec3 ambient = ambientStrength * vec3(0.6, 0.6, 0.6);
   vec3 norm = normalize(Normal);
 
   vec3 totalDiffuse = vec3(0.0);

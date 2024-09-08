@@ -46,6 +46,18 @@ void Editor::UILoop() {
   if (ImGui::CollapsingHeader(("Load Enabled? " + temp).c_str())) {
     ImGui::Text("Hello world");
   }
+  // shadow map pos
+  static glm::vec3 shadowPos = Engine::Instance().GetShadowPos();
+  static glm::vec3 ogShadowPos = shadowPos;
+
+  if (ImGui::CollapsingHeader("\tPosition: shadow pos")) {
+    bool b1 = ImGui::SliderFloat("x pos shadow", &shadowPos.x, ogShadowPos.x - 1.0f, ogShadowPos.x + 1.0f);
+    bool b2 = ImGui::SliderFloat("y pos shadow", &shadowPos.y, ogShadowPos.y - 1.0f, ogShadowPos.y + 1.0f);
+    bool b3 = ImGui::SliderFloat("z pos shadow", &shadowPos.z, ogShadowPos.z - 1.0f, ogShadowPos.z + 1.0f);
+    if (b1 || b2 || b3) {
+      Engine::Instance().SetShadowPos(shadowPos);
+    }
+  }
   /* std::vector<glm::vec3> colors; */
   /* // objects */
   /* int cnt = 0; */

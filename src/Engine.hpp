@@ -95,4 +95,8 @@ public:
   void SetEditorUpdateCallback(std::function<void()> callback);
   /* CORE */
   void Init();
+
+  /* DEBUG */
+  inline void SetShadowPos(glm::vec3 pos) { renderer.shadowPos = pos; };
+  inline glm::vec3 GetShadowPos() { return renderer.shadowPos; };
 };

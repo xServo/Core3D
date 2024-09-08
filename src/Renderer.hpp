@@ -53,6 +53,7 @@ public:
   void ToggleShadowBufferView();
   /* FRAMEBUFFER */
   FrameBuffer shadowBuffer;
+  glm::vec3 shadowPos;
   FrameBuffer ppBuffer;
   unsigned int ppTexture;
   void ppStart();
