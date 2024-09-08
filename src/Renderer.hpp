@@ -26,6 +26,7 @@ public:
   Texture textures;
   /* RENDER VARS */
   GLFWwindow* gWindow;
+  float projectionFOV;
   /* STATE VARS */
   unsigned int shaderID;
   float deltaTime;
@@ -45,8 +46,8 @@ public:
   /* RENDER */
   unsigned int Shader(const std::string& path);
   void GLDraw();
-  void Draw(const std::vector<GameObject*>&objects);
-  void DrawObjects(const std::vector<GameObject*>&objects, unsigned int shader);
+  void Draw(const std::vector<GameObject*>& objects);
+  void DrawObjects(const std::vector<GameObject*>& objects, unsigned int shader);
   void Swap();
   void Clear();
   void ToggleShadowBufferView();
@@ -66,7 +67,7 @@ public:
   unsigned int tempBuffer;
   unsigned int ppShader;
   unsigned int shadowShader;
-  unsigned int displayShadowShader; 
+  unsigned int displayShadowShader;
   unsigned int ppVao;
   unsigned int ppVBO;
   int ppTexUniform;
@@ -78,6 +79,9 @@ public:
 private:
   const int SCREEN_WIDTH;
   const int SCREEN_HEIGHT;
+  int m_InitialWidth;   // THIS is needed due to mac displays reporting resolution inacuratley
+  int m_InitialHeight;  // THIS is needed due to mac displays reporting resolution inacuratley
+
   const float NEAR_PLANE = 0.01f;
   const float FAR_PLANE = 50.0f;
   static const int SHADOW_RES = 1024;
