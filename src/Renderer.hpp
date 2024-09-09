@@ -7,6 +7,7 @@
 #include <glew.h>
 #include <glfw3.h>
 #include "ShaderCompiler.hpp"
+#include "fwd.hpp"
 #include "texture.hpp"
 #include "glm/glm.hpp"
 #include "imgui.h"
@@ -19,6 +20,10 @@
 // TEXTURE SLOTS
 // 8 IS RESERVED FOR SHADOW MAP
 // 9 IS RESERVED FOR POST PROCESSING
+enum RESERVED_TEX_SLOT {
+  SKYBOX = 6,
+  SHADOW = 8,
+};
 
 class Renderer {
 public:
@@ -32,17 +37,14 @@ public:
   float deltaTime;
   bool isWireFrame;
   bool isUI;
-
   /* STATE */
   void Wireframe(bool flag);
   void DeltaTime();
-
   /* IMGUI */
   void ImGui();
   void ImGuiInit();
   void ImGuiEnd();
   void ImGuiUI();
-
   /* RENDER */
   unsigned int Shader(const std::string& path);
   void GLDraw();
@@ -51,6 +53,14 @@ public:
   void Swap();
   void Clear();
   void ToggleShadowBufferView();
+  /* SKYBOX */
+  unsigned int skyboxVAO;
+  unsigned int skyboxVBO;
+  unsigned int skyboxTex;
+  unsigned int skyboxShader;
+  unsigned int SkyboxLoadCubemap(std::vector<std::string> faces);
+  void SkyboxInit();
+  void SkyboxDraw();
   /* FRAMEBUFFER */
   FrameBuffer shadowBuffer;
   glm::vec3 shadowPos;
@@ -58,13 +68,6 @@ public:
   unsigned int ppTexture;
   void ppStart();
   void ShadowStart();
-  float screenQuadVert[24] = {
-      -1.0f, 1.0f, 0.0f, 1.0f,
-      -1.0f, -1.0f, 0.0f, 0.0f,
-      1.0f, -1.0f, 1.0f, 0.0f,
-      -1.0f, 1.0f, 0.0f, 1.0f,
-      1.0f, -1.0f, 1.0f, 0.0f,
-      1.0f, 1.0f, 1.0f, 1.0f};
   unsigned int tempBuffer;
   unsigned int ppShader;
   unsigned int shadowShader;
@@ -86,6 +89,7 @@ private:
   const float NEAR_PLANE = 0.01f;
   const float FAR_PLANE = 50.0f;
   static const int SHADOW_RES = 1024;
+  glm::mat4 m_ProjectionMatrix;
   float m_LastFrameTime;
   bool m_RenderShadowBuffer;
 

@@ -55,7 +55,7 @@ struct PointLight {
 const int LIGHT_COUNT = 3;
 uniform PointLight lights[LIGHT_COUNT];
 
-float ambientStrength = 0.3;
+float ambientStrength = 0.5;
 float specularStrength = 0.5;
 layout(location = 0) out vec4 FragColor;
 
@@ -75,7 +75,8 @@ void main() {
 //    FragColor = vec4(CalculatePhong(color), 1.0);
     float tempShadows = CalculateShadow();
     if (tempShadows == 0) {
-      tempShadows = 0.5;
+      // tempShadows = 0.5;
+      tempShadows = 0.75;
     }
     FragColor = vec4(CalculatePBR(color * tempShadows), 1.0);
   } else {

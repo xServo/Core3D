@@ -32,4 +32,5 @@ public:
   void MoveUp();
   void MoveDown();
   inline glm::vec3 GetPos() const { return m_Pos; };
+  inline glm::mat4 GetViewMatrix() const { return glm::lookAt(m_Pos, m_Pos + m_Target, m_Up); }
 };

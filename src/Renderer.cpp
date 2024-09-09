@@ -1,4 +1,7 @@
 #include "Renderer.hpp"
+#include "Engine.hpp"
+#include "VertData.hpp"
+
 /* ---------------------------PUBLIC---------------------------- */
 Renderer::Renderer(const int WIDTH, const int HEIGHT)
     : SCREEN_WIDTH(WIDTH),
@@ -11,6 +14,7 @@ Renderer::Renderer(const int WIDTH, const int HEIGHT)
   isUI = true;
   Init();
   shaderID = Shader("res/shaders/basic.shader");
+  skyboxShader = Shader("res/shaders/skybox.shader");
   ppShader = Shader("res/shaders/pp.shader");
   shadowShader = Shader("res/shaders/shadow.shader");
   displayShadowShader = Shader("res/shaders/debug_shadow.shader");
@@ -77,6 +81,7 @@ void Renderer::Draw(const std::vector<GameObject*>& objects) {
   ppBuffer.Bind();
   Clear();
   DrawObjects(objects, shaderID);
+  SkyboxDraw();
   /* ---------- POST PROCESSING --------- */
   // disable wireframe
   bool tempWireFrame = isWireFrame;
@@ -95,7 +100,7 @@ void Renderer::Draw(const std::vector<GameObject*>& objects) {
   glBindTexture(GL_TEXTURE_2D, ppBuffer.GetTexture());
   glDrawArrays(GL_TRIANGLES, 0, 6);
 
-  // TEMP DRAW SHADOW BUFFER
+  /* OPTIONALLY DRAW SHADOW BUFFER TO SCREEN */
   if (m_RenderShadowBuffer) {
     BindShader(displayShadowShader);
     GLCall(glActiveTexture(GL_TEXTURE7));
@@ -105,9 +110,8 @@ void Renderer::Draw(const std::vector<GameObject*>& objects) {
     GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
   }
 
-  glEnable(GL_DEPTH_TEST);
   /* ---------- SWAP --------- */
-  // swap and rebind shader for game stuff on begin frame
+  glEnable(GL_DEPTH_TEST);
   BindShader(shaderID);
   ImGuiEnd();
   Swap();
@@ -149,8 +153,85 @@ void Renderer::ToggleShadowBufferView() {
   }
 }
 
+unsigned int Renderer::SkyboxLoadCubemap(std::vector<std::string> faces) {
+  unsigned int textureID;
+  glGenTextures(1, &textureID);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+  int width, height, nrChannels;
+  stbi_set_flip_vertically_on_load(0);
+  for (unsigned int i = 0; i < faces.size(); i++) {
+    unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+    if (data) {
+      glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+      stbi_image_free(data);
+    } else {
+      std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+      stbi_image_free(data);
+    }
+  }
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+  stbi_set_flip_vertically_on_load(1);
+  return textureID;
+}
+
+void Renderer::SkyboxInit() {
+  GLCall(glActiveTexture(GL_TEXTURE6));
+  textures.boundSlot = -1;
+  // skybox VAO
+  GLCall(glGenVertexArrays(1, &skyboxVAO));
+  GLCall(glGenBuffers(1, &skyboxVBO));
+  GLCall(glBindVertexArray(skyboxVAO));
+  GLCall(glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO));
+  GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW));
+  GLCall(glEnableVertexAttribArray(0));
+  GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0));
+  // load cubemap
+  std::vector<std::string> faces{
+      "res/textures/skybox/right.jpg",
+      "res/textures/skybox/left.jpg",
+      "res/textures/skybox/top.jpg",
+      "res/textures/skybox/bottom.jpg",
+      "res/textures/skybox/front.jpg",
+      "res/textures/skybox/back.jpg"};
+  skyboxTex = SkyboxLoadCubemap(faces);
+  // set shader uniform
+  BindShader(skyboxShader);
+  unsigned int u_Skybox = glGetUniformLocation(skyboxShader, "u_Skybox");
+  GLCall(glUniform1i(u_Skybox, RESERVED_TEX_SLOT::SKYBOX));
+  BindShader(shaderID);
+}
+
+void Renderer::SkyboxDraw() {
+  BindShader(skyboxShader);
+  glDepthFunc(GL_LEQUAL);
+  // pass matrices from the player
+  // the matrices begin as mat3 and then go back to mat4 as to not apply wrong translations
+  glm::mat4 view = glm::mat4(glm::mat3(Engine::Instance().player.camera.GetViewMatrix()));
+  unsigned int u_View = glGetUniformLocation(skyboxShader, "u_View");
+  GLCall(glUniformMatrix4fv(u_View, 1, GL_FALSE, &view[0][0]));
+
+  glm::mat4 projection = m_ProjectionMatrix;
+  unsigned int u_Projection = glGetUniformLocation(skyboxShader, "u_Projection");
+  GLCall(glUniformMatrix4fv(u_Projection, 1, GL_FALSE, &projection[0][0]));
+  // skybox cube
+  GLCall(glBindVertexArray(skyboxVAO));
+  GLCall(glActiveTexture(GL_TEXTURE6));
+  textures.boundSlot = -1;
+  glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+  glDrawArrays(GL_TRIANGLES, 0, 36);
+  glBindVertexArray(0);
+  glDepthFunc(GL_LESS);
+  BindShader(shaderID);
+}
+
 void Renderer::ShadowStart() {
-  GLCall(glUniform1i(ppTexUniform, 8));
+  GLCall(glUniform1i(ppTexUniform, RESERVED_TEX_SLOT::SHADOW));
   shadowBuffer.SetTexType(FrameBuffer::DEPTH);
   shadowBuffer.Init();
 }
@@ -242,9 +323,9 @@ unsigned int Renderer::Shader(const std::string& path) {
 }
 /* ---------------------------PRIVATE---------------------------- */
 void Renderer::Projection() {
-  glm::mat4 perspective = glm::perspective(glm::radians(projectionFOV), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
+  m_ProjectionMatrix = glm::perspective(glm::radians(projectionFOV), static_cast<float>(SCREEN_WIDTH) / static_cast<float>(SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
   int u_Perspective = glGetUniformLocation(shaderID, "u_Perspective");
-  GLCall(glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &perspective[0][0]));
+  GLCall(glUniformMatrix4fv(u_Perspective, 1, GL_FALSE, &m_ProjectionMatrix[0][0]));
 
   glViewport(0, 0, m_InitialWidth, m_InitialHeight);
 }
@@ -270,7 +351,7 @@ void Renderer::ShadowProj() {
   GLCall(glActiveTexture(GL_TEXTURE8));
   glBindTexture(GL_TEXTURE_2D, shadowBuffer.GetTexture());
   int shadowMap = glGetUniformLocation(shaderID, "u_ShadowMap");
-  glUniform1i(shadowMap, 8);
+  glUniform1i(shadowMap, RESERVED_TEX_SLOT::SHADOW);
 
   // FOR displaying shadow buffer
   int near = glGetUniformLocation(displayShadowShader, "near_plane");

@@ -395,6 +395,7 @@ void Engine::LoadObjects(const std::string& filePath) {
 void Engine::PreLoop() {
   renderer.ShadowStart();
   renderer.ppStart();
+  renderer.SkyboxInit();
   if (loadEnabled) {
     LoadObjects("res/save1.json");
   }
