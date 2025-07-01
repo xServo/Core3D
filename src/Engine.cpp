@@ -106,23 +106,23 @@ void Engine::Init() {
   bulb1.SetSize(glm::vec3(0.1, 0.1, 0.1));
   AddObject(&bulb1);
 
-  /* LightObject bulb2(shader, 1); */
-  /* bulb2.name = "Bulb2"; */
-  /* bulb2.Color(glm::vec3(0, 0, 1)); */
-  /* bulb2.SetIsLit(false); */
-  /* bulb2.SetIsTextured(false); */
-  /* bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1)); */
-  /* bulb2.SetPos(glm::vec3(4, 0.5, 4)); */
-  /* AddObject(&bulb2); */
+  LightObject bulb2(shader, 1);
+  bulb2.name = "Bulb2";
+  bulb2.Color(glm::vec3(0, 0, 1));
+  bulb2.SetIsLit(false);
+  bulb2.SetIsTextured(false);
+  bulb2.SetSize(glm::vec3(0.1, 0.1, 0.1));
+  bulb2.SetPos(glm::vec3(4, 0.5, 4));
+  AddObject(&bulb2);
 
-  /* LightObject bulb3(shader, 2); */
-  /* bulb3.name = "Bulb2"; */
-  /* bulb3.Color(glm::vec3(1, 1, 1)); */
-  /* bulb3.SetIsLit(false); */
-  /* bulb3.SetIsTextured(false); */
-  /* bulb3.SetSize(glm::vec3(0.1, 0.1, 0.1)); */
-  /* bulb3.SetPos(glm::vec3(-3.5, 0.5, 4)); */
-  /* AddObject(&bulb3); */
+  LightObject bulb3(shader, 2);
+  bulb3.name = "Bulb2";
+  bulb3.Color(glm::vec3(1, 1, 1));
+  bulb3.SetIsLit(false);
+  bulb3.SetIsTextured(false);
+  bulb3.SetSize(glm::vec3(0.1, 0.1, 0.1));
+  bulb3.SetPos(glm::vec3(-3.5, 0.5, 4));
+  AddObject(&bulb3);
 
   // GameObject box(shader);
   // box.SetIsLit(false);
@@ -295,17 +295,17 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
   levelAttrib.shaderID = shader;
   levelAttrib.shine = 10;
   /* WALL GEN */
-  /* for (int i = 1; i < levelSize + 1; i++) { */
-  /*   for (int j = 1; j < levelSize + 1; j++) { */
-  /*     if (levelArr[i - 1][j - 1] == 1) { */
-  /*       levelAttrib.name = "wall"; */
-  /*       levelAttrib.pos = glm::vec3((i * 2) - offset, 0, (j * 2) - offset); */
-  /*       levelAttrib.textureSlot = 1; */
-  /*       /1* objects.push_back(LoadAttrib(levelAttrib)); *1/ */
-  /*       LoadAttrib(levelAttrib); */
-  /*     } */
-  /*   } */
-  /* } */
+  for (int i = 1; i < levelSize + 1; i++) {
+    for (int j = 1; j < levelSize + 1; j++) {
+      if (levelArr[i - 1][j - 1] == 1) {
+        levelAttrib.name = "wall";
+        levelAttrib.pos = glm::vec3((i * 2) - offset, 0, (j * 2) - offset);
+        levelAttrib.textureSlot = 1;
+        /* objects.push_back(LoadAttrib(levelAttrib)); */
+        LoadAttrib(levelAttrib);
+      }
+    }
+  }
   /* FLOOR GEN */
   for (int i = 1; i < levelSize + 1; i++) {
     for (int j = 1; j < levelSize + 1; j++) {
@@ -318,18 +318,18 @@ void Engine::LoadLevel(const int levelArr[7][7]) {
       LoadAttrib(levelAttrib);
     }
   }
-  /* for (int i = 1; i < levelSize + 1; i++) { */
   /* ROOF GEN */
-  /*   for (int j = 1; j < levelSize + 1; j++) { */
-  /*     levelAttrib.name = "roof"; */
-  /*     levelAttrib.roughness = 1; */
-  /*     levelAttrib.metallic = 0; */
-  /*     levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7); */
-  /*     levelAttrib.textureSlot = 0; */
-  /*     /1* objects.push_back(LoadAttrib(levelAttrib)); *1/ */
-  /*     LoadAttrib(levelAttrib); */
-  /*   } */
-  /* } */
+  for (int i = 1; i < levelSize + 1; i++) {
+    for (int j = 1; j < levelSize + 1; j++) {
+      levelAttrib.name = "roof";
+      levelAttrib.roughness = 1;
+      levelAttrib.metallic = 0;
+      levelAttrib.pos = glm::vec3((i * 2) - 7, 2, (j * 2) - 7);
+      levelAttrib.textureSlot = 0;
+      /* objects.push_back(LoadAttrib(levelAttrib)); */
+      LoadAttrib(levelAttrib);
+    }
+  }
 }
 
 void Engine::SaveObjects(std::string filePath) {
