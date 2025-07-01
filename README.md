@@ -29,4 +29,4 @@
 2. ``brew install glfw GLEW assimp``
 3. ``./build.sh -r``
 
-![Screenshot from renderer](Screenshot.png)
+![Screenshot from renderer](res/screenshot.png)
