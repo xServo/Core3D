@@ -11,6 +11,12 @@
 + Post Processing
 + ImGui for debugging
 
+### Keybinds
+ + WASD - Movement
+ + T & G - Move up and down
+ + R - Toggle wireframe
+ + E - Toggle menu
+
 ### How To build
 #### Windows 
 1. Install **CMake** and **Visual Studio**
